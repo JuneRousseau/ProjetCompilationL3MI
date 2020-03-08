@@ -1,0 +1,52 @@
+D                       [0-9]
+L                       [a-zA-Z_]
+l                       [a-zA-Z]
+H                       [a-fA-F0-9]
+E                       [Ee][+-]?{D}+
+FS                      (f|F|l|L)
+IS                      (u|U|l|L)*
+
+%{
+#include <stdio.h>
+#include "y.tab.h"
+
+
+/* Ne gère pas les commentaires. A rajouter */
+/* Supprimer les lignes dont vous n'avez pas besoin. */
+
+%}
+
+%%
+"else"                  { /* A completer */ }
+"extern"                { /* A completer */ }
+"for"                   { /* A completer */ }
+"if"                    { /* A completer */ }
+"int"                   { /* A completer */ }
+"return"                { /* A completer */ }
+"sizeof"                { /* A completer */ }
+"struct"                { /* A completer */ }
+"void"                  { /* A completer */ }
+"while"                 { /* A completer */ }
+
+{l}({L}|{D})*           { /* A completer */ } /*identificateurs de variable*/
+
+/* {D}+{IS}?               { /* A completer */ } */
+{D}+               { /* A completer */ } /* constance numérique */
+
+/* L?'(\\.|[^\\'])+'       { /* A completer */ } chaine de caractere */
+/* L?\"(\\.|[^\\"])*\"     { /* A completer */ } chaine de caracteres KOUKOU, C'EST QUOI CA? */
+
+"->"                    { /* A completer */ }
+"&&"                    { /* A completer */ }
+"||"                    { /* A completer */ }
+"<="                    { /* A completer */ }
+">="                    { /* A completer */ }
+"=="                    { /* A completer */ }
+"!="                    { /* A completer */ }
+"*/"                    { /* A completer */ }
+"/*"                    { /* A completer */ }
+
+[ \t\v\n\f]             { /* A completer */ }
+.                       { return yytext[0]; }
+%%
+

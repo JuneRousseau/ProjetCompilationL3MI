@@ -193,4 +193,16 @@ function_definition
         ;
 
 %%
+int main()
+{
+  while(1)
+    {
+      yyparse();
+    }
+}
 
+int yyerror(char* s)
+{
+  fprintf(stderr, "%s\n", s);
+  exit(1);
+}
