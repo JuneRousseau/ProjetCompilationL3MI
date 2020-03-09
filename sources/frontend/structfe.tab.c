@@ -62,8 +62,12 @@
 
 
 /* Copy the first part of user declarations.  */
+#line 1 "structfe.y" /* yacc.c:339  */
 
-#line 67 "structfe.tab.c" /* yacc.c:339  */
+#include <stdio.h>
+#include <stdlib.h>
+
+#line 71 "structfe.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -136,7 +140,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 140 "structfe.tab.c" /* yacc.c:358  */
+#line 144 "structfe.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -435,15 +439,15 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    13,    13,    14,    15,    19,    20,    21,    22,    23,
-      27,    28,    32,    33,    34,    38,    39,    40,    44,    45,
-      46,    50,    51,    52,    56,    57,    58,    59,    60,    64,
-      65,    66,    70,    71,    75,    76,    80,    81,    85,    86,
-      90,    91,    95,    96,    97,   101,   102,   103,   107,   108,
-     112,   116,   117,   121,   122,   123,   124,   128,   129,   133,
-     137,   138,   139,   140,   141,   145,   146,   147,   148,   152,
-     153,   157,   158,   162,   163,   167,   168,   172,   173,   177,
-     178,   182,   183,   187,   188,   192
+       0,    18,    18,    19,    20,    24,    25,    26,    27,    28,
+      32,    33,    37,    38,    39,    43,    44,    45,    49,    50,
+      51,    55,    56,    57,    61,    62,    63,    64,    65,    69,
+      70,    71,    75,    76,    80,    81,    85,    86,    90,    91,
+      95,    96,   100,   101,   102,   106,   107,   108,   112,   113,
+     117,   121,   122,   126,   127,   128,   129,   133,   134,   138,
+     142,   143,   144,   145,   146,   150,   151,   152,   153,   157,
+     158,   162,   163,   167,   168,   172,   173,   177,   178,   182,
+     183,   187,   188,   192,   193,   197
 };
 #endif
 
@@ -1343,7 +1347,7 @@ yyreduce:
   switch (yyn)
     {
       
-#line 1347 "structfe.tab.c" /* yacc.c:1646  */
+#line 1351 "structfe.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1571,14 +1575,13 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 195 "structfe.y" /* yacc.c:1906  */
+#line 200 "structfe.y" /* yacc.c:1906  */
 
 int main()
 {
   int c = yyparse();
-  while(c != 0)
+  while(1)
     {
-      printf("%d", c);
       c=yyparse();
     }
 }
@@ -1586,6 +1589,6 @@ int main()
 extern int yylineno;
 int yyerror(char* s)
 {
-  printf("%s line %d", s, yylineno);
+  printf("%s line %d\n", s, yylineno);
   exit(1);
 }

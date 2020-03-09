@@ -1,3 +1,8 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+%}
+
 %token IDENTIFIER CONSTANT SIZEOF
 %token PTR_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP
@@ -196,9 +201,8 @@ function_definition
 int main()
 {
   int c = yyparse();
-  while(c != 0)
+  while(1)
     {
-      printf("%d", c);
       c=yyparse();
     }
 }
@@ -206,6 +210,6 @@ int main()
 extern int yylineno;
 int yyerror(char* s)
 {
-  printf("%s line %d", s, yylineno);
+  printf("%s line %d\n", s, yylineno);
   exit(1);
 }
