@@ -6,6 +6,9 @@ E                       [Ee][+-]?{D}+
 FS                      (f|F|l|L)
 IS                      (u|U|l|L)*
 
+com_s "/*"
+com_e "*/"
+
 %option yylineno
 
 %{
@@ -15,38 +18,47 @@ IS                      (u|U|l|L)*
 
 /* Ne gère pas les commentaires. A rajouter */
 /* Supprimer les lignes dont vous n'avez pas besoin. */
-
 %}
 
 %%
-"else"                  { printf("reconnu:%s \n", yytext); return ELSE; }
-"extern"                { printf("reconnu:%s \n", yytext); return EXTERN; }
-"for"                   { printf("reconnu:%s \n", yytext); return FOR; }
-"if"                    { printf("reconnu:%s \n", yytext); return IF; }
-"int"                   { printf("reconnu:%s \n", yytext); return INT; }
-"return"                { printf("reconnu:%s \n", yytext); return RETURN; }
-"sizeof"                { printf("reconnu:%s \n", yytext); return SIZEOF; }
-"struct"                { printf("reconnu:%s \n", yytext); return STRUCT; }
-"void"                  { printf("reconnu:%s \n", yytext); return VOID; }
-"while"                 { printf("reconnu:%s \n", yytext); return WHILE; }
+"else"                  { return ELSE; }
+"extern"                { return EXTERN; }
+"for"                   { return FOR; }
+"if"                    { return IF; }
+"int"                   { return INT; }
+"return"                { return RETURN; }
+"sizeof"                { return SIZEOF; }
+"struct"                { return STRUCT; }
+"void"                  { return VOID; }
+"while"                 { return WHILE; }
 
-{L}({L}|{D})*           { printf("reconnu:%s \n", yytext); return IDENTIFIER; } /*identificateurs de variable*/
-{D}+               { printf("reconnu:%s \n", yytext); return CONSTANT; } /* constance numérique */
+{L}({L}|{D})*           { return IDENTIFIER; } /*identificateurs de variable*/
+{D}+               { return CONSTANT; } /* constance numérique */
 
-"/*"[.\n]*"*/"         {printf("COMMENTAIRE OUI OU NON?");} /* Commentaires */
+"/*"(.|\n|\r)*"*/"        ; /* Commentaires */
 
-"->"                    { printf("reconnu:%s \n", yytext); return PTR_OP; }
-"&&"                    { printf("reconnu:%s \n", yytext); return AND_OP; }
-"||"                    { printf("reconnu:%s \n", yytext); return OR_OP; }
-"<="                    { printf("reconnu:%s \n", yytext); return LE_OP; }
-">="                    { printf("reconnu:%s \n", yytext); return GE_OP; }
-"=="                    { printf("reconnu:%s \n", yytext); return EQ_OP; }
-"!="                    { printf("reconnu:%s \n", yytext); return NE_OP; }
-"("                     { printf("reconnu:%s \n", yytext); return '(';}
-")"                     { printf("reconnu:%s \n", yytext); return ')';}
-";"                     { printf("reconnu:%s \n", yytext); return ';';}
-[\n\t ]             {printf("reconnu:%d (ascii) \n", yytext[0]);}
+"->"                    { return PTR_OP; }
+"&&"                    { return AND_OP; }
+"||"                    { return OR_OP; }
+"<="                    { return LE_OP; }
+">="                    { return GE_OP; }
+"=="                    { return EQ_OP; }
+"!="                    { return NE_OP; }
+"("                     { return '(';}
+")"                     { return ')';}
+";"                     { return ';';}
+"{"                     { return '{';}
+"}"                     { return '}';}
+"="                     { return '=';}
+"+"                     { return '+';}
+"-"                     { return '-';}
+"*"                     { return '*';}
+"/"                     { return '/';}
+"&"                     { return '&';}
 
-.                       { printf("wtf: %d ", yytext[0]); return yytext[0]; }
+
+[\n\t\r\v\f ]           ;
+
+.                       { return yytext[0]; }
 
 %%

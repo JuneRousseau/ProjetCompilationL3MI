@@ -12,6 +12,7 @@
 %token IF ELSE WHILE FOR RETURN
 
 %start program
+
 %%
 
 primary_expression
@@ -201,15 +202,16 @@ function_definition
 int main()
 {
   int c = yyparse();
-  while(1)
+  while(c)
     {
       c=yyparse();
     }
+  printf("Accepted\n");
 }
 
 extern int yylineno;
 int yyerror(char* s)
 {
-  printf("%s line %d\n", s, yylineno);
+  printf("%s line %d: %s\n", s, yylineno);
   exit(1);
 }
