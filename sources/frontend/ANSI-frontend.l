@@ -1,23 +1,11 @@
 D                       [0-9]
 L                       [a-zA-Z_]
-l                       [a-zA-Z]
-H                       [a-fA-F0-9]
-E                       [Ee][+-]?{D}+
-FS                      (f|F|l|L)
-IS                      (u|U|l|L)*
-
-com_s "/*"
-com_e "*/"
 
 %option yylineno
 
 %{
 #include <stdio.h>
 #include "structfe.tab.h"
-
-
-/* Ne gère pas les commentaires. A rajouter */
-/* Supprimer les lignes dont vous n'avez pas besoin. */
 %}
 
 %%
@@ -33,9 +21,9 @@ com_e "*/"
 "while"                 { return WHILE; }
 
 {L}({L}|{D})*           { return IDENTIFIER; } /*identificateurs de variable*/
-{D}+               { return CONSTANT; } /* constance numérique */
+{D}+                    { return CONSTANT; } /* constance numérique */
 
-"/*"(.|\n|\r)*"*/"        ; /* Commentaires */
+"/*"([^*]|(\*+[^*/]))*\*+\/    ; /* Commentaires */
 
 "->"                    { return PTR_OP; }
 "&&"                    { return AND_OP; }
@@ -44,17 +32,6 @@ com_e "*/"
 ">="                    { return GE_OP; }
 "=="                    { return EQ_OP; }
 "!="                    { return NE_OP; }
-"("                     { return '(';}
-")"                     { return ')';}
-";"                     { return ';';}
-"{"                     { return '{';}
-"}"                     { return '}';}
-"="                     { return '=';}
-"+"                     { return '+';}
-"-"                     { return '-';}
-"*"                     { return '*';}
-"/"                     { return '/';}
-"&"                     { return '&';}
 
 
 [\n\t\r\v\f ]           ;

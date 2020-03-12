@@ -6,41 +6,34 @@ int yylex();
 int yyerror(char* s);
 %}
 
-%token IDENTIFIER CONSTANT SIZEOF
-%token PTR_OP LE_OP GE_OP EQ_OP NE_OP
-%token AND_OP OR_OP
+%token IDENTIFIER CONSTANT 
+%token LE_OP GE_OP EQ_OP NE_OP
 %token EXTERN
 %token INT VOID
-%token STRUCT 
-%token IF ELSE WHILE FOR RETURN
+%token IF RETURN GOTO
 
 %start program
-
 %%
 
 primary_expression
         : IDENTIFIER
         | CONSTANT
-        | '(' expression ')'
         ;
 
 postfix_expression
         : primary_expression
         | postfix_expression '(' ')'
         | postfix_expression '(' argument_expression_list ')'
-        | postfix_expression '.' IDENTIFIER
-        | postfix_expression PTR_OP IDENTIFIER
         ;
 
 argument_expression_list
-        : expression
-        | argument_expression_list ',' expression
+        : primary_expression
+        | argument_expression_list ',' primary_expression
         ;
 
 unary_expression
         : postfix_expression
-        | unary_operator unary_expression
-        | SIZEOF unary_expression
+        | unary_operator primary_expression
         ;
 
 unary_operator
@@ -51,48 +44,38 @@ unary_operator
 
 multiplicative_expression
         : unary_expression
-        | multiplicative_expression '*' unary_expression
-        | multiplicative_expression '/' unary_expression
+        | primary_expression '*' primary_expression
+        | primary_expression '/' primary_expression
         ;
 
 additive_expression
         : multiplicative_expression
-        | additive_expression '+' multiplicative_expression
-        | additive_expression '-' multiplicative_expression
+        | primary_expression '+' primary_expression
+        | primary_expression '-' primary_expression
         ;
 
 relational_expression
         : additive_expression
-        | relational_expression '<' additive_expression
-        | relational_expression '>' additive_expression
-        | relational_expression LE_OP additive_expression
-        | relational_expression GE_OP additive_expression
+        | primary_expression '<' primary_expression
+        | primary_expression '>' primary_expression
+        | primary_expression LE_OP primary_expression
+        | primary_expression GE_OP primary_expression
         ;
 
 equality_expression
         : relational_expression
-        | equality_expression EQ_OP relational_expression
-        | equality_expression NE_OP relational_expression
-        ;
-
-logical_and_expression
-        : equality_expression
-        | logical_and_expression AND_OP equality_expression
-        ;
-
-logical_or_expression
-        : logical_and_expression
-        | logical_or_expression OR_OP logical_and_expression
+        | primary_expression EQ_OP primary_expression
+        | primary_expression NE_OP primary_expression
         ;
 
 expression
-        : logical_or_expression
-        | unary_expression '=' expression
+        : equality_expression
+        | unary_operator primary_expression '=' primary_expression
+        | primary_expression '=' additive_expression
         ;
 
 declaration
         : declaration_specifiers declarator ';'
-        | struct_specifier ';'
         ;
 
 declaration_specifiers
@@ -103,22 +86,6 @@ declaration_specifiers
 type_specifier
         : VOID
         | INT
-        | struct_specifier
-        ;
-
-struct_specifier
-        : STRUCT IDENTIFIER '{' struct_declaration_list '}'
-        | STRUCT '{' struct_declaration_list '}'
-        | STRUCT IDENTIFIER
-        ;
-
-struct_declaration_list
-        : struct_declaration
-        | struct_declaration_list struct_declaration
-        ;
-
-struct_declaration
-        : type_specifier declarator ';'
         ;
 
 declarator
@@ -128,7 +95,6 @@ declarator
 
 direct_declarator
         : IDENTIFIER
-        | '(' declarator ')'
         | direct_declarator '(' parameter_list ')'
         | direct_declarator '(' ')'
         ;
@@ -144,9 +110,9 @@ parameter_declaration
 
 statement
         : compound_statement
+        | labeled_statement
         | expression_statement
         | selection_statement
-        | iteration_statement
         | jump_statement 
         ;
 
@@ -167,24 +133,22 @@ statement_list
         | statement_list statement
         ;
 
+labeled_statement
+        : IDENTIFIER ':' statement
+        ;
+
 expression_statement
         : ';'
         | expression ';'
         ;
 
 selection_statement
-        : IF '(' expression ')' statement
-	| IF '(' expression ')' statement ELSE statement
+        : IF '(' equality_expression ')' GOTO IDENTIFIER ';'
         ;
-
-iteration_statement
-        : WHILE '(' expression ')' statement
-        | FOR '(' expression_statement expression_statement expression ')' statement
-        ;
-
 jump_statement
         : RETURN ';'
         | RETURN expression ';'
+        | GOTO IDENTIFIER ';'
         ;
 
 program
@@ -203,19 +167,18 @@ function_definition
 
 %%
 int main()
-{
-  int c = yyparse();
-  while(c)
     {
-	c=yyparse();
+	int c = yyparse();
+	while(c)
+	    {
+		c=yyparse();
+	    }
+	printf("Accepted\n");
     }
-  printf("Accepted\n");
-}
 
 extern int yylineno;
 int yyerror(char* s)
 {
     printf("line %d: %s\n", yylineno, s);
-  exit(1);
-
+    exit(1);
 }
