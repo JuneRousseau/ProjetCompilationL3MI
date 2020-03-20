@@ -66,11 +66,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#define TAILLE 103
 
 int yylex();
 int yyerror(char* s);
 
-#line 74 "structfe.tab.c" /* yacc.c:339  */
+#line 76 "structfe.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -129,7 +131,19 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+
+union YYSTYPE
+{
+#line 19 "structfe.y" /* yacc.c:355  */
+
+    char* name;
+    int number;
+    
+
+#line 144 "structfe.tab.c" /* yacc.c:355  */
+};
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -143,7 +157,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 147 "structfe.tab.c" /* yacc.c:358  */
+#line 161 "structfe.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -442,15 +456,15 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    22,    22,    23,    24,    28,    29,    30,    31,    32,
-      36,    37,    41,    42,    43,    47,    48,    49,    53,    54,
-      55,    59,    60,    61,    65,    66,    67,    68,    69,    73,
-      74,    75,    79,    80,    84,    85,    89,    90,    94,    95,
-      99,   100,   104,   105,   106,   110,   111,   112,   116,   117,
-     121,   125,   126,   130,   131,   132,   133,   137,   138,   142,
-     146,   147,   148,   149,   150,   154,   155,   156,   157,   161,
-     162,   166,   167,   171,   172,   176,   177,   181,   182,   186,
-     187,   191,   192,   196,   197,   201
+       0,    29,    29,    30,    31,    35,    36,    37,    38,    39,
+      43,    44,    48,    49,    50,    54,    55,    56,    60,    61,
+      62,    66,    67,    68,    72,    73,    74,    75,    76,    80,
+      81,    82,    86,    87,    91,    92,    96,    97,   101,   102,
+     106,   107,   111,   112,   113,   117,   118,   119,   123,   124,
+     128,   132,   133,   137,   138,   139,   140,   144,   145,   149,
+     153,   154,   155,   156,   157,   161,   162,   163,   164,   168,
+     169,   173,   174,   178,   179,   183,   184,   188,   189,   193,
+     194,   198,   199,   203,   204,   208
 };
 #endif
 
@@ -1350,7 +1364,7 @@ yyreduce:
   switch (yyn)
     {
       
-#line 1354 "structfe.tab.c" /* yacc.c:1646  */
+#line 1368 "structfe.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1578,16 +1592,160 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 204 "structfe.y" /* yacc.c:1906  */
+#line 211 "structfe.y" /* yacc.c:1906  */
+
+
+/* Gestion tables des symboles */
+
+/*mettre les declarations dans un fichier .h*/
+typedef enum { INT_T, STRUCT_T } type_t;
+
+typedef struct _symbole_t {
+ char *nom;
+ type_t type;
+ struct _symbole_t *suivant;
+ } symbole_t;
+
+typedef struct _table_t {
+    symbole_t *table[TAILLE];
+    struct _table_t *suivant;
+    struct _table_t *precedent;
+    } table_t;
+
+symbole_t *ajouter( table_t *table, char * nom );
+symbole_t *rechercher( table_t *table, char * nom );
+table_t *nouvelle_table();
+void supprimer_table();
+int hash(char *nom);
+
+typedef struct _pile_t {
+    table_t *premier;
+    } pile_t;
+
+pile_t *init_pile();
+pile_t *push(pile_t *pile, table_t *table);
+pile_t *pop(pile_t *pile);
+table_t *top(pile_t *pile);
+
+
+/*jusqu'ici*/
+
+
+
+
+table_t *nouvelle_table(){
+    table_t *p = (table_t *) malloc(sizeof(table_t));
+    p->suivant = NULL;
+    p->precedent = NULL;
+    return p;
+    }
+
+void supprimer_table(table_t *table)
+{
+    free(table);
+}
+
+symbole_t *rechercher(table_t *tableSymbole, char *nom)
+    {
+	int h;
+	symbole_t *s;
+	symbole_t *precedent;
+	h = hash(nom);
+	s = tableSymbole->table[h];
+	precedent = NULL;
+	while ( s != NULL )
+	{
+	    if ( strcmp( s->nom, nom ) == 0 )
+		return s;
+	    precedent = s;
+	    s = s->suivant;
+	}
+	return s;
+    }
+
+symbole_t *ajouter(table_t *tableSymbole, char *nom)
+    {
+	int h;
+	symbole_t *s;
+	symbole_t *precedent;
+	h = hash(nom);
+	s = tableSymbole->table[h];
+	precedent = NULL;
+	while ( s != NULL )
+	{
+	    if ( strcmp( s->nom, nom ) == 0 )
+		return s;
+	    precedent = s;
+	    s = s->suivant;
+	}
+	if ( precedent == NULL )
+	{
+	    tableSymbole->table[h] = (symbole_t *) malloc(sizeof(symbole_t));
+	    s = tableSymbole->table[h];
+	}
+	else
+	    {
+		precedent->suivant = (symbole_t *) malloc(sizeof(symbole_t));
+		s = precedent->suivant;
+	    }
+    s->nom = strdup(nom);
+    s->suivant = NULL;
+    return s;
+    }
+
+
+int hash( char *nom ) {
+ int i, r;
+ int taille = strlen(nom);
+ r = 0;
+ for ( i = 0; i < taille; i++ )
+ r = ((r << 8) + nom[i]) % TAILLE;
+ return r;
+}
+
+pile_t *push(pile_t *pile, table_t *table)
+    {
+	table_t *t= top(pile);
+	t->precedent= table;
+	table->suivant=t;
+	table->precedent=NULL;
+	pile->premier= table;
+	return pile;
+    }
+
+pile_t *pop(pile_t *pile)
+    {
+	table_t *last_top= top(pile);
+	table_t *new_top = last_top->suivant;
+	new_top->precedent = NULL;
+	pile->premier= new_top;
+	supprimer_table(last_top);
+	return pile;
+    }
+
+
+
+table_t *top(pile_t *pile)
+    {
+	return pile->premier;
+    }
+
+pile_t *init_pile()
+    {
+	pile_t *pile = malloc(sizeof(pile_t));
+	pile->premier= nouvelle_table();
+	return pile;
+    }
 
 int main()
 {
-  int c = yyparse();
-  while(c)
+    int c = yyparse();
+    while(c)
     {
 	c=yyparse();
     }
-  printf("Accepted\n");
+  
+    printf("Accepted\n");
 }
 
 extern int yylineno;

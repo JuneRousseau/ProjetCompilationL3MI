@@ -853,12 +853,12 @@ YY_RULE_SETUP
 case 11:
 YY_RULE_SETUP
 #line 23 "ANSI-frontend.l"
-{ return IDENTIFIER; } /*identificateurs de variable*/
+{ yylval.name= strdup(yytext); return IDENTIFIER; } /*identificateurs de variable*/
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 24 "ANSI-frontend.l"
-{ return CONSTANT; } /* constance numérique */
+{ yylval.number= atoi(yytext); return CONSTANT; } /* constance numérique */
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */

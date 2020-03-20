@@ -1,5 +1,0 @@
-A demander:
-
--fichiers qui passent pas: expr.c et pointeur.c
--sizeof(int) doit il etre reconnu par la grammaire en frontend
--ambiguite du if/else en frontend

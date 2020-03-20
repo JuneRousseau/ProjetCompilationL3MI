@@ -1,6 +1,8 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#define TAILLE 103
 
 int yylex();
 int yyerror(char* s);
@@ -13,6 +15,11 @@ int yyerror(char* s);
 %token INT VOID
 %token STRUCT 
 %token IF ELSE WHILE FOR RETURN
+
+%union {
+    char* name;
+    int number;
+    }
 
 %start program
 
@@ -202,14 +209,158 @@ function_definition
         ;
 
 %%
+
+/* Gestion tables des symboles */
+
+/*mettre les declarations dans un fichier .h*/
+typedef enum { INT_T, STRUCT_T } type_t;
+
+typedef struct _symbole_t {
+ char *nom;
+ type_t type;
+ struct _symbole_t *suivant;
+ } symbole_t;
+
+typedef struct _table_t {
+    symbole_t *table[TAILLE];
+    struct _table_t *suivant;
+    struct _table_t *precedent;
+    } table_t;
+
+symbole_t *ajouter( table_t *table, char * nom );
+symbole_t *rechercher( table_t *table, char * nom );
+table_t *nouvelle_table();
+void supprimer_table();
+int hash(char *nom);
+
+typedef struct _pile_t {
+    table_t *premier;
+    } pile_t;
+
+pile_t *init_pile();
+pile_t *push(pile_t *pile, table_t *table);
+pile_t *pop(pile_t *pile);
+table_t *top(pile_t *pile);
+
+
+/*jusqu'ici*/
+
+
+
+
+table_t *nouvelle_table(){
+    table_t *p = (table_t *) malloc(sizeof(table_t));
+    p->suivant = NULL;
+    p->precedent = NULL;
+    return p;
+    }
+
+void supprimer_table(table_t *table)
+{
+    free(table);
+}
+
+symbole_t *rechercher(table_t *tableSymbole, char *nom)
+    {
+	int h;
+	symbole_t *s;
+	symbole_t *precedent;
+	h = hash(nom);
+	s = tableSymbole->table[h];
+	precedent = NULL;
+	while ( s != NULL )
+	{
+	    if ( strcmp( s->nom, nom ) == 0 )
+		return s;
+	    precedent = s;
+	    s = s->suivant;
+	}
+	return s;
+    }
+
+symbole_t *ajouter(table_t *tableSymbole, char *nom)
+    {
+	int h;
+	symbole_t *s;
+	symbole_t *precedent;
+	h = hash(nom);
+	s = tableSymbole->table[h];
+	precedent = NULL;
+	while ( s != NULL )
+	{
+	    if ( strcmp( s->nom, nom ) == 0 )
+		return s;
+	    precedent = s;
+	    s = s->suivant;
+	}
+	if ( precedent == NULL )
+	{
+	    tableSymbole->table[h] = (symbole_t *) malloc(sizeof(symbole_t));
+	    s = tableSymbole->table[h];
+	}
+	else
+	    {
+		precedent->suivant = (symbole_t *) malloc(sizeof(symbole_t));
+		s = precedent->suivant;
+	    }
+    s->nom = strdup(nom);
+    s->suivant = NULL;
+    return s;
+    }
+
+
+int hash( char *nom ) {
+ int i, r;
+ int taille = strlen(nom);
+ r = 0;
+ for ( i = 0; i < taille; i++ )
+ r = ((r << 8) + nom[i]) % TAILLE;
+ return r;
+}
+
+pile_t *push(pile_t *pile, table_t *table)
+    {
+	table_t *t= top(pile);
+	t->precedent= table;
+	table->suivant=t;
+	table->precedent=NULL;
+	pile->premier= table;
+	return pile;
+    }
+
+pile_t *pop(pile_t *pile)
+    {
+	table_t *last_top= top(pile);
+	table_t *new_top = last_top->suivant;
+	new_top->precedent = NULL;
+	pile->premier= new_top;
+	supprimer_table(last_top);
+	return pile;
+    }
+
+
+
+table_t *top(pile_t *pile)
+    {
+	return pile->premier;
+    }
+
+pile_t *init_pile()
+    {
+	pile_t *pile = malloc(sizeof(pile_t));
+	pile->premier= nouvelle_table();
+	return pile;
+    }
+
 int main()
 {
-  int c = yyparse();
-  while(c)
+    int c = yyparse();
+    while(c)
     {
 	c=yyparse();
     }
-  printf("Accepted\n");
+  
+    printf("Accepted\n");
 }
 
 extern int yylineno;

@@ -20,8 +20,8 @@ L                       [a-zA-Z_]
 "void"                  { return VOID; }
 "while"                 { return WHILE; }
 
-{L}({L}|{D})*           { return IDENTIFIER; } /*identificateurs de variable*/
-{D}+                    { return CONSTANT; } /* constance numérique */
+{L}({L}|{D})*           { yylval.name= strdup(yytext); return IDENTIFIER; } /*identificateurs de variable*/
+{D}+                    { yylval.number= atoi(yytext); return CONSTANT; } /* constance numérique */
 
 "/*"([^*]|(\*+[^*/]))*\*+\/    ; /* Commentaires */
 

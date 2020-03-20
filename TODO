@@ -1,0 +1,10 @@
+Instruction pour le compil: ./compil.sh nameLex.l nameYacc
+
+-creer le fichier .h
+-modifier la grammaire pour reconnaitre le sizeof(int) (cf forum)
+-supprimer ambiguité du if/else en frontend
+-gerer la rechercher d'un symbole dans toute les tables de la pile
+-ajouter routines semantiques pour la gestion des symboles
+-gerer les symboles id de fonctions
+
+-generer backend
