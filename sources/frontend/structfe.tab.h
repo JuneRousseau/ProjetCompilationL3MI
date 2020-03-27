@@ -45,9 +45,9 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    IDENTIFIER = 258,
+    SIZEOF = 258,
     CONSTANT = 259,
-    SIZEOF = 260,
+    IDENTIFIER = 260,
     PTR_OP = 261,
     LE_OP = 262,
     GE_OP = 263,
@@ -72,13 +72,14 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 14 "structfe.y" /* yacc.c:1909  */
+#line 18 "structfe.y" /* yacc.c:1909  */
 
     char* name;
     int number;
+    symbole_t *symbol;
     
 
-#line 82 "structfe.tab.h" /* yacc.c:1909  */
+#line 83 "structfe.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

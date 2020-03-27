@@ -3,7 +3,7 @@
 
 %}
 
-%token IDENTIFIER CONSTANT SIZEOF
+%token SIZEOF CONSTANT IDENTIFIER
 %token PTR_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP
 %token EXTERN
@@ -11,9 +11,14 @@
 %token STRUCT 
 %token IF ELSE WHILE FOR RETURN
 
+/*			%token	<number>	CONSTANT
+%token	<>	IDENTIFIER*/
+		
+
 %union {
     char* name;
     int number;
+    symbole_t *symbol;
     }
 
 %start program
@@ -22,7 +27,7 @@
 
 primary_expression
         : IDENTIFIER
-        | CONSTANT
+        | CONSTANT 
         | '(' expression ')'
         ;
 
@@ -31,7 +36,7 @@ postfix_expression
         | postfix_expression '(' ')'
         | postfix_expression '(' argument_expression_list ')'
         | postfix_expression '.' IDENTIFIER
-        | postfix_expression PTR_OP IDENTIFIER
+        | postfix_expression PTR_OP IDENTIFIER 
         ;
 
 argument_expression_list
@@ -129,7 +134,7 @@ declarator
         ;
 
 direct_declarator
-        : IDENTIFIER
+: IDENTIFIER
         | '(' declarator ')'
         | direct_declarator '(' parameter_list ')'
         | direct_declarator '(' ')'
@@ -154,9 +159,9 @@ statement
 
 compound_statement
         : '{' '}'
-        | '{' statement_list '}'
-        | '{' declaration_list '}'
-        | '{' declaration_list statement_list '}'
+        | '{' statement_list '}' 
+        | '{' declaration_list '}' 
+        | '{' declaration_list statement_list '}' 
         ;
 
 declaration_list
@@ -204,15 +209,17 @@ function_definition
         ;
 
 %%
-
+	 
 int main()
 {
+    init_pile();
     int c = yyparse();
     while(c)
     {
 	c=yyparse();
     }
-  
+
+    afficher_pile();
     printf("Accepted\n");
 }
 
@@ -224,108 +231,3 @@ int yyerror(char* s)
 
 }
 
-/* Gestion tables des symboles */
-
-table_t *nouvelle_table(){
-    table_t *p = (table_t *) malloc(sizeof(table_t));
-    p->suivant = NULL;
-    p->precedent = NULL;
-    return p;
-    }
-
-void supprimer_table(table_t *table)
-{
-    free(table);
-}
-
-symbole_t *rechercher(table_t *tableSymbole, char *nom)
-    {
-	int h;
-	symbole_t *s;
-	symbole_t *precedent;
-	h = hash(nom);
-	s = tableSymbole->table[h];
-	precedent = NULL;
-	while ( s != NULL )
-	{
-	    if ( strcmp( s->nom, nom ) == 0 )
-		return s;
-	    precedent = s;
-	    s = s->suivant;
-	}
-	return s;
-    }
-
-symbole_t *ajouter(table_t *tableSymbole, char *nom)
-    {
-	int h;
-	symbole_t *s;
-	symbole_t *precedent;
-	h = hash(nom);
-	s = tableSymbole->table[h];
-	precedent = NULL;
-	while ( s != NULL )
-	{
-	    if ( strcmp( s->nom, nom ) == 0 )
-		return s;
-	    precedent = s;
-	    s = s->suivant;
-	}
-	if ( precedent == NULL )
-	{
-	    tableSymbole->table[h] = (symbole_t *) malloc(sizeof(symbole_t));
-	    s = tableSymbole->table[h];
-	}
-	else
-	    {
-		precedent->suivant = (symbole_t *) malloc(sizeof(symbole_t));
-		s = precedent->suivant;
-	    }
-    s->nom = strdup(nom);
-    s->suivant = NULL;
-    return s;
-    }
-
-
-int hash( char *nom ) {
- int i, r;
- int taille = strlen(nom);
- r = 0;
- for ( i = 0; i < taille; i++ )
- r = ((r << 8) + nom[i]) % TAILLE;
- return r;
-}
-
-pile_t *push(pile_t *pile, table_t *table)
-    {
-	table_t *t= top(pile);
-	t->precedent= table;
-	table->suivant=t;
-	table->precedent=NULL;
-	pile->premier= table;
-	return pile;
-    }
-
-pile_t *pop(pile_t *pile)
-    {
-	table_t *last_top= top(pile);
-	table_t *new_top = last_top->suivant;
-	new_top->precedent = NULL;
-	pile->premier= new_top;
-	supprimer_table(last_top);
-	return pile;
-    }
-
-
-
-table_t *top(pile_t *pile)
-    {
-	return pile->premier;
-    }
-
-pile_t *init_pile()
-    {
-	pile_t *pile = malloc(sizeof(pile_t));
-	pile->premier= nouvelle_table();
-	return pile;
-    }

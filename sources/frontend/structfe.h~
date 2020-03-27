@@ -6,7 +6,7 @@
 int yylex();
 int yyerror(char* s);
 
-typedef enum { INT_T, STRUCT_T, VOID_T, PTR_INT_T, PTR_STRUCT_T, PTR_FCT_T, PTR_VOID_T, FCT_T } type_t;
+typedef enum { INT_T, STRUCT_T } type_t;
 
 typedef struct _symbole_t {
  char *nom;
@@ -20,8 +20,8 @@ typedef struct _table_t {
     struct _table_t *precedent;
     } table_t;
 
-symbole_t *ajouter( table_t *table, char *nom);
-symbole_t *rechercher( table_t *table, char *nom );
+symbole_t *ajouter( table_t *table, char * nom );
+symbole_t *rechercher( table_t *table, char * nom );
 table_t *nouvelle_table();
 void supprimer_table();
 int hash(char *nom);
@@ -31,11 +31,6 @@ typedef struct _pile_t {
     } pile_t;
 
 pile_t *init_pile();
-pile_t *push(table_t *table);
-pile_t *pop();
-table_t *top();
-symbole_t *find( char *nom);
-
-void afficher_pile();
-void afficher_table();
-
+pile_t *push(pile_t *pile, table_t *table);
+pile_t *pop(pile_t *pile);
+table_t *top(pile_t *pile);

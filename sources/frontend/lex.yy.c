@@ -512,9 +512,13 @@ char *yytext;
 #line 1 "ANSI-frontend.l"
 #line 7 "ANSI-frontend.l"
 #include <stdio.h>
+#include "structfe.h"
 #include "structfe.tab.h"
-#line 517 "lex.yy.c"
-#line 518 "lex.yy.c"
+#define TAILLE 103
+
+pile_t *pile;
+#line 521 "lex.yy.c"
+#line 522 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -731,9 +735,9 @@ YY_DECL
 		}
 
 	{
-#line 11 "ANSI-frontend.l"
+#line 15 "ANSI-frontend.l"
 
-#line 737 "lex.yy.c"
+#line 741 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -802,122 +806,122 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 12 "ANSI-frontend.l"
+#line 16 "ANSI-frontend.l"
 { return ELSE; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 13 "ANSI-frontend.l"
+#line 17 "ANSI-frontend.l"
 { return EXTERN; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 14 "ANSI-frontend.l"
+#line 18 "ANSI-frontend.l"
 { return FOR; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 15 "ANSI-frontend.l"
+#line 19 "ANSI-frontend.l"
 { return IF; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 16 "ANSI-frontend.l"
+#line 20 "ANSI-frontend.l"
 { return INT; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 17 "ANSI-frontend.l"
+#line 21 "ANSI-frontend.l"
 { return RETURN; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 18 "ANSI-frontend.l"
+#line 22 "ANSI-frontend.l"
 { return SIZEOF; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 19 "ANSI-frontend.l"
+#line 23 "ANSI-frontend.l"
 { return STRUCT; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 20 "ANSI-frontend.l"
+#line 24 "ANSI-frontend.l"
 { return VOID; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 21 "ANSI-frontend.l"
+#line 25 "ANSI-frontend.l"
 { return WHILE; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 23 "ANSI-frontend.l"
-{ yylval.name= strdup(yytext); return IDENTIFIER; } /*identificateurs de variable*/
+#line 27 "ANSI-frontend.l"
+{ yylval.symbol= ajouter(top(pile), yytext); return IDENTIFIER; } /*identificateurs de variable*/
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 24 "ANSI-frontend.l"
+#line 28 "ANSI-frontend.l"
 { yylval.number= atoi(yytext); return CONSTANT; } /* constance numérique */
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 26 "ANSI-frontend.l"
+#line 30 "ANSI-frontend.l"
 ; /* Commentaires */
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 28 "ANSI-frontend.l"
+#line 32 "ANSI-frontend.l"
 { return PTR_OP; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 29 "ANSI-frontend.l"
+#line 33 "ANSI-frontend.l"
 { return AND_OP; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 30 "ANSI-frontend.l"
+#line 34 "ANSI-frontend.l"
 { return OR_OP; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 31 "ANSI-frontend.l"
+#line 35 "ANSI-frontend.l"
 { return LE_OP; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 32 "ANSI-frontend.l"
+#line 36 "ANSI-frontend.l"
 { return GE_OP; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 33 "ANSI-frontend.l"
+#line 37 "ANSI-frontend.l"
 { return EQ_OP; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 34 "ANSI-frontend.l"
+#line 38 "ANSI-frontend.l"
 { return NE_OP; }
 	YY_BREAK
 case 21:
 /* rule 21 can match eol */
 YY_RULE_SETUP
-#line 37 "ANSI-frontend.l"
+#line 41 "ANSI-frontend.l"
 ;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 39 "ANSI-frontend.l"
+#line 43 "ANSI-frontend.l"
 { return yytext[0]; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 41 "ANSI-frontend.l"
+#line 45 "ANSI-frontend.l"
 ECHO;
 	YY_BREAK
-#line 921 "lex.yy.c"
+#line 925 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1934,6 +1938,155 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 41 "ANSI-frontend.l"
+#line 45 "ANSI-frontend.l"
 
+
+/* Gestion tables des symboles */
+
+table_t *nouvelle_table(){
+    table_t *p = (table_t *) malloc(sizeof(table_t));
+    p->suivant = NULL;
+    p->precedent = NULL;
+    return p;
+    }
+
+void supprimer_table(table_t *table)
+{
+    free(table);
+}
+
+symbole_t *rechercher(table_t *tableSymbole, char *nom)
+    {
+	int h;
+	symbole_t *s;
+	symbole_t *precedent;
+	h = hash(nom);
+	s = tableSymbole->table[h];
+	precedent = NULL;
+	while ( s != NULL )
+	{
+	    if ( strcmp( s->nom, nom ) == 0 )
+		return s;
+	    precedent = s;
+	    s = s->suivant;
+	}
+	return s;
+    }
+
+ symbole_t *ajouter(table_t *tableSymbole, char *nom)
+    {
+	int h;
+	symbole_t *s;
+	symbole_t *precedent;
+	h = hash(nom);
+	s = tableSymbole->table[h];
+	precedent = NULL;
+	while ( s != NULL )
+	{
+	    if ( strcmp( s->nom, nom ) == 0 )
+		return s; /* Si l'identifiant existe déjà, on retourne NULL */
+	    precedent = s;
+	    s = s->suivant;
+	}
+	if ( precedent == NULL )
+	{
+	    tableSymbole->table[h] = (symbole_t *) malloc(sizeof(symbole_t));
+	    s = tableSymbole->table[h];
+	}
+	else
+	    {
+		precedent->suivant = (symbole_t *) malloc(sizeof(symbole_t));
+		s = precedent->suivant;
+	    }
+    s->nom = strdup(nom);
+    s->suivant = NULL;
+    return s;
+    }
+
+
+int hash( char *nom ) {
+ int i, r;
+ int taille = strlen(nom);
+ r = 0;
+ for ( i = 0; i < taille; i++ )
+ r = ((r << 8) + nom[i]) % TAILLE;
+ return r;
+}
+
+pile_t *push(table_t *table)
+    {
+	table_t *t= top(pile);
+	t->precedent= table;
+	table->suivant=t;
+	table->precedent=NULL;
+	pile->premier= table;
+	return pile;
+    }
+
+pile_t *pop()
+    {
+	table_t *last_top= top(pile);
+	table_t *new_top = last_top->suivant;
+	new_top->precedent = NULL;
+	pile->premier= new_top;
+	supprimer_table(last_top);
+	return pile;
+    }
+
+
+table_t *top()
+    {
+	return pile->premier;
+    }
+
+pile_t *init_pile()
+    {
+	pile = (pile_t *) malloc(sizeof(pile_t));
+	pile->premier= nouvelle_table();
+	return pile;
+    }
+
+symbole_t *find(char *nom)
+    {
+	table_t *table_courante= top(pile);
+	symbole_t *symbole= NULL;
+	while(table_courante != NULL && symbole == NULL){
+	    symbole = rechercher(table_courante, nom);
+	    table_courante = table_courante->suivant;
+	    }
+
+	return symbole;
+    }
+	   
+
+void afficher_pile()
+    {
+	table_t *table_courante = top();
+	int i=0;
+	while(table_courante)
+	    {
+		printf("---- Table %i : ----\n", i);
+		afficher_table(table_courante);
+		table_courante= table_courante->suivant;
+		i++;
+		printf("\n\n");
+	    }
+    }
+
+void afficher_table(table_t *t)
+    {
+	for(int i=0; i<TAILLE ; i++)
+	    {
+	        symbole_t *s = t->table[i];
+		if(s != NULL) {
+		    printf("%d: ", i);
+		    while(s != NULL)
+			{
+			    printf("%s -> ", s->nom);
+			    s= s->suivant;
+			}
+		    printf("NULL\n");
+		    }
+	    }
+    }
 
