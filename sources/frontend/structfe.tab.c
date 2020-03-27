@@ -64,15 +64,10 @@
 /* Copy the first part of user declarations.  */
 #line 1 "structfe.y" /* yacc.c:339  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#define TAILLE 103
+#include "structfe.h"
 
-int yylex();
-int yyerror(char* s);
 
-#line 76 "structfe.tab.c" /* yacc.c:339  */
+#line 71 "structfe.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -134,13 +129,13 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 19 "structfe.y" /* yacc.c:355  */
+#line 14 "structfe.y" /* yacc.c:355  */
 
     char* name;
     int number;
     
 
-#line 144 "structfe.tab.c" /* yacc.c:355  */
+#line 139 "structfe.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -157,7 +152,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 161 "structfe.tab.c" /* yacc.c:358  */
+#line 156 "structfe.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -456,15 +451,15 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    29,    29,    30,    31,    35,    36,    37,    38,    39,
-      43,    44,    48,    49,    50,    54,    55,    56,    60,    61,
-      62,    66,    67,    68,    72,    73,    74,    75,    76,    80,
-      81,    82,    86,    87,    91,    92,    96,    97,   101,   102,
-     106,   107,   111,   112,   113,   117,   118,   119,   123,   124,
-     128,   132,   133,   137,   138,   139,   140,   144,   145,   149,
-     153,   154,   155,   156,   157,   161,   162,   163,   164,   168,
-     169,   173,   174,   178,   179,   183,   184,   188,   189,   193,
-     194,   198,   199,   203,   204,   208
+       0,    24,    24,    25,    26,    30,    31,    32,    33,    34,
+      38,    39,    43,    44,    45,    49,    50,    51,    55,    56,
+      57,    61,    62,    63,    67,    68,    69,    70,    71,    75,
+      76,    77,    81,    82,    86,    87,    91,    92,    96,    97,
+     101,   102,   106,   107,   108,   112,   113,   114,   118,   119,
+     123,   127,   128,   132,   133,   134,   135,   139,   140,   144,
+     148,   149,   150,   151,   152,   156,   157,   158,   159,   163,
+     164,   168,   169,   173,   174,   178,   179,   183,   184,   188,
+     189,   193,   194,   198,   199,   203
 };
 #endif
 
@@ -1364,7 +1359,7 @@ yyreduce:
   switch (yyn)
     {
       
-#line 1368 "structfe.tab.c" /* yacc.c:1646  */
+#line 1363 "structfe.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1592,46 +1587,29 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 211 "structfe.y" /* yacc.c:1906  */
+#line 206 "structfe.y" /* yacc.c:1906  */
 
+
+int main()
+{
+    int c = yyparse();
+    while(c)
+    {
+	c=yyparse();
+    }
+  
+    printf("Accepted\n");
+}
+
+extern int yylineno;
+int yyerror(char* s)
+{
+    printf("line %d: %s\n", yylineno, s);
+  exit(1);
+
+}
 
 /* Gestion tables des symboles */
-
-/*mettre les declarations dans un fichier .h*/
-typedef enum { INT_T, STRUCT_T } type_t;
-
-typedef struct _symbole_t {
- char *nom;
- type_t type;
- struct _symbole_t *suivant;
- } symbole_t;
-
-typedef struct _table_t {
-    symbole_t *table[TAILLE];
-    struct _table_t *suivant;
-    struct _table_t *precedent;
-    } table_t;
-
-symbole_t *ajouter( table_t *table, char * nom );
-symbole_t *rechercher( table_t *table, char * nom );
-table_t *nouvelle_table();
-void supprimer_table();
-int hash(char *nom);
-
-typedef struct _pile_t {
-    table_t *premier;
-    } pile_t;
-
-pile_t *init_pile();
-pile_t *push(pile_t *pile, table_t *table);
-pile_t *pop(pile_t *pile);
-table_t *top(pile_t *pile);
-
-
-/*jusqu'ici*/
-
-
-
 
 table_t *nouvelle_table(){
     table_t *p = (table_t *) malloc(sizeof(table_t));
@@ -1736,22 +1714,3 @@ pile_t *init_pile()
 	pile->premier= nouvelle_table();
 	return pile;
     }
-
-int main()
-{
-    int c = yyparse();
-    while(c)
-    {
-	c=yyparse();
-    }
-  
-    printf("Accepted\n");
-}
-
-extern int yylineno;
-int yyerror(char* s)
-{
-    printf("line %d: %s\n", yylineno, s);
-  exit(1);
-
-}
