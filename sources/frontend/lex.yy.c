@@ -857,7 +857,7 @@ YY_RULE_SETUP
 case 11:
 YY_RULE_SETUP
 #line 27 "ANSI-frontend.l"
-{ yylval.symbol= ajouter(top(pile), yytext); return IDENTIFIER; } /*identificateurs de variable*/
+{ yylval.symbol= ajouter(top(), yytext); return IDENTIFIER; } /*identificateurs de variable*/
 	YY_BREAK
 case 12:
 YY_RULE_SETUP

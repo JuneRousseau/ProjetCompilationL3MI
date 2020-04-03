@@ -10,6 +10,7 @@ L                       [a-zA-Z_]
 #define TAILLE 103
 
 pile_t *pile;
+char *code;
 %}
 
 %%
@@ -24,7 +25,7 @@ pile_t *pile;
 "void"                  { return VOID; }
 "while"                 { return WHILE; }
 
-{L}({L}|{D})*           { yylval.symbol= ajouter(top(pile), yytext); return IDENTIFIER; } /*identificateurs de variable*/
+{L}({L}|{D})*           { yylval.symbol= ajouter(top(), yytext); return IDENTIFIER; } /*identificateurs de variable*/
 {D}+                    { yylval.number= atoi(yytext); return CONSTANT; } /* constance numérique */
 
 "/*"([^*]|(\*+[^*/]))*\*+\/    ; /* Commentaires */
@@ -192,3 +193,18 @@ void afficher_table(table_t *t)
 		    }
 	    }
     }
+
+char *ajouter_code(char *code, char *str){
+	char *new_code = (char *)malloc(strlen(code)+strlen(str));
+	strcpy(new_code, code);
+	strcat(new_code, str);
+	return new_code;
+}
+
+char *init_code(){
+	code = "";
+	return code;
+}
+
+char *new_var(){
+}

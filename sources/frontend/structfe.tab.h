@@ -47,23 +47,23 @@ extern int yydebug;
   {
     SIZEOF = 258,
     CONSTANT = 259,
-    IDENTIFIER = 260,
-    PTR_OP = 261,
-    LE_OP = 262,
-    GE_OP = 263,
-    EQ_OP = 264,
-    NE_OP = 265,
-    AND_OP = 266,
-    OR_OP = 267,
-    EXTERN = 268,
-    INT = 269,
-    VOID = 270,
-    STRUCT = 271,
-    IF = 272,
-    ELSE = 273,
-    WHILE = 274,
-    FOR = 275,
-    RETURN = 276
+    PTR_OP = 260,
+    LE_OP = 261,
+    GE_OP = 262,
+    EQ_OP = 263,
+    NE_OP = 264,
+    AND_OP = 265,
+    OR_OP = 266,
+    EXTERN = 267,
+    INT = 268,
+    VOID = 269,
+    STRUCT = 270,
+    IF = 271,
+    ELSE = 272,
+    WHILE = 273,
+    FOR = 274,
+    RETURN = 275,
+    IDENTIFIER = 276
   };
 #endif
 
@@ -72,14 +72,15 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 18 "structfe.y" /* yacc.c:1909  */
+#line 23 "structfe.y" /* yacc.c:1909  */
 
     char* name;
     int number;
     symbole_t *symbol;
+    attributs_t attributs;
     
 
-#line 83 "structfe.tab.h" /* yacc.c:1909  */
+#line 84 "structfe.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

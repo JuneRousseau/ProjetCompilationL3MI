@@ -3,22 +3,28 @@
 
 %}
 
-%token SIZEOF CONSTANT IDENTIFIER
-%token PTR_OP LE_OP GE_OP EQ_OP NE_OP
-%token AND_OP OR_OP
-%token EXTERN
-%token INT VOID
-%token STRUCT 
-%token IF ELSE WHILE FOR RETURN
+%token <attributs> SIZEOF CONSTANT
+%token <attributs> PTR_OP LE_OP GE_OP EQ_OP NE_OP
+%token <attributs> AND_OP OR_OP
+%token <attributs> EXTERN
+%token <attributs> INT VOID
+%token <attributs> STRUCT 
+%token <attributs> IF ELSE WHILE FOR RETURN
+%token <attributs> '(' ')' '{' '}' ';' '&' '*' '-' ',' '.' '+' '>' '<' '='
+%token <symbol> IDENTIFIER
 
-/*			%token	<number>	CONSTANT
-%token	<>	IDENTIFIER*/
-		
+%type <attributs> primary_expression postfix_expression argument_expression_list unary_expression unary_operator multiplicative_expression additive_expression  relational_expression equality_expression logical_and_expression logical_or_expression expression declaration declaration_specifiers type_specifier  struct_specifier struct_declaration_list struct_declaration declarator direct_declarator parameter_list parameter_declaration statement compound_statement  declaration_list statement_list expression_statement selection_statement iteration_statement jump_statement program external_declaration function_definition
+
+%nonassoc "then"
+%nonassoc ELSE
+
+
 
 %union {
     char* name;
     int number;
     symbole_t *symbol;
+    attributs_t attributs;
     }
 
 %start program
@@ -26,13 +32,13 @@
 %%
 
 primary_expression
-        : IDENTIFIER
-        | CONSTANT 
-        | '(' expression ')'
+        : IDENTIFIER {symbole_t *s = rechercher(top(), $1->nom); $$.type = s->type; $$.code = strdup($1->nom);}
+        | CONSTANT {$$.type = INT_T;}
+        | '(' expression ')'{$$.type = $1.type;}
         ;
 
 postfix_expression
-        : primary_expression
+        : primary_expression {$$.type = $1.type;}
         | postfix_expression '(' ')'
         | postfix_expression '(' argument_expression_list ')'
         | postfix_expression '.' IDENTIFIER
@@ -40,14 +46,14 @@ postfix_expression
         ;
 
 argument_expression_list
-        : expression
+        : expression {$$.type = $1.type;}
         | argument_expression_list ',' expression
         ;
 
 unary_expression
-        : postfix_expression
-        | unary_operator unary_expression
-        | SIZEOF unary_expression
+        : postfix_expression {$$.type = $1.type;}
+        | unary_operator unary_expression {$$.type = $2.type;}
+        | SIZEOF unary_expression {$$.type = INT_T;}
         ;
 
 unary_operator
@@ -57,43 +63,43 @@ unary_operator
         ;
 
 multiplicative_expression
-        : unary_expression
+        : unary_expression {$$.type = $1.type;}
         | multiplicative_expression '*' unary_expression
         | multiplicative_expression '/' unary_expression
         ;
 
 additive_expression
-        : multiplicative_expression
+        : multiplicative_expression {$$.type = $1.type;}
         | additive_expression '+' multiplicative_expression
         | additive_expression '-' multiplicative_expression
         ;
 
 relational_expression
-        : additive_expression
-        | relational_expression '<' additive_expression
-        | relational_expression '>' additive_expression
-        | relational_expression LE_OP additive_expression
-        | relational_expression GE_OP additive_expression
+        : additive_expression {$$.type = INT_T;} /* verifier types*/
+        | relational_expression '<' additive_expression {$$.type = INT_T;}
+        | relational_expression '>' additive_expression {$$.type = INT_T;}
+        | relational_expression LE_OP additive_expression {$$.type = INT_T;}
+        | relational_expression GE_OP additive_expression {$$.type = INT_T;}
         ;
 
 equality_expression
-        : relational_expression
-        | equality_expression EQ_OP relational_expression
-        | equality_expression NE_OP relational_expression
+        : relational_expression {$$.type = INT_T;}
+        | equality_expression EQ_OP relational_expression {$$.type = INT_T;}
+        | equality_expression NE_OP relational_expression {$$.type = INT_T;}
         ;
 
 logical_and_expression
-        : equality_expression
-        | logical_and_expression AND_OP equality_expression
+        : equality_expression  {$$.type = INT_T;}
+        | logical_and_expression AND_OP equality_expression {$$.type = INT_T;}
         ;
 
 logical_or_expression
-        : logical_and_expression
-        | logical_or_expression OR_OP logical_and_expression
+        : logical_and_expression {$$.type = INT_T;}
+        | logical_or_expression OR_OP logical_and_expression {$$.type = INT_T;}
         ;
 
 expression
-        : logical_or_expression
+        : logical_or_expression {$$.type = INT_T;}
         | unary_expression '=' expression
         ;
 
@@ -180,7 +186,7 @@ expression_statement
         ;
 
 selection_statement
-        : IF '(' expression ')' statement
+        : IF '(' expression ')' statement %prec "then" 
 	| IF '(' expression ')' statement ELSE statement
         ;
 

@@ -39,3 +39,12 @@ symbole_t *find( char *nom);
 void afficher_pile();
 void afficher_table();
 
+typedef struct _attributs{
+	type_t type;
+	char *code;
+}attributs_t;
+
+char *init_code();
+char *ajouter_code(char *code, char *str);
+
+char *new_var();

@@ -14,6 +14,6 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 A DEMANDER :
 
--supprimer ambiguité du if/else en frontend
+-gestion des attributs en yacc 
 -pointeur sur type_t ??
-- manipulation structures avec name.champs (faut-il le supprimer de la grammaire oui ou non?)
+-manipulation structures avec name.champs (faut-il le supprimer de la grammaire oui ou non?)
