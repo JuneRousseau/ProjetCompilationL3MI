@@ -2090,3 +2090,19 @@ void afficher_table(table_t *t)
 	    }
     }
 
+char *ajouter_code(char *code_genere, char *str){
+	char *new_code = (char *)malloc(strlen(code_genere)+strlen(str));
+	strcpy(new_code, code_genere);
+	strcat(new_code, str);
+	free(code_genere);
+      	return new_code;
+}
+
+char *init_code(char *code_genere){
+    code_genere = (char *) malloc(0);
+    return code_genere;
+}
+
+char *new_var(){
+}
+

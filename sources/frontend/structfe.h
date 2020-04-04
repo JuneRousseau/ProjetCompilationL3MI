@@ -44,7 +44,7 @@ typedef struct _attributs{
 	char *code;
 }attributs_t;
 
-char *init_code();
+char *init_code(char *code);
 char *ajouter_code(char *code, char *str);
 
 char *new_var();

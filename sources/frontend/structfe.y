@@ -218,6 +218,14 @@ function_definition
 	 
 int main()
 {
+
+    char *code;
+    code = init_code(code);
+    code= ajouter_code(code, "test");
+    printf("000: %s\n", code);
+    code = ajouter_code(code, "test 2");
+    printf("001: %s\n", code);
+    
     init_pile();
     int c = yyparse();
     while(c)
@@ -236,4 +244,3 @@ int yyerror(char* s)
   exit(1);
 
 }
-
