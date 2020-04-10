@@ -46,24 +46,24 @@ extern int yydebug;
   enum yytokentype
   {
     SIZEOF = 258,
-    CONSTANT = 259,
-    PTR_OP = 260,
-    LE_OP = 261,
-    GE_OP = 262,
-    EQ_OP = 263,
-    NE_OP = 264,
-    AND_OP = 265,
-    OR_OP = 266,
-    EXTERN = 267,
-    INT = 268,
-    VOID = 269,
-    STRUCT = 270,
-    IF = 271,
-    ELSE = 272,
-    WHILE = 273,
-    FOR = 274,
-    RETURN = 275,
-    IDENTIFIER = 276
+    PTR_OP = 259,
+    LE_OP = 260,
+    GE_OP = 261,
+    EQ_OP = 262,
+    NE_OP = 263,
+    AND_OP = 264,
+    OR_OP = 265,
+    EXTERN = 266,
+    INT = 267,
+    VOID = 268,
+    STRUCT = 269,
+    IF = 270,
+    ELSE = 271,
+    WHILE = 272,
+    FOR = 273,
+    RETURN = 274,
+    IDENTIFIER = 275,
+    CONSTANT = 276
   };
 #endif
 
@@ -72,15 +72,14 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 23 "structfe.y" /* yacc.c:1909  */
+#line 24 "structfe.y" /* yacc.c:1909  */
 
-    char* name;
     int number;
+    char *code;
     symbole_t *symbol;
-    attributs_t attributs;
     
 
-#line 84 "structfe.tab.h" /* yacc.c:1909  */
+#line 83 "structfe.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

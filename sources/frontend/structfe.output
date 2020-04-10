@@ -2,9 +2,9 @@ Grammaire
 
     0 $accept: program $end
 
-    1 primary_expression: IDENTIFIER
+    1 primary_expression: '(' expression ')'
     2                   | CONSTANT
-    3                   | '(' expression ')'
+    3                   | IDENTIFIER
 
     4 postfix_expression: primary_expression
     5                   | postfix_expression '(' ')'
@@ -72,8 +72,8 @@ Grammaire
    50 declarator: '*' direct_declarator
    51           | direct_declarator
 
-   52 direct_declarator: IDENTIFIER
-   53                  | '(' declarator ')'
+   52 direct_declarator: '(' declarator ')'
+   53                  | IDENTIFIER
    54                  | direct_declarator '(' parameter_list ')'
    55                  | direct_declarator '(' ')'
 
@@ -124,8 +124,8 @@ Terminaux, suivis des règles où ils apparaissent
 
 $end (0) 0
 '&' (38) 14
-'(' (40) 3 5 6 53 54 55 74 75 76 77
-')' (41) 3 5 6 53 54 55 74 75 76 77
+'(' (40) 1 5 6 52 54 55 74 75 76 77
+')' (41) 1 5 6 52 54 55 74 75 76 77
 '*' (42) 15 18 50
 '+' (43) 21
 ',' (44) 10 57
@@ -140,24 +140,24 @@ $end (0) 0
 '}' (125) 44 45 64 65 66 67
 error (256)
 SIZEOF (258) 13
-CONSTANT (259) 2
-PTR_OP (260) 8
-LE_OP (261) 26
-GE_OP (262) 27
-EQ_OP (263) 29
-NE_OP (264) 30
-AND_OP (265) 32
-OR_OP (266) 34
-EXTERN (267) 39
-INT (268) 42
-VOID (269) 41
-STRUCT (270) 44 45 46
-IF (271) 74 75
-ELSE (272) 75
-WHILE (273) 76
-FOR (274) 77
-RETURN (275) 78 79
-IDENTIFIER (276) 1 7 8 44 46 52
+PTR_OP (259) 8
+LE_OP (260) 26
+GE_OP (261) 27
+EQ_OP (262) 29
+NE_OP (263) 30
+AND_OP (264) 32
+OR_OP (265) 34
+EXTERN (266) 39
+INT (267) 42
+VOID (268) 41
+STRUCT (269) 44 45 46
+IF (270) 74 75
+ELSE (271) 75
+WHILE (272) 76
+FOR (273) 77
+RETURN (274) 78 79
+IDENTIFIER (275) 3 7 8 44 46 53
+CONSTANT (276) 2
 "then" (277)
 
 
@@ -188,7 +188,7 @@ logical_and_expression (48)
 logical_or_expression (49)
     à gauche: 33 34, à droite: 34 35
 expression (50)
-    à gauche: 35 36, à droite: 3 9 10 36 73 74 75 76 77 79
+    à gauche: 35 36, à droite: 1 9 10 36 73 74 75 76 77 79
 declaration (51)
     à gauche: 37 38, à droite: 68 69 83
 declaration_specifiers (52)
@@ -202,7 +202,7 @@ struct_declaration_list (55)
 struct_declaration (56)
     à gauche: 49, à droite: 47 48
 declarator (57)
-    à gauche: 50 51, à droite: 37 49 53 58 84
+    à gauche: 50 51, à droite: 37 49 52 58 84
 direct_declarator (58)
     à gauche: 52 53 54 55, à droite: 50 51 54 55
 parameter_list (59)
@@ -397,7 +397,7 @@ function_definition (71)
 
 État 16
 
-   53 direct_declarator: '(' . declarator ')'
+   52 direct_declarator: '(' . declarator ')'
 
     '('         décalage et aller à l'état 16
     '*'         décalage et aller à l'état 17
@@ -419,9 +419,9 @@ function_definition (71)
 
 État 18
 
-   52 direct_declarator: IDENTIFIER .
+   53 direct_declarator: IDENTIFIER .
 
-    $défaut  réduction par utilisation de la règle 52 (direct_declarator)
+    $défaut  réduction par utilisation de la règle 53 (direct_declarator)
 
 
 État 19
@@ -517,7 +517,7 @@ function_definition (71)
 
 État 28
 
-   53 direct_declarator: '(' declarator . ')'
+   52 direct_declarator: '(' declarator . ')'
 
     ')'  décalage et aller à l'état 38
 
@@ -541,23 +541,23 @@ function_definition (71)
    67                   | '{' . declaration_list statement_list '}'
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
     EXTERN      décalage et aller à l'état 1
     INT         décalage et aller à l'état 2
     VOID        décalage et aller à l'état 3
     STRUCT      décalage et aller à l'état 4
-    IF          décalage et aller à l'état 41
-    WHILE       décalage et aller à l'état 42
-    FOR         décalage et aller à l'état 43
-    RETURN      décalage et aller à l'état 44
-    '('         décalage et aller à l'état 45
+    IF          décalage et aller à l'état 40
+    WHILE       décalage et aller à l'état 41
+    FOR         décalage et aller à l'état 42
+    RETURN      décalage et aller à l'état 43
+    '('         décalage et aller à l'état 44
     '{'         décalage et aller à l'état 30
-    '}'         décalage et aller à l'état 46
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '}'         décalage et aller à l'état 45
+    ';'         décalage et aller à l'état 46
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -654,9 +654,9 @@ function_definition (71)
 
 État 38
 
-   53 direct_declarator: '(' declarator ')' .
+   52 direct_declarator: '(' declarator ')' .
 
-    $défaut  réduction par utilisation de la règle 53 (direct_declarator)
+    $défaut  réduction par utilisation de la règle 52 (direct_declarator)
 
 
 État 39
@@ -664,12 +664,12 @@ function_definition (71)
    13 unary_expression: SIZEOF . unary_expression
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression  aller à l'état 52
     postfix_expression  aller à l'état 53
@@ -679,46 +679,39 @@ function_definition (71)
 
 État 40
 
-    2 primary_expression: CONSTANT .
-
-    $défaut  réduction par utilisation de la règle 2 (primary_expression)
-
-
-État 41
-
    74 selection_statement: IF . '(' expression ')' statement
    75                    | IF . '(' expression ')' statement ELSE statement
 
     '('  décalage et aller à l'état 80
 
 
-État 42
+État 41
 
    76 iteration_statement: WHILE . '(' expression ')' statement
 
     '('  décalage et aller à l'état 81
 
 
-État 43
+État 42
 
    77 iteration_statement: FOR . '(' expression_statement expression_statement expression ')' statement
 
     '('  décalage et aller à l'état 82
 
 
-État 44
+État 43
 
    78 jump_statement: RETURN . ';'
    79               | RETURN . expression ';'
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
+    '('         décalage et aller à l'état 44
     ';'         décalage et aller à l'état 83
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -733,17 +726,17 @@ function_definition (71)
     expression                 aller à l'état 84
 
 
-État 45
+État 44
 
-    3 primary_expression: '(' . expression ')'
+    1 primary_expression: '(' . expression ')'
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -758,46 +751,53 @@ function_definition (71)
     expression                 aller à l'état 85
 
 
-État 46
+État 45
 
    64 compound_statement: '{' '}' .
 
     $défaut  réduction par utilisation de la règle 64 (compound_statement)
 
 
-État 47
+État 46
 
    72 expression_statement: ';' .
 
     $défaut  réduction par utilisation de la règle 72 (expression_statement)
 
 
-État 48
+État 47
 
    14 unary_operator: '&' .
 
     $défaut  réduction par utilisation de la règle 14 (unary_operator)
 
 
-État 49
+État 48
 
    15 unary_operator: '*' .
 
     $défaut  réduction par utilisation de la règle 15 (unary_operator)
 
 
-État 50
+État 49
 
    16 unary_operator: '-' .
 
     $défaut  réduction par utilisation de la règle 16 (unary_operator)
 
 
+État 50
+
+    3 primary_expression: IDENTIFIER .
+
+    $défaut  réduction par utilisation de la règle 3 (primary_expression)
+
+
 État 51
 
-    1 primary_expression: IDENTIFIER .
+    2 primary_expression: CONSTANT .
 
-    $défaut  réduction par utilisation de la règle 1 (primary_expression)
+    $défaut  réduction par utilisation de la règle 2 (primary_expression)
 
 
 État 52
@@ -837,12 +837,12 @@ function_definition (71)
    12 unary_expression: unary_operator . unary_expression
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression  aller à l'état 52
     postfix_expression  aller à l'état 53
@@ -969,23 +969,23 @@ function_definition (71)
    69 declaration_list: declaration_list . declaration
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
     EXTERN      décalage et aller à l'état 1
     INT         décalage et aller à l'état 2
     VOID        décalage et aller à l'état 3
     STRUCT      décalage et aller à l'état 4
-    IF          décalage et aller à l'état 41
-    WHILE       décalage et aller à l'état 42
-    FOR         décalage et aller à l'état 43
-    RETURN      décalage et aller à l'état 44
-    '('         décalage et aller à l'état 45
+    IF          décalage et aller à l'état 40
+    WHILE       décalage et aller à l'état 41
+    FOR         décalage et aller à l'état 42
+    RETURN      décalage et aller à l'état 43
+    '('         décalage et aller à l'état 44
     '{'         décalage et aller à l'état 30
     '}'         décalage et aller à l'état 105
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    ';'         décalage et aller à l'état 46
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1017,19 +1017,19 @@ function_definition (71)
    71 statement_list: statement_list . statement
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    IF          décalage et aller à l'état 41
-    WHILE       décalage et aller à l'état 42
-    FOR         décalage et aller à l'état 43
-    RETURN      décalage et aller à l'état 44
-    '('         décalage et aller à l'état 45
+    IF          décalage et aller à l'état 40
+    WHILE       décalage et aller à l'état 41
+    FOR         décalage et aller à l'état 42
+    RETURN      décalage et aller à l'état 43
+    '('         décalage et aller à l'état 44
     '{'         décalage et aller à l'état 30
     '}'         décalage et aller à l'état 108
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    ';'         décalage et aller à l'état 46
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1140,12 +1140,12 @@ function_definition (71)
    75                    | IF '(' . expression ')' statement ELSE statement
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1165,12 +1165,12 @@ function_definition (71)
    76 iteration_statement: WHILE '(' . expression ')' statement
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1190,13 +1190,13 @@ function_definition (71)
    77 iteration_statement: FOR '(' . expression_statement expression_statement expression ')' statement
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    ';'         décalage et aller à l'état 46
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1228,7 +1228,7 @@ function_definition (71)
 
 État 85
 
-    3 primary_expression: '(' expression . ')'
+    1 primary_expression: '(' expression . ')'
 
     ')'  décalage et aller à l'état 117
 
@@ -1246,13 +1246,13 @@ function_definition (71)
     6                   | postfix_expression '(' . argument_expression_list ')'
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
+    '('         décalage et aller à l'état 44
     ')'         décalage et aller à l'état 119
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1280,12 +1280,12 @@ function_definition (71)
    36 expression: unary_expression '=' . expression
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1312,12 +1312,12 @@ function_definition (71)
    18 multiplicative_expression: multiplicative_expression '*' . unary_expression
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression  aller à l'état 52
     postfix_expression  aller à l'état 53
@@ -1330,12 +1330,12 @@ function_definition (71)
    19 multiplicative_expression: multiplicative_expression '/' . unary_expression
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression  aller à l'état 52
     postfix_expression  aller à l'état 53
@@ -1348,12 +1348,12 @@ function_definition (71)
    22 additive_expression: additive_expression '-' . multiplicative_expression
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1367,12 +1367,12 @@ function_definition (71)
    21 additive_expression: additive_expression '+' . multiplicative_expression
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1386,12 +1386,12 @@ function_definition (71)
    26 relational_expression: relational_expression LE_OP . additive_expression
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1406,12 +1406,12 @@ function_definition (71)
    27 relational_expression: relational_expression GE_OP . additive_expression
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1426,12 +1426,12 @@ function_definition (71)
    25 relational_expression: relational_expression '>' . additive_expression
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1446,12 +1446,12 @@ function_definition (71)
    24 relational_expression: relational_expression '<' . additive_expression
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1466,12 +1466,12 @@ function_definition (71)
    29 equality_expression: equality_expression EQ_OP . relational_expression
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1487,12 +1487,12 @@ function_definition (71)
    30 equality_expression: equality_expression NE_OP . relational_expression
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1508,12 +1508,12 @@ function_definition (71)
    32 logical_and_expression: logical_and_expression AND_OP . equality_expression
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1530,12 +1530,12 @@ function_definition (71)
    34 logical_or_expression: logical_or_expression OR_OP . logical_and_expression
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1582,19 +1582,19 @@ function_definition (71)
    71 statement_list: statement_list . statement
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    IF          décalage et aller à l'état 41
-    WHILE       décalage et aller à l'état 42
-    FOR         décalage et aller à l'état 43
-    RETURN      décalage et aller à l'état 44
-    '('         décalage et aller à l'état 45
+    IF          décalage et aller à l'état 40
+    WHILE       décalage et aller à l'état 41
+    FOR         décalage et aller à l'état 42
+    RETURN      décalage et aller à l'état 43
+    '('         décalage et aller à l'état 44
     '{'         décalage et aller à l'état 30
     '}'         décalage et aller à l'état 137
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    ';'         décalage et aller à l'état 46
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1678,13 +1678,13 @@ function_definition (71)
    77 iteration_statement: FOR '(' expression_statement . expression_statement expression ')' statement
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    ';'         décalage et aller à l'état 46
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1709,9 +1709,9 @@ function_definition (71)
 
 État 117
 
-    3 primary_expression: '(' expression ')' .
+    1 primary_expression: '(' expression ')' .
 
-    $défaut  réduction par utilisation de la règle 3 (primary_expression)
+    $défaut  réduction par utilisation de la règle 1 (primary_expression)
 
 
 État 118
@@ -1925,18 +1925,18 @@ function_definition (71)
    75                    | IF '(' expression ')' . statement ELSE statement
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    IF          décalage et aller à l'état 41
-    WHILE       décalage et aller à l'état 42
-    FOR         décalage et aller à l'état 43
-    RETURN      décalage et aller à l'état 44
-    '('         décalage et aller à l'état 45
+    IF          décalage et aller à l'état 40
+    WHILE       décalage et aller à l'état 41
+    FOR         décalage et aller à l'état 42
+    RETURN      décalage et aller à l'état 43
+    '('         décalage et aller à l'état 44
     '{'         décalage et aller à l'état 30
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    ';'         décalage et aller à l'état 46
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1962,18 +1962,18 @@ function_definition (71)
    76 iteration_statement: WHILE '(' expression ')' . statement
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    IF          décalage et aller à l'état 41
-    WHILE       décalage et aller à l'état 42
-    FOR         décalage et aller à l'état 43
-    RETURN      décalage et aller à l'état 44
-    '('         décalage et aller à l'état 45
+    IF          décalage et aller à l'état 40
+    WHILE       décalage et aller à l'état 41
+    FOR         décalage et aller à l'état 42
+    RETURN      décalage et aller à l'état 43
+    '('         décalage et aller à l'état 44
     '{'         décalage et aller à l'état 30
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    ';'         décalage et aller à l'état 46
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -1999,12 +1999,12 @@ function_definition (71)
    77 iteration_statement: FOR '(' expression_statement expression_statement . expression ')' statement
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -2031,12 +2031,12 @@ function_definition (71)
    10 argument_expression_list: argument_expression_list ',' . expression
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    '('         décalage et aller à l'état 45
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -2087,18 +2087,18 @@ function_definition (71)
    75 selection_statement: IF '(' expression ')' statement ELSE . statement
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    IF          décalage et aller à l'état 41
-    WHILE       décalage et aller à l'état 42
-    FOR         décalage et aller à l'état 43
-    RETURN      décalage et aller à l'état 44
-    '('         décalage et aller à l'état 45
+    IF          décalage et aller à l'état 40
+    WHILE       décalage et aller à l'état 41
+    FOR         décalage et aller à l'état 42
+    RETURN      décalage et aller à l'état 43
+    '('         décalage et aller à l'état 44
     '{'         décalage et aller à l'état 30
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    ';'         décalage et aller à l'état 46
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
@@ -2124,18 +2124,18 @@ function_definition (71)
    77 iteration_statement: FOR '(' expression_statement expression_statement expression ')' . statement
 
     SIZEOF      décalage et aller à l'état 39
-    CONSTANT    décalage et aller à l'état 40
-    IF          décalage et aller à l'état 41
-    WHILE       décalage et aller à l'état 42
-    FOR         décalage et aller à l'état 43
-    RETURN      décalage et aller à l'état 44
-    '('         décalage et aller à l'état 45
+    IF          décalage et aller à l'état 40
+    WHILE       décalage et aller à l'état 41
+    FOR         décalage et aller à l'état 42
+    RETURN      décalage et aller à l'état 43
+    '('         décalage et aller à l'état 44
     '{'         décalage et aller à l'état 30
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
+    ';'         décalage et aller à l'état 46
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
 
     primary_expression         aller à l'état 52
     postfix_expression         aller à l'état 53
