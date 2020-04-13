@@ -14,7 +14,7 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 A DEMANDER :
 
--gestion des attributs en yacc 
+- nom des variables temporaires (collision avec un nom dans le programme)
 -pointeur sur type_t ??
 -manipulation structures avec name.champs (faut-il le supprimer de la grammaire oui ou non?)
 

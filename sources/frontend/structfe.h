@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 #define TAILLE 103
 
 int yylex();
@@ -13,6 +14,12 @@ typedef struct _symbole_t {
  type_t type;
  struct _symbole_t *suivant;
  } symbole_t;
+
+typedef struct _attributs_t {
+  char *code;
+  type_t type;
+  char *res;
+} attributs_t;
 
 typedef struct _table_t {
     symbole_t *table[TAILLE];
@@ -39,12 +46,12 @@ symbole_t *find( char *nom);
 void afficher_pile();
 void afficher_table();
 
-typedef struct _attributs{
-	type_t type;
-	char *code;
-}attributs_t;
-
 char *init_code(char *code);
 char *ajouter_code(char *code, char *str);
+char *concatener_nulle(char *strs, ...);
 
-char *new_var();
+
+void init_cpt_var();
+char *new_var(char *str);
+
+char *concatener(char *cs, ...);

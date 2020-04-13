@@ -10,6 +10,7 @@ L                       [a-zA-Z_]
 #define TAILLE 103
 
 pile_t *pile;
+int cpt_var;
 %}
 
 %%
@@ -25,7 +26,7 @@ pile_t *pile;
 "while"                 { return WHILE; }
 
 {L}({L}|{D})*           { yylval.symbol= ajouter(top(), yytext); return IDENTIFIER; } /*identificateurs de variable*/
-{D}+                    { yylval.number= atoi(yytext); return CONSTANT; } /* constance numérique */
+{D}+                    { yylval.number= strdup(yytext); return CONSTANT; } /* constance numérique */
 
 "/*"([^*]|(\*+[^*/]))*\*+\/    ; /* Commentaires */
 
@@ -195,8 +196,8 @@ void afficher_table(table_t *t)
 
 char *ajouter_code(char *code_genere, char *str){
 	char *new_code = (char *)malloc(strlen(code_genere)+strlen(str));
-	strcpy(new_code, code_genere);
-	strcat(new_code, str);
+	strcpy(new_code, strdup(code_genere));
+	strcat(new_code, strdup(str));
 	free(code_genere);
       	return new_code;
 }
@@ -206,5 +207,80 @@ char *init_code(char *code_genere){
     return code_genere;
 }
 
-char *new_var(){
+char *concatener_nulle(char *strs, ...)
+    {
+	char *dest = strs;
+	va_list ap;
+	va_start(ap, strs);
+	printf("init %s\n", strs);
+	strs = va_arg(ap, char*);
+
+	while(strs != NULL) {
+	    printf("concat: %s", strs);
+	    dest = ajouter_code(dest, strdup(strs));
+	    printf("suivantttttt %s\n", strs);
+	    strs = va_arg(ap, char*);
+	    printf("suivant %s\n", strs);
+	};
+
+	printf("On retourne : %s \n", dest);
+
+	va_end(ap);
+	return dest;
+    }
+
+void init_cpt_var(){
+    cpt_var = 0;
+    }
+
+char *new_var(char *var){
+    var = malloc(32);
+    sprintf(var, "t_%d", cpt_var);
+    cpt_var++;
+
+    return var;
+}
+
+
+char *concatener(char *cs, ...)
+{
+   va_list va;
+   const char *ct;
+   char *s = NULL;
+   size_t size = 0;
+
+   va_start (va, cs);
+/* (1) */
+   while ((ct = va_arg (va, char *)) != NULL)
+   {
+      void *tmp = NULL;
+
+/* (2) */
+      size += strlen (ct) + strlen (cs);
+      tmp = realloc (s, sizeof (*s) * (size + 1));
+      if (tmp != NULL)
+      {
+         if (s == NULL)
+         {
+/* (3) */
+            s = tmp;
+            strcpy (s, ct);
+         }
+         else
+         {
+/* (4) */
+             s = tmp;
+             strcat (s, cs);
+             strcat (s, ct);
+         }
+      }
+      else
+      {
+         fprintf (stderr, "Memoire insuffisante\n");
+         free (s);
+         s = NULL;
+         exit (EXIT_FAILURE);
+      }
+   }
+   return s;
 }
