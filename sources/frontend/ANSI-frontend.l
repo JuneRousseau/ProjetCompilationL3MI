@@ -11,6 +11,7 @@ L                       [a-zA-Z_]
 
 pile_t *pile;
 int cpt_var;
+int cpt_label;
 %}
 
 %%
@@ -207,23 +208,23 @@ char *init_code(char *code_genere){
     return code_genere;
 }
 
-char *concatener_nulle(char *strs, ...)
+char *concatener(char *strs, ...)
     {
 	char *dest = strs;
 	va_list ap;
 	va_start(ap, strs);
-	printf("init %s\n", strs);
+	/*printf("init %s\n", strs);*/
 	strs = va_arg(ap, char*);
 
 	while(strs != NULL) {
-	    printf("concat: %s", strs);
+	    /*printf("concat: %s", strs);*/
 	    dest = ajouter_code(dest, strdup(strs));
-	    printf("suivantttttt %s\n", strs);
+	    /*printf("suivantttttt %s\n", strs);*/
 	    strs = va_arg(ap, char*);
-	    printf("suivant %s\n", strs);
+	    /*printf("suivant %s\n", strs);*/
 	};
 
-	printf("On retourne : %s \n", dest);
+	/*printf("On retourne : %s \n", dest);*/
 
 	va_end(ap);
 	return dest;
@@ -241,8 +242,20 @@ char *new_var(char *var){
     return var;
 }
 
+void init_cpt_label(){
+    cpt_label = 0;
+    }
 
-char *concatener(char *cs, ...)
+char *new_label(char *label){
+    label = malloc(32);
+    sprintf(label, "label_%d", cpt_label);
+    cpt_label++;
+
+    return label;
+}
+
+
+char *concatener_nulle(char *cs, ...)
 {
    va_list va;
    const char *ct;

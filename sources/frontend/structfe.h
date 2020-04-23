@@ -54,4 +54,7 @@ char *concatener_nulle(char *strs, ...);
 void init_cpt_var();
 char *new_var(char *str);
 
+void init_cpt_label();
+char *new_label(char *str);
+
 char *concatener(char *cs, ...);

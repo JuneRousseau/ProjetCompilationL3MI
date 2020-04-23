@@ -452,15 +452,15 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    34,    34,    43,    49,    54,    55,    58,    62,    63,
-      70,    71,    75,    76,    85,    92,    93,    94,    98,    99,
-     110,   124,   125,   129,   136,   137,   141,   145,   149,   156,
-     157,   161,   169,   170,   177,   178,   185,   187,   195,   196,
-     200,   201,   205,   206,   207,   211,   212,   213,   217,   218,
-     222,   226,   227,   231,   232,   233,   234,   238,   239,   243,
-     247,   248,   249,   250,   251,   255,   256,   257,   258,   262,
-     263,   267,   268,   272,   273,   277,   278,   282,   283,   287,
-     288,   292,   293,   297,   298,   302
+       0,    34,    34,    41,    47,    52,    53,    58,    66,    67,
+      78,    80,    93,    94,   104,   112,   113,   114,   118,   120,
+     131,   145,   146,   150,   157,   158,   162,   166,   170,   177,
+     178,   182,   190,   192,   214,   215,   237,   238,   245,   246,
+     250,   251,   255,   256,   257,   261,   262,   263,   267,   268,
+     272,   276,   277,   281,   282,   283,   284,   288,   289,   293,
+     297,   298,   299,   300,   301,   305,   306,   308,   310,   315,
+     316,   320,   321,   327,   329,   335,   347,   363,   364,   368,
+     369,   374,   375,   379,   380,   384
 };
 #endif
 
@@ -1362,128 +1362,137 @@ yyreduce:
         case 2:
 #line 34 "structfe.y" /* yacc.c:1646  */
     { (yyval.attributs).code = init_code((yyval.attributs).code);
-     (yyval.attributs).code = ajouter_code((yyval.attributs).code, "(");
-     (yyval.attributs).code = ajouter_code((yyval.attributs).code, (yyvsp[-1].attributs).code);
-     (yyval.attributs).code = ajouter_code((yyval.attributs).code, ")");
+     (yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-1].attributs).code, NULL);
 (yyval.attributs).res = strdup((yyvsp[-1].attributs).res);
 
 }
-#line 1372 "structfe.tab.c" /* yacc.c:1646  */
+#line 1370 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 43 "structfe.y" /* yacc.c:1646  */
+#line 41 "structfe.y" /* yacc.c:1646  */
     {
 (yyval.attributs).code = init_code((yyval.attributs).code);
 (yyval.attributs).res = (yyvsp[0].number);
 }
-#line 1381 "structfe.tab.c" /* yacc.c:1646  */
+#line 1379 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 49 "structfe.y" /* yacc.c:1646  */
+#line 47 "structfe.y" /* yacc.c:1646  */
     {
 (yyval.attributs).code = init_code((yyval.attributs).code);
 (yyval.attributs).res = strdup((yyvsp[0].symbol)->nom);}
-#line 1389 "structfe.tab.c" /* yacc.c:1646  */
+#line 1387 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 54 "structfe.y" /* yacc.c:1646  */
+#line 52 "structfe.y" /* yacc.c:1646  */
     {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyvsp[0].attributs).res);}
-#line 1395 "structfe.tab.c" /* yacc.c:1646  */
+#line 1393 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 55 "structfe.y" /* yacc.c:1646  */
+#line 53 "structfe.y" /* yacc.c:1646  */
     {(yyval.attributs).code = strdup((yyvsp[-2].attributs).code);
 (yyval.attributs).res = strdup(new_var((yyval.attributs).res));
-(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "();\n", NULL);}
-#line 1403 "structfe.tab.c" /* yacc.c:1646  */
+(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "()", ";\n", NULL);}
+#line 1401 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
 #line 59 "structfe.y" /* yacc.c:1646  */
-    {(yyval.attributs).code = strdup((yyvsp[-3].attributs).code);
+    {
+(yyval.attributs).code = strdup((yyvsp[-3].attributs).code);
 (yyval.attributs).res = strdup(new_var((yyval.attributs).res));
-(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-3].attributs).code, (yyvsp[-1].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-3].attributs).res, "(", (yyvsp[-1].attributs).res,");\n", NULL);}
+(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-3].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-3].attributs).res, "(", (yyvsp[-1].attributs).res, (yyvsp[-1].attributs).code,")", ";\n", NULL);
+}
 #line 1411 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
-  case 9:
-#line 64 "structfe.y" /* yacc.c:1646  */
-    {(yyval.attributs).code = strdup((yyvsp[-2].attributs).code);
-(yyval.attributs).res = strdup(new_var((yyval.attributs).res));
-(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "->", strdup((yyvsp[0].symbol)->nom),";\n", NULL);}
-#line 1419 "structfe.tab.c" /* yacc.c:1646  */
+  case 8:
+#line 66 "structfe.y" /* yacc.c:1646  */
+    {printf("NORMALEMENT ON PEUT PAS UTILISER CA"); (yyval.attributs).code=NULL; (yyval.attributs).res=NULL;}
+#line 1417 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
-  case 10:
-#line 70 "structfe.y" /* yacc.c:1646  */
-    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyvsp[0].attributs).res);}
+  case 9:
+#line 68 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code = strdup((yyvsp[-2].attributs).code);
+(yyval.attributs).res = strdup(new_var((yyval.attributs).res));
+(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "->", strdup((yyvsp[0].symbol)->nom), ";\n", NULL);}
 #line 1425 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
-  case 11:
-#line 71 "structfe.y" /* yacc.c:1646  */
-    {(yyval.attributs).code = strdup((yyvsp[-2].attributs).code); (yyval.attributs).res = strdup((yyvsp[-2].attributs).res); (yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, ",", (yyvsp[0].attributs).res, NULL);}
+  case 10:
+#line 78 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyvsp[0].attributs).res);}
 #line 1431 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
+  case 11:
+#line 81 "structfe.y" /* yacc.c:1646  */
+    {
+(yyval.attributs).code = strdup((yyvsp[-2].attributs).code);
+(yyval.attributs).res = strdup((yyvsp[-2].attributs).res);
+(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, ",", (yyvsp[0].attributs).res, NULL);
+}
+#line 1441 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
   case 12:
-#line 75 "structfe.y" /* yacc.c:1646  */
+#line 93 "structfe.y" /* yacc.c:1646  */
     {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyvsp[0].attributs).res);}
-#line 1437 "structfe.tab.c" /* yacc.c:1646  */
+#line 1447 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 77 "structfe.y" /* yacc.c:1646  */
+#line 95 "structfe.y" /* yacc.c:1646  */
     { (yyval.attributs).code = init_code((yyval.attributs).code);
 (yyval.attributs).res = strdup(new_var((yyval.attributs).res)); /* stockage du resultat*/
- (yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-1].attributs).code, (yyvsp[0].attributs).res, ";\n", NULL); 
+ (yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-1].attributs).code, (yyvsp[0].attributs).res, NULL); 
 /* on ecrit le code deja généré*/
 /*creer une nouvelle variable, stocke le resultat*/
 /*on ecrit l'operateur*/
 /*ecrit la variable ou est stockée le resultat calculé*/
 }
-#line 1450 "structfe.tab.c" /* yacc.c:1646  */
+#line 1460 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 85 "structfe.y" /* yacc.c:1646  */
+#line 105 "structfe.y" /* yacc.c:1646  */
     {(yyval.attributs).code = init_code((yyval.attributs).code);
 (yyval.attributs).res = strdup(new_var((yyval.attributs).res));
- (yyval.attributs).code = concatener((yyval.attributs).code,(yyval.attributs).res, " = sizeof(",(yyvsp[0].attributs).res , ");\n");
-(yyval.attributs).res = strdup((yyvsp[0].attributs).res);}
-#line 1459 "structfe.tab.c" /* yacc.c:1646  */
+(yyval.attributs).code = concatener((yyval.attributs).code, (yyval.attributs).res, " = sizeof(",(yyvsp[0].attributs).res , ")");}
+#line 1468 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 92 "structfe.y" /* yacc.c:1646  */
+#line 112 "structfe.y" /* yacc.c:1646  */
     { (yyval.attributs).code = init_code((yyval.attributs).code); (yyval.attributs).code = ajouter_code((yyval.attributs).code, "&");}
-#line 1465 "structfe.tab.c" /* yacc.c:1646  */
+#line 1474 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 93 "structfe.y" /* yacc.c:1646  */
+#line 113 "structfe.y" /* yacc.c:1646  */
     { (yyval.attributs).code = init_code((yyval.attributs).code); (yyval.attributs).code = ajouter_code((yyval.attributs).code, "*");}
-#line 1471 "structfe.tab.c" /* yacc.c:1646  */
+#line 1480 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 94 "structfe.y" /* yacc.c:1646  */
+#line 114 "structfe.y" /* yacc.c:1646  */
     { (yyval.attributs).code = init_code((yyval.attributs).code); (yyval.attributs).code = ajouter_code((yyval.attributs).code, "-");}
-#line 1477 "structfe.tab.c" /* yacc.c:1646  */
+#line 1486 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 98 "structfe.y" /* yacc.c:1646  */
-    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyval.attributs).res);}
-#line 1483 "structfe.tab.c" /* yacc.c:1646  */
+#line 118 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyvsp[0].attributs).res);}
+#line 1492 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 100 "structfe.y" /* yacc.c:1646  */
+#line 121 "structfe.y" /* yacc.c:1646  */
     {(yyval.attributs).code = init_code((yyval.attributs).code);
 (yyval.attributs).res = strdup(new_var((yyval.attributs).res));
  (yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "*", (yyvsp[0].attributs).res, ";\n", NULL); 
@@ -1494,174 +1503,376 @@ yyreduce:
 /*on ecrit l'operateur*/
 /*resultat de unary*/
 }
-#line 1498 "structfe.tab.c" /* yacc.c:1646  */
+#line 1507 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 111 "structfe.y" /* yacc.c:1646  */
+#line 132 "structfe.y" /* yacc.c:1646  */
     {(yyval.attributs).code = init_code((yyval.attributs).code);
 (yyval.attributs).res = strdup(new_var((yyval.attributs).res));
-(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "/", (yyvsp[0].attributs).res, ";\n", NULL); 
+ (yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "/", (yyvsp[0].attributs).res, ";\n", NULL); 
 /*code de multiplicative expression*/
 /*code de unary expression */
 /*creer une nouvelle variable, stocke le resultat*/
 /*resultat de multiplicative*/
 /*on ecrit l'operateur*/
 /*resultat de unary*/}
-#line 1512 "structfe.tab.c" /* yacc.c:1646  */
+#line 1521 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 124 "structfe.y" /* yacc.c:1646  */
-    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyval.attributs).res);}
-#line 1518 "structfe.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 22:
-#line 125 "structfe.y" /* yacc.c:1646  */
-    {
-(yyval.attributs).code = init_code((yyval.attributs).code);
-(yyval.attributs).res = strdup(new_var((yyval.attributs).res));
-(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "+", (yyvsp[0].attributs).res, ";\n", NULL); }
+#line 145 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyvsp[0].attributs).res);}
 #line 1527 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
+  case 22:
+#line 146 "structfe.y" /* yacc.c:1646  */
+    {
+(yyval.attributs).code = init_code((yyval.attributs).code);
+(yyval.attributs).res = strdup(new_var((yyval.attributs).res));
+(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "+", (yyvsp[0].attributs).res, NULL); }
+#line 1536 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
   case 23:
-#line 129 "structfe.y" /* yacc.c:1646  */
+#line 150 "structfe.y" /* yacc.c:1646  */
     {
 (yyval.attributs).code = init_code((yyval.attributs).code);
 (yyval.attributs).res = strdup(new_var((yyval.attributs).res));
 (yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "-", (yyvsp[0].attributs).res, ";\n", NULL); }
-#line 1536 "structfe.tab.c" /* yacc.c:1646  */
+#line 1545 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 136 "structfe.y" /* yacc.c:1646  */
-    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyval.attributs).res);}
-#line 1542 "structfe.tab.c" /* yacc.c:1646  */
+#line 157 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyvsp[0].attributs).res);}
+#line 1551 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 137 "structfe.y" /* yacc.c:1646  */
+#line 158 "structfe.y" /* yacc.c:1646  */
     {
 (yyval.attributs).code = init_code((yyval.attributs).code);
 (yyval.attributs).res = strdup(new_var((yyval.attributs).res));
 (yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, ">", (yyvsp[0].attributs).res, ";\n", NULL); }
-#line 1551 "structfe.tab.c" /* yacc.c:1646  */
+#line 1560 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 141 "structfe.y" /* yacc.c:1646  */
+#line 162 "structfe.y" /* yacc.c:1646  */
     {
 (yyval.attributs).code = init_code((yyval.attributs).code);
 (yyval.attributs).res = strdup(new_var((yyval.attributs).res));
 (yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "<", (yyvsp[0].attributs).res, ";\n", NULL); }
-#line 1560 "structfe.tab.c" /* yacc.c:1646  */
+#line 1569 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 145 "structfe.y" /* yacc.c:1646  */
+#line 166 "structfe.y" /* yacc.c:1646  */
     {
 (yyval.attributs).code = init_code((yyval.attributs).code);
 (yyval.attributs).res = strdup(new_var((yyval.attributs).res));
 (yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "<=", (yyvsp[0].attributs).res, ";\n", NULL); }
-#line 1569 "structfe.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 28:
-#line 149 "structfe.y" /* yacc.c:1646  */
-    {
-(yyval.attributs).code = init_code((yyval.attributs).code);
-(yyval.attributs).res = strdup(new_var((yyval.attributs).res));
-(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, ">=", (yyvsp[0].attributs).res, ";\n", NULL); }
 #line 1578 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
-  case 29:
-#line 156 "structfe.y" /* yacc.c:1646  */
-    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyval.attributs).res);}
-#line 1584 "structfe.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 30:
-#line 157 "structfe.y" /* yacc.c:1646  */
-    {
-(yyval.attributs).code = init_code((yyval.attributs).code);
-(yyval.attributs).res = strdup(new_var((yyval.attributs).res));
-(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "==", (yyvsp[0].attributs).res, ";\n", NULL); }
-#line 1593 "structfe.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 31:
-#line 161 "structfe.y" /* yacc.c:1646  */
-    {
-(yyval.attributs).code = init_code((yyval.attributs).code);
-(yyval.attributs).res = strdup(new_var((yyval.attributs).res));
-(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "!=", (yyvsp[0].attributs).res, ";\n", NULL); }
-#line 1602 "structfe.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 32:
-#line 169 "structfe.y" /* yacc.c:1646  */
-    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyval.attributs).res);}
-#line 1608 "structfe.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 33:
+  case 28:
 #line 170 "structfe.y" /* yacc.c:1646  */
     {
 (yyval.attributs).code = init_code((yyval.attributs).code);
 (yyval.attributs).res = strdup(new_var((yyval.attributs).res));
-(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "&&", (yyvsp[0].attributs).res, ";\n", NULL); }
-#line 1617 "structfe.tab.c" /* yacc.c:1646  */
+(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, ">=", (yyvsp[0].attributs).res, ";\n", NULL); }
+#line 1587 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
-  case 34:
+  case 29:
 #line 177 "structfe.y" /* yacc.c:1646  */
-    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyval.attributs).res);}
-#line 1623 "structfe.tab.c" /* yacc.c:1646  */
+    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyvsp[0].attributs).res);}
+#line 1593 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
-  case 35:
+  case 30:
 #line 178 "structfe.y" /* yacc.c:1646  */
     {
 (yyval.attributs).code = init_code((yyval.attributs).code);
 (yyval.attributs).res = strdup(new_var((yyval.attributs).res));
-(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "||", (yyvsp[0].attributs).res, ";\n", NULL); }
-#line 1632 "structfe.tab.c" /* yacc.c:1646  */
+(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "==", (yyvsp[0].attributs).res, ";\n", NULL); }
+#line 1602 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 31:
+#line 182 "structfe.y" /* yacc.c:1646  */
+    {
+(yyval.attributs).code = init_code((yyval.attributs).code);
+(yyval.attributs).res = strdup(new_var((yyval.attributs).res));
+(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyval.attributs).res, " = ", (yyvsp[-2].attributs).res, "!=", (yyvsp[0].attributs).res, ";\n",  NULL); }
+#line 1611 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 32:
+#line 190 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyvsp[0].attributs).res);}
+#line 1617 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 33:
+#line 192 "structfe.y" /* yacc.c:1646  */
+    {
+(yyval.attributs).code = init_code((yyval.attributs).code);
+(yyval.attributs).res = strdup(new_var((yyval.attributs).res));
+/*$$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "&&", $3.res, ";\n", NULL);*/
+char* label_suite;
+ char* label_falsee;
+char* label_truee;
+label_suite= strdup(new_label(label_suite));
+label_falsee= strdup(new_label(label_falsee));
+label_truee= strdup(new_label(label_truee));
+
+ (yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, "if ", (yyvsp[-2].attributs).res, " goto ", label_suite,";\n", NULL);
+ (yyval.attributs).code = concatener((yyval.attributs).code, "goto ", label_falsee, ";\n", NULL);
+ (yyval.attributs).code = concatener((yyval.attributs).code,"\n",  label_suite, ":\n", NULL);
+ (yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[0].attributs).code, "if ", (yyvsp[0].attributs).res, " goto ", label_truee,";\n", NULL);
+ (yyval.attributs).code = concatener((yyval.attributs).code,"goto ", label_falsee, ";\n", NULL);
+ (yyval.attributs).code = concatener((yyval.attributs).code,"\n",  label_truee,":\n", (yyval.attributs).res, "= 1;\n", NULL);
+ (yyval.attributs).code = concatener((yyval.attributs).code,"\n", label_falsee,":\n", (yyval.attributs).res, "= 0;\n", NULL);
+ }
+#line 1641 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 34:
+#line 214 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyvsp[0].attributs).res);}
+#line 1647 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 35:
+#line 215 "structfe.y" /* yacc.c:1646  */
+    {
+(yyval.attributs).code = init_code((yyval.attributs).code);
+(yyval.attributs).res = strdup(new_var((yyval.attributs).res));
+/*$$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "||", $3.res, ";\n", NULL);*/
+char* label_suite;
+char* label_falsee;
+char* label_truee;
+label_suite= strdup(new_label(label_suite));
+label_falsee= strdup(new_label(label_falsee));
+label_truee= strdup(new_label(label_truee));
+ 
+ (yyval.attributs).code = concatener((yyval.attributs).code,"", (yyvsp[-2].attributs).code, "if ", (yyvsp[-2].attributs).res, "goto ", label_truee,";\n", NULL);
+ (yyval.attributs).code = concatener((yyval.attributs).code,"", "goto ", label_suite, ";\n", NULL);
+ (yyval.attributs).code = concatener((yyval.attributs).code,"", label_suite, ":\n", NULL);
+ (yyval.attributs).code = concatener((yyval.attributs).code,"", (yyvsp[0].attributs).code, "if ", (yyvsp[0].attributs).res, "goto ", label_truee,";\n", NULL);
+ (yyval.attributs).code = concatener((yyval.attributs).code,"", "goto ", label_falsee, ";\n", NULL);
+ (yyval.attributs).code = concatener((yyval.attributs).code,"", label_truee,":\n", (yyval.attributs).res, "= 1;\n", NULL);
+ (yyval.attributs).code = concatener((yyval.attributs).code,"", label_falsee,":\n", (yyval.attributs).res, "= 0;\n", NULL);
+}
+#line 1671 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 185 "structfe.y" /* yacc.c:1646  */
-    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyval.attributs).res);
-printf("%s\n", (yyval.attributs).code);}
-#line 1639 "structfe.tab.c" /* yacc.c:1646  */
+#line 237 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); (yyval.attributs).res = strdup((yyvsp[0].attributs).res);}
+#line 1677 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 187 "structfe.y" /* yacc.c:1646  */
+#line 238 "structfe.y" /* yacc.c:1646  */
     {
 (yyval.attributs).code = init_code((yyval.attributs).code);
 (yyval.attributs).res = strdup((yyvsp[-2].attributs).res);
-(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyvsp[-2].attributs).res, " = ", (yyvsp[0].attributs).res, ";\n", NULL);
-printf("%s", (yyval.attributs).code);}
-#line 1649 "structfe.tab.c" /* yacc.c:1646  */
+(yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, (yyvsp[0].attributs).code, (yyvsp[-2].attributs).res, " = ", (yyvsp[0].attributs).res, NULL);}
+#line 1686 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 42:
+#line 255 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code= strdup("void");}
+#line 1692 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 43:
+#line 256 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code= strdup("int");}
+#line 1698 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 44:
+#line 257 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code= NULL;}
+#line 1704 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 231 "structfe.y" /* yacc.c:1646  */
+#line 281 "structfe.y" /* yacc.c:1646  */
     { (yyval.attributs) = (yyvsp[-2].attributs);}
-#line 1655 "structfe.tab.c" /* yacc.c:1646  */
+#line 1710 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 232 "structfe.y" /* yacc.c:1646  */
+#line 282 "structfe.y" /* yacc.c:1646  */
     {(yyval.attributs).code = strdup((yyvsp[0].symbol)->nom);}
-#line 1661 "structfe.tab.c" /* yacc.c:1646  */
+#line 1716 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 60:
+#line 297 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); printf("%s", (yyval.attributs).code);}
+#line 1722 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 61:
+#line 298 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); printf("%s", (yyval.attributs).code);}
+#line 1728 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 62:
+#line 299 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); /*printf("%s", $$.code);*/}
+#line 1734 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 63:
+#line 300 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); printf("%s", (yyval.attributs).code);}
+#line 1740 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 64:
+#line 301 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code = strdup((yyvsp[0].attributs).code); printf("%s", (yyval.attributs).code);}
+#line 1746 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 65:
+#line 305 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code = init_code((yyval.attributs).code); (yyval.attributs).code= ajouter_code((yyval.attributs).code, "{ }");}
+#line 1752 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 66:
+#line 306 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code = init_code((yyval.attributs).code);
+     (yyval.attributs).code= concatener((yyval.attributs).code, "{\n", (yyvsp[-1].attributs).code ,"\n}", NULL);}
+#line 1759 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 67:
+#line 308 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code = init_code((yyval.attributs).code);
+     (yyval.attributs).code= concatener((yyval.attributs).code, "{\n", (yyvsp[-1].attributs).code ,"\n}", NULL);}
+#line 1766 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 68:
+#line 310 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code = init_code((yyval.attributs).code);
+     (yyval.attributs).code= concatener((yyval.attributs).code, "{\n", (yyvsp[-2].attributs).code, (yyvsp[-1].attributs).code ,"\n}", NULL);}
+#line 1773 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 69:
+#line 315 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code= strdup("");}
+#line 1779 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 70:
+#line 316 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code= strdup("");}
+#line 1785 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 71:
+#line 320 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code=strdup((yyvsp[0].attributs).code);}
+#line 1791 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 72:
+#line 321 "structfe.y" /* yacc.c:1646  */
+    {
+(yyval.attributs).code=strdup((yyvsp[-1].attributs).code);
+(yyval.attributs).code=ajouter_code((yyval.attributs).code, (yyvsp[0].attributs).code);}
+#line 1799 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 73:
+#line 327 "structfe.y" /* yacc.c:1646  */
+    { (yyval.attributs).code = init_code((yyval.attributs).code);
+     (yyval.attributs).code=ajouter_code((yyval.attributs).code, ";\n"); (yyval.attributs).res= NULL;}
+#line 1806 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 74:
+#line 329 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code= strdup((yyvsp[-1].attributs).code);
+(yyval.attributs).res= strdup((yyvsp[-1].attributs).res);
+ (yyval.attributs).code= ajouter_code((yyval.attributs).code, ";\n"); }
+#line 1814 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 75:
+#line 335 "structfe.y" /* yacc.c:1646  */
+    {
+char* label_falsee;
+char* label_truee;
+label_falsee= strdup(new_label(label_falsee));
+label_truee= strdup(new_label(label_truee));
+(yyval.attributs).code= strdup((yyvsp[-2].attributs).code);
+(yyval.attributs).code= concatener((yyval.attributs).code, "if ", (yyvsp[-2].attributs).res, " goto ", label_truee, ";\n", NULL);
+(yyval.attributs).code= concatener((yyval.attributs).code, "goto ", label_falsee, ";\n", NULL);
+(yyval.attributs).code = concatener((yyval.attributs).code, label_truee, ":\n", (yyvsp[0].attributs).code, label_falsee, ":\n", NULL);
+(yyval.attributs).res = NULL;
+}
+#line 1830 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 76:
+#line 348 "structfe.y" /* yacc.c:1646  */
+    {
+char* label_falsee;
+char* label_truee;
+label_falsee= strdup(new_label(label_falsee));
+label_truee= strdup(new_label(label_truee));
+(yyval.attributs).code= strdup((yyvsp[-4].attributs).code);
+(yyval.attributs).code= concatener((yyval.attributs).code, "if ", (yyvsp[-4].attributs).res, " goto ", label_truee, ";\n", NULL);
+(yyval.attributs).code= concatener((yyval.attributs).code, "goto ", label_falsee, ";\n", NULL);
+(yyval.attributs).code = concatener((yyval.attributs).code, label_truee, ":\n", (yyvsp[-2].attributs).code, NULL);
+(yyval.attributs).code = concatener((yyval.attributs).code, label_falsee, ":\n", (yyvsp[0].attributs).code,  NULL);
+(yyval.attributs).res= NULL;
+}
+#line 1847 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 77:
+#line 363 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code=NULL;}
+#line 1853 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 78:
+#line 364 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code=NULL;}
+#line 1859 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 79:
+#line 368 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code= init_code((yyval.attributs).code); (yyval.attributs).code= ajouter_code((yyval.attributs).code, "return ;\n");}
+#line 1865 "structfe.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 80:
+#line 369 "structfe.y" /* yacc.c:1646  */
+    {(yyval.attributs).code= strdup((yyvsp[-1].attributs).code);
+     (yyval.attributs).code= concatener((yyval.attributs).code, "return ", (yyvsp[-1].attributs).res," ;\n");}
+#line 1872 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1665 "structfe.tab.c" /* yacc.c:1646  */
+#line 1876 "structfe.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1889,7 +2100,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 305 "structfe.y" /* yacc.c:1906  */
+#line 387 "structfe.y" /* yacc.c:1906  */
 
 	 
 int main()
@@ -1897,16 +2108,16 @@ int main()
 
     init_pile();
     init_cpt_var();
+    init_cpt_label();
 
-    
     int c = yyparse();
     while(c)
     {
 	c=yyparse();
     }
 
-    afficher_pile();
-    printf("Accepted\n");
+    /*afficher_pile();*/
+    printf("\n\n\nAccepted\n");
 }
 
 extern int yylineno;

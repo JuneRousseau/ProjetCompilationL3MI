@@ -518,8 +518,9 @@ char *yytext;
 
 pile_t *pile;
 int cpt_var;
-#line 522 "lex.yy.c"
+int cpt_label;
 #line 523 "lex.yy.c"
+#line 524 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -736,9 +737,9 @@ YY_DECL
 		}
 
 	{
-#line 16 "ANSI-frontend.l"
+#line 17 "ANSI-frontend.l"
 
-#line 742 "lex.yy.c"
+#line 743 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -807,122 +808,122 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 17 "ANSI-frontend.l"
+#line 18 "ANSI-frontend.l"
 { return ELSE; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 18 "ANSI-frontend.l"
+#line 19 "ANSI-frontend.l"
 { return EXTERN; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 19 "ANSI-frontend.l"
+#line 20 "ANSI-frontend.l"
 { return FOR; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 20 "ANSI-frontend.l"
+#line 21 "ANSI-frontend.l"
 { return IF; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 21 "ANSI-frontend.l"
+#line 22 "ANSI-frontend.l"
 { return INT; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 22 "ANSI-frontend.l"
+#line 23 "ANSI-frontend.l"
 { return RETURN; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 23 "ANSI-frontend.l"
+#line 24 "ANSI-frontend.l"
 { return SIZEOF; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 24 "ANSI-frontend.l"
+#line 25 "ANSI-frontend.l"
 { return STRUCT; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 25 "ANSI-frontend.l"
+#line 26 "ANSI-frontend.l"
 { return VOID; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 26 "ANSI-frontend.l"
+#line 27 "ANSI-frontend.l"
 { return WHILE; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 28 "ANSI-frontend.l"
+#line 29 "ANSI-frontend.l"
 { yylval.symbol= ajouter(top(), yytext); return IDENTIFIER; } /*identificateurs de variable*/
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 29 "ANSI-frontend.l"
+#line 30 "ANSI-frontend.l"
 { yylval.number= strdup(yytext); return CONSTANT; } /* constance numérique */
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 31 "ANSI-frontend.l"
+#line 32 "ANSI-frontend.l"
 ; /* Commentaires */
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 33 "ANSI-frontend.l"
+#line 34 "ANSI-frontend.l"
 { return PTR_OP; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 34 "ANSI-frontend.l"
+#line 35 "ANSI-frontend.l"
 { return AND_OP; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 35 "ANSI-frontend.l"
+#line 36 "ANSI-frontend.l"
 { return OR_OP; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 36 "ANSI-frontend.l"
+#line 37 "ANSI-frontend.l"
 { return LE_OP; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 37 "ANSI-frontend.l"
+#line 38 "ANSI-frontend.l"
 { return GE_OP; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 38 "ANSI-frontend.l"
+#line 39 "ANSI-frontend.l"
 { return EQ_OP; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 39 "ANSI-frontend.l"
+#line 40 "ANSI-frontend.l"
 { return NE_OP; }
 	YY_BREAK
 case 21:
 /* rule 21 can match eol */
 YY_RULE_SETUP
-#line 42 "ANSI-frontend.l"
+#line 43 "ANSI-frontend.l"
 ;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 44 "ANSI-frontend.l"
+#line 45 "ANSI-frontend.l"
 { return yytext[0]; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 46 "ANSI-frontend.l"
+#line 47 "ANSI-frontend.l"
 ECHO;
 	YY_BREAK
-#line 926 "lex.yy.c"
+#line 927 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1939,7 +1940,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 46 "ANSI-frontend.l"
+#line 47 "ANSI-frontend.l"
 
 
 /* Gestion tables des symboles */
@@ -2104,23 +2105,23 @@ char *init_code(char *code_genere){
     return code_genere;
 }
 
-char *concatener_nulle(char *strs, ...)
+char *concatener(char *strs, ...)
     {
 	char *dest = strs;
 	va_list ap;
 	va_start(ap, strs);
-	printf("init %s\n", strs);
+	/*printf("init %s\n", strs);*/
 	strs = va_arg(ap, char*);
 
 	while(strs != NULL) {
-	    printf("concat: %s", strs);
+	    /*printf("concat: %s", strs);*/
 	    dest = ajouter_code(dest, strdup(strs));
-	    printf("suivantttttt %s\n", strs);
+	    /*printf("suivantttttt %s\n", strs);*/
 	    strs = va_arg(ap, char*);
-	    printf("suivant %s\n", strs);
+	    /*printf("suivant %s\n", strs);*/
 	};
 
-	printf("On retourne : %s \n", dest);
+	/*printf("On retourne : %s \n", dest);*/
 
 	va_end(ap);
 	return dest;
@@ -2138,8 +2139,20 @@ char *new_var(char *var){
     return var;
 }
 
+void init_cpt_label(){
+    cpt_label = 0;
+    }
 
-char *concatener(char *cs, ...)
+char *new_label(char *label){
+    label = malloc(32);
+    sprintf(label, "label_%d", cpt_label);
+    cpt_label++;
+
+    return label;
+}
+
+
+char *concatener_nulle(char *cs, ...)
 {
    va_list va;
    const char *ct;

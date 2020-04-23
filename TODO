@@ -3,13 +3,16 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 -modifier la grammaire pour reconnaitre le sizeof(int) (cf forum)
 
 
-
-
--ajouter routines semantiques pour la gestion des symboles
--gerer les symboles id de fonctions
-
 -generer backend
 
+
+TODO:
+
+-GESTION DES TYPES/DECLARATION DES VAR TEMPORAIRES
+-comprendre le probleme de pointeur qui se balade (peut etre un strdup qui manque??)
+-revoir le code du selection_statement (verifier que le code est au bon endroit)
+-remonter le code jusqu'au debut du programme pour pouvoir tout afficher d'un coup
+-probleme avec le code dans le malloc
 
 
 A DEMANDER :
@@ -17,6 +20,99 @@ A DEMANDER :
 - nom des variables temporaires (collision avec un nom dans le programme)
 -pointeur sur type_t ??
 -manipulation structures avec name.champs (faut-il le supprimer de la grammaire oui ou non?)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exp1 && exp2 ...
+
+
+code exp1
+if $1.res goto label_suite
+goto label_false
+
+
+label_suite:
+code exp2
+if $2.res goto label_true
+goto label_false
+
+label_true:
+$$.res= 1
+
+label_false:
+$$.res= 0
+
+
+
+
+exp1 || exp2
+
+code exp1
+if $1.res goto label_true
+goto label_suite
+
+label_suite:
+code exp2
+if $2.res goto label_true
+goto label_false
+
+label_true:
+$$.res= 1
+
+label_false:
+$$.res= 0
+
+
+
+if (exp) :
+ corps
+
+
+if $$.res goto label_true
+goto label_false
+
+label_true:
+code_corps
+
+label_false:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
