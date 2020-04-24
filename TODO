@@ -30,6 +30,13 @@ A DEMANDER :
 
 
 
+a = b = 1
+
+a = (b = 1)
+
+b= 1
+t_1= b
+a = t_1
 
 
 
@@ -100,6 +107,103 @@ label_false:
 
 
 
+
+
+t_1 = p-> suivant
+t_2=sizeof(p)
+t_3=malloc(t_2)                t_3 = malloc (sizeof(p))
+t_1 =
+
+
+
+
+
+p->suivant=malloc(sizeof(p));
+return p->suivant;
+
+
+t_1= sizeof(p)
+t_2=malloc(t_1)
+p->suivant=t_2
+t_4= p->suivant
+return t_4
+
+
+
+
+
+
+a=(1+2)+3
+
+b=a+1
+c=a+b
+
+return c
+
+
+t_1=1+2
+t_2=t_1+3
+a=t_2
+
+t_3=a+1
+b=t_3
+
+t_4=a+b
+c=t_4
+
+t_5= c
+
+return t_5
+
+
+
+
+
+
+
+p->suivant=malloc(sizeof(p));
+
+
+expression 	-> postfix_exp 			"=" 	expression
+		-> postfix_exp "->" ID   	"=" 	postfix_exp
+		-> ID "->" ID			"=" 	postfix_exp "(" arg_list ")"
+		-> ID "->" ID 			"="	ID(expression)
+		
+
+
+
+
+
+
+p->suivant <=> (*p).suivant
+
+
+
+
+for(exp_stm1 exp_stm2 exp3) stm4
+
+<=> 
+exp_stm1 
+while(exp_stm2) {stm4 exp3}
+
+
+for(i=0; i<10; i++) corps
+
+
+code_exp_stm1
+code_exp_stm2
+if (res_stm_2) goto label_loop
+goto label_end
+
+label_loop:
+	code_stm4
+	code_exp3
+	code_exp_stm2
+	if(res_code_exp_stm2) goto label_loop
+	goto label_end
+
+label_end:
+	
 
 
 

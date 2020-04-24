@@ -50,6 +50,7 @@ $$.res = strdup($1->nom);} ;
 
 postfix_expression
 : primary_expression {$$.code = strdup($1.code); $$.res = strdup($1.res);}
+
 | postfix_expression '(' ')' {$$.code = strdup($1.code);
 $$.res = strdup(new_var($$.res));
 $$.code = concatener($$.code, $1.code, $$.res, " = ", $1.res, "()", ";\n", NULL);}
@@ -59,16 +60,18 @@ $$.code = concatener($$.code, $1.code, $$.res, " = ", $1.res, "()", ";\n", NULL)
 	{
 $$.code = strdup($1.code);
 $$.res = strdup(new_var($$.res));
-$$.code = concatener($$.code, $1.code, $$.res, " = ", $1.res, "(", $3.res, $3.code,")", ";\n", NULL);
+ $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res,"(", $3.res, $3.code,")", ";\n", NULL);
 }
 
 
 | postfix_expression '.' IDENTIFIER {printf("NORMALEMENT ON PEUT PAS UTILISER CA"); $$.code=NULL; $$.res=NULL;}
-        | postfix_expression PTR_OP IDENTIFIER
+
+| postfix_expression PTR_OP IDENTIFIER /* ATTENTION, les structures n'existent pas dans le backend, il faudra modifier cet routine sémantique */
 {$$.code = strdup($1.code);
 $$.res = strdup(new_var($$.res));
-$$.code = concatener($$.code, $1.code, $$.res, " = ", $1.res, "->", strdup($3->nom), ";\n", NULL);}
-        ;
+$$.code = concatener($$.code, $1.code, $$.res, " = ", $1.res, "->", strdup($3->nom), ";\n", NULL);
+}
+;
 
 
 
@@ -94,7 +97,7 @@ unary_expression
 | unary_operator unary_expression
 { $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res)); /* stockage du resultat*/
- $$.code = concatener($$.code, $2.code, $$.res, " = ", $1.code, $2.res, NULL); 
+ $$.code = concatener($$.code, $2.code, $$.res, " = ", $1.code, $2.res,";\n", NULL); 
 /* on ecrit le code deja généré*/
 /*creer une nouvelle variable, stocke le resultat*/
 /*on ecrit l'operateur*/
@@ -104,7 +107,7 @@ $$.res = strdup(new_var($$.res)); /* stockage du resultat*/
 | SIZEOF unary_expression
 {$$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
-$$.code = concatener($$.code, $$.res, " = sizeof(",$2.res , ")");}
+ $$.code = concatener($$.code, $$.res, " = sizeof(",$2.res , ");\n", NULL);}
 
         ;
 
@@ -146,7 +149,8 @@ additive_expression
         | additive_expression '+' multiplicative_expression {
 $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
-$$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "+", $3.res, NULL); }
+$$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "+", $3.res, ";\n",  NULL); }
+
         | additive_expression '-' multiplicative_expression {
 $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
@@ -158,11 +162,11 @@ relational_expression
         | relational_expression '<' additive_expression {
 $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
-$$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, ">", $3.res, ";\n", NULL); }
+$$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "<", $3.res, ";\n", NULL); }
         | relational_expression '>' additive_expression  {
 $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
-$$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "<", $3.res, ";\n", NULL); }
+$$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, ">", $3.res, ";\n", NULL); }
         | relational_expression LE_OP additive_expression {
 $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
@@ -238,7 +242,7 @@ expression
         | unary_expression '=' expression  {
 $$.code = init_code($$.code);
 $$.res = strdup($1.res);
-$$.code = concatener($$.code, $1.code, $3.code, $1.res, " = ", $3.res, NULL);}
+ $$.code = concatener($$.code, $1.code, $3.code, $1.res, " = ", $3.res, ";\n", NULL);}
         ;
 
 declaration
@@ -294,21 +298,29 @@ parameter_declaration
         ;
 
 statement
-        : compound_statement {$$.code = strdup($1.code); printf("%s", $$.code);}
-        | expression_statement {$$.code = strdup($1.code); printf("%s", $$.code);}
+        : compound_statement {$$.code = strdup($1.code); /*printf("%s", $$.code);*/}
+        | expression_statement {$$.code = strdup($1.code); /*printf("%s", $$.code);*/}
         | selection_statement {$$.code = strdup($1.code); /*printf("%s", $$.code);*/}
         | iteration_statement {$$.code = strdup($1.code); printf("%s", $$.code);}
-        | jump_statement {$$.code = strdup($1.code); printf("%s", $$.code);}
+        | jump_statement {$$.code = strdup($1.code); /*printf("%s", $$.code);*/}
         ;
 
 compound_statement
-: '{' '}' {$$.code = init_code($$.code); $$.code= ajouter_code($$.code, "{ }");}
-        | '{' statement_list '}'{$$.code = init_code($$.code);
-     $$.code= concatener($$.code, "{\n", $2.code ,"\n}", NULL);}
-        | '{' declaration_list '}' {$$.code = init_code($$.code);
-     $$.code= concatener($$.code, "{\n", $2.code ,"\n}", NULL);}
-        | '{' declaration_list statement_list '}' {$$.code = init_code($$.code);
-     $$.code= concatener($$.code, "{\n", $2.code, $3.code ,"\n}", NULL);}
+: '{' '}' {$$.code = init_code($$.code); $$.code= ajouter_code($$.code, "{ }\n");}
+
+
+| '{' statement_list '}'{$$.code = init_code($$.code);
+     $$.code= concatener($$.code, "{\n", $2.code ,"}\n", NULL);
+
+}
+
+
+| '{' declaration_list '}' {$$.code = init_code($$.code);
+     $$.code= concatener($$.code, "{\n", $2.code ,"}\n", NULL);}
+
+
+| '{' declaration_list statement_list '}' {$$.code = init_code($$.code);
+     $$.code= concatener($$.code, "{\n", $2.code, $3.code ,"}\n", NULL);}
         ;
 
 declaration_list
@@ -319,16 +331,18 @@ declaration_list
 statement_list
         : statement {$$.code=strdup($1.code);}
         | statement_list statement {
-$$.code=strdup($1.code);
-$$.code=ajouter_code($$.code, $2.code);}
+$$.code=init_code($$.code);
+$$.code=concatener($$.code, $1.code, $2.code, NULL);}
         ;
 
 expression_statement
         : ';' { $$.code = init_code($$.code);
      $$.code=ajouter_code($$.code, ";\n"); $$.res= NULL;}
-        | expression ';' {$$.code= strdup($1.code);
+
+
+| expression ';' {$$.code= strdup($1.code);
 $$.res= strdup($1.res);
- $$.code= ajouter_code($$.code, ";\n"); }
+/*$$.code= ajouter_code($$.code, ";\n"); */}
         ;
 
 selection_statement
@@ -360,14 +374,47 @@ $$.res= NULL;
         ;
 
 iteration_statement
-        : WHILE '(' expression ')' statement {$$.code=NULL;}
-        | FOR '(' expression_statement expression_statement expression ')' statement {$$.code=NULL;}
+        : WHILE '(' expression ')' statement
+{
+char* label_loop;
+char* label_end;
+label_loop  = strdup(new_label(label_loop));
+label_end= strdup(new_label(label_end));
+
+$$.code=init_code($$.code);
+$$.code= concatener($$.code, $3.code, "\n", NULL);
+$$.code= concatener($$.code, "if ", $3.res , " goto ", label_loop, ";\n", NULL);
+$$.code= concatener($$.code, "goto ", label_end, ";\n", NULL);
+$$.code = concatener($$.code, label_loop, ":\n", $5.code, "\n", $3.code, "\n", NULL);
+$$.code= concatener($$.code, "if ", $3.res , " goto ", label_loop, ";\n", NULL);
+$$.code= concatener($$.code, "goto ", label_end, ";\n",label_end,":\n", NULL);
+$$.res= NULL;
+}
+
+
+| FOR '(' expression_statement expression_statement expression ')' statement
+{
+char* label_loop;
+char* label_end;
+label_loop  = strdup(new_label(label_loop));
+label_end= strdup(new_label(label_end));
+
+$$.code=init_code($$.code);
+$$.code= concatener($$.code, $3.code, NULL);
+$$.code= concatener($$.code, $4.code, NULL);
+$$.code= concatener($$.code, "if ", $4.res , " goto ", label_loop, ";\n", NULL);
+$$.code= concatener($$.code, "goto ", label_end, ";\n", NULL);
+$$.code = concatener($$.code, label_loop, ":\n", $7.code, "\n", $5.code, "\n", $4.code, NULL);
+$$.code= concatener($$.code, "if ", $4.res , " goto ", label_loop, ";\n", NULL);
+$$.code= concatener($$.code, "goto ", label_end, ";\n",label_end,":\n", NULL);
+$$.res= NULL;
+}
         ;
 
 jump_statement
 : RETURN ';' {$$.code= init_code($$.code); $$.code= ajouter_code($$.code, "return ;\n");}
         | RETURN expression ';' {$$.code= strdup($2.code);
-     $$.code= concatener($$.code, "return ", $2.res," ;\n");}
+     $$.code= concatener($$.code, "return ", $2.res," ;\n", NULL);}
         ;
 
 program
