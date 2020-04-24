@@ -1,23 +1,18 @@
 Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
--modifier la grammaire pour reconnaitre le sizeof(int) (cf forum)
-
-
--generer backend
-
 
 TODO:
-
+-modifier la grammaire pour reconnaitre le sizeof(int) (cf forum)
 -GESTION DES TYPES/DECLARATION DES VAR TEMPORAIRES
--comprendre le probleme de pointeur qui se balade (peut etre un strdup qui manque??)
--revoir le code du selection_statement (verifier que le code est au bon endroit)
--remonter le code jusqu'au debut du programme pour pouvoir tout afficher d'un coup
--probleme avec le code dans le malloc
+-gestions des structures !
+-probleme avec le code des appels de fonctions !!!
+
+test qui passent pas: cond ;
 
 
 A DEMANDER :
 
-- nom des variables temporaires (collision avec un nom dans le programme)
+-nom des variables temporaires (collision avec un nom dans le programme)
 -pointeur sur type_t ??
 -manipulation structures avec name.champs (faut-il le supprimer de la grammaire oui ou non?)
 
@@ -204,19 +199,6 @@ label_loop:
 
 label_end:
 	
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

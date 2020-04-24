@@ -26,7 +26,7 @@
     symbole_t *symbol;
     }
 
-%start program
+%start program_start
 
 %%
 
@@ -97,7 +97,7 @@ unary_expression
 | unary_operator unary_expression
 { $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res)); /* stockage du resultat*/
- $$.code = concatener($$.code, $2.code, $$.res, " = ", $1.code, $2.res,";\n", NULL); 
+$$.code = concatener($$.code, $2.code, $$.res, " = ", $1.code, $2.res,";\n", NULL); 
 /* on ecrit le code deja généré*/
 /*creer une nouvelle variable, stocke le resultat*/
 /*on ecrit l'operateur*/
@@ -107,9 +107,8 @@ $$.res = strdup(new_var($$.res)); /* stockage du resultat*/
 | SIZEOF unary_expression
 {$$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
- $$.code = concatener($$.code, $$.res, " = sizeof(",$2.res , ");\n", NULL);}
-
-        ;
+$$.code = concatener($$.code, $$.res, " = sizeof(",$2.res , ");\n", NULL);}
+;
 
 unary_operator
 : '&' { $$.code = init_code($$.code); $$.code = ajouter_code($$.code, "&");}
@@ -247,19 +246,35 @@ $$.res = strdup($1.res);
 
 declaration
         : declaration_specifiers declarator ';'
+{
+$$.code=init_code($$.code);
+$$.code=concatener($$.code, $1.code, " ", $2.code, ";\n", NULL);
+}
+
         | struct_specifier ';'
+{
+$$.code=strdup("not yet implemented: struct specifier");
+}
         ;
+
 
 declaration_specifiers
         : EXTERN type_specifier
-        | type_specifier
+{
+$$.code=init_code($$.code);
+ $$.code= concatener($$.code, "extern ", $2.code, NULL);
+}
+
+| type_specifier {$$.code= strdup($1.code);}
         ;
+
 
 type_specifier
         : VOID {$$.code= strdup("void");}
         | INT {$$.code= strdup("int");}
-        | struct_specifier {$$.code= NULL;}
+        | struct_specifier {$$.code= strdup("not yet implemented: struct_specifier");}
         ;
+
 
 struct_specifier
         : STRUCT IDENTIFIER '{' struct_declaration_list '}'
@@ -278,30 +293,44 @@ struct_declaration
 
 declarator
         : '*' direct_declarator
-        | direct_declarator
+{
+$$.code= init_code($$.code);
+$$.code= concatener($$.code, "*", $2.code, NULL);
+}
+        | direct_declarator {$$.code= strdup($1.code);}
         ;
 
 direct_declarator
-:  '(' declarator ')' { $$ = $1;}
-	|	IDENTIFIER {$$.code = strdup($1->nom);}
-        | direct_declarator '(' parameter_list ')'
-        | direct_declarator '(' ')'
+:  '(' declarator ')' { $$.code = init_code($$.code); $$.code = concatener($$.code, "(", $2.code, ")", NULL);}
+
+| IDENTIFIER {$$.code = strdup($1->nom);}
+
+| direct_declarator '(' parameter_list ')'
+{$$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "(",$3.code,")", NULL);}	      
+
+| direct_declarator '(' ')'
+{$$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "()", NULL);}
         ;
 
 parameter_list
         : parameter_declaration
+{$$.code = strdup($1.code);}
         | parameter_list ',' parameter_declaration
+{
+$$.code = init_code($$.code);
+$$.code = concatener($$.code, $1.code, "," , $3.code, NULL);
+}
         ;
 
 parameter_declaration
-        : declaration_specifiers declarator
+: declaration_specifiers declarator {$$.code=init_code($$.code); $$.code=concatener($$.code, $1.code, " ", $2.code," ", NULL);}
         ;
 
 statement
         : compound_statement {$$.code = strdup($1.code); /*printf("%s", $$.code);*/}
         | expression_statement {$$.code = strdup($1.code); /*printf("%s", $$.code);*/}
         | selection_statement {$$.code = strdup($1.code); /*printf("%s", $$.code);*/}
-        | iteration_statement {$$.code = strdup($1.code); printf("%s", $$.code);}
+        | iteration_statement {$$.code = strdup($1.code); /*printf("%s", $$.code);*/}
         | jump_statement {$$.code = strdup($1.code); /*printf("%s", $$.code);*/}
         ;
 
@@ -324,8 +353,13 @@ compound_statement
         ;
 
 declaration_list
-        : declaration {$$.code= strdup("");}
-        | declaration_list declaration {$$.code= strdup("");}
+        : declaration
+{$$.code= strdup($1.code);}
+
+| declaration_list declaration {
+$$.code= init_code($$.code);
+$$.code= concatener($$.code, $1.code, $2.code, NULL);
+}
         ;
 
 statement_list
@@ -413,22 +447,42 @@ $$.res= NULL;
 
 jump_statement
 : RETURN ';' {$$.code= init_code($$.code); $$.code= ajouter_code($$.code, "return ;\n");}
-        | RETURN expression ';' {$$.code= strdup($2.code);
-     $$.code= concatener($$.code, "return ", $2.res," ;\n", NULL);}
+
+| RETURN expression ';' {$$.code= strdup($2.code);
+$$.code= concatener($$.code, "return ", $2.res," ;\n", NULL);}
         ;
+program_start
+: program {printf("%s",$1.code);}
 
 program
         : external_declaration
+{
+$$.code= strdup($1.code);
+}
         | program external_declaration
+{
+$$.code = init_code($$.code);
+ $$.code = concatener($$.code, $1.code, $2.code, NULL);
+}
         ;
 
 external_declaration
         : function_definition
+{
+
+}
         | declaration
+{
+$$.code = strdup($1.code);
+}
         ;
 
 function_definition
         : declaration_specifiers declarator compound_statement
+	{
+$$.code = init_code($$.code);
+ $$.code = concatener($$.code, $1.code, " " ,$2.code, $3.code, NULL);
+}
         ;
 
 %%
