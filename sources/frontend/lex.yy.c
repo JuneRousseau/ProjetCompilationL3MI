@@ -2093,10 +2093,11 @@ void afficher_table(table_t *t)
     }
 
 char *ajouter_code(char *code_genere, char *str){
-	char *new_code = (char *)malloc(strlen(code_genere)+strlen(str));
-	strcpy(new_code, strdup(code_genere));
-	strcat(new_code, strdup(str));
-	free(code_genere);
+    int new_size= strlen(code_genere)+strlen(str)+1;
+	char *new_code = (char *)malloc(new_size);
+	strcpy(new_code, code_genere);
+	strcat(new_code, str);
+	/*free(code_genere);*/
       	return new_code;
 }
 
@@ -2110,18 +2111,12 @@ char *concatener(char *strs, ...)
 	char *dest = strs;
 	va_list ap;
 	va_start(ap, strs);
-	/*printf("init %s\n", strs);*/
 	strs = va_arg(ap, char*);
 
 	while(strs != NULL) {
-	    /*printf("concat: %s", strs);*/
 	    dest = ajouter_code(dest, strdup(strs));
-	    /*printf("suivantttttt %s\n", strs);*/
 	    strs = va_arg(ap, char*);
-	    /*printf("suivant %s\n", strs);*/
 	};
-
-	/*printf("On retourne : %s \n", dest);*/
 
 	va_end(ap);
 	return dest;
@@ -2132,7 +2127,7 @@ void init_cpt_var(){
     }
 
 char *new_var(char *var){
-    var = malloc(32);
+    var = malloc(50);
     sprintf(var, "t_%d", cpt_var);
     cpt_var++;
 
@@ -2144,7 +2139,7 @@ void init_cpt_label(){
     }
 
 char *new_label(char *label){
-    label = malloc(32);
+    label = malloc(50);
     sprintf(label, "label_%d", cpt_label);
     cpt_label++;
 

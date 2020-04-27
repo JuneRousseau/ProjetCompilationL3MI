@@ -2,12 +2,11 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 
 TODO:
--modifier la grammaire pour reconnaitre le sizeof(int) (cf forum)
--GESTION DES TYPES/DECLARATION DES VAR TEMPORAIRES
 -gestions des structures !
--probleme avec le code des appels de fonctions !!!
 
-test qui passent pas: cond ;
+-GESTION DES TYPES/DECLARATION DES VAR TEMPORAIRES (type t_x; t_x=...)
+
+
 
 
 A DEMANDER :
@@ -15,9 +14,13 @@ A DEMANDER :
 -nom des variables temporaires (collision avec un nom dans le programme)
 -pointeur sur type_t ??
 -manipulation structures avec name.champs (faut-il le supprimer de la grammaire oui ou non?)
+-code généré sur le terminal ou dans un fichier?
 
 
 
+NOUS SOMMES PERPLEXE:
+sizeof ~~~~~~~~~
+le free pour la concatenation
 
 
 
@@ -199,6 +202,77 @@ label_loop:
 
 label_end:
 	
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reflexions sur les structures:
+
+
+
+struct liste {
+  int valeur;
+  struct liste *suivant;
+};
+
+on enregistre liste comme etant une structure (dans la table des symboles) avec un champs valeur (type int) et un champ suivant (type ptr)
+
+
+
+
+
+
+
+
+
+
+p est une structure liste
+
+p->suivant=malloc(sizeof(p));
+
+p->valeur ~=~ (*p).valeur ~=~ *(p)
+p->suivant ~=~ (*p).suivant ~=~ *(p+sizeof(type(valeur)))
+
+
+--->
+
+t_0= 
+
+
+
+
+
+structures= [champs1, champs2, champs3...] = *champs
+champs = *nom+*type
+
+
+il faut ecrire une fonction size_if_type qui genere la somme des size des champs
+
+
+imaginons une structure s dont les 3 champs sont de type int
+on a cette "équivalence" s->champs3 = *(s+size_of_type(champs1)+size_of_type(champs2))
+en pratique, on veut generer ce code = *s+sizeof(int)+sizeof(int)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
