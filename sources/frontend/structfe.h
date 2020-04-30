@@ -7,7 +7,8 @@
 int yylex();
 int yyerror(char* s);
 
-typedef enum { INT_T, STRUCT_T, VOID_T, PTR_INT_T, PTR_STRUCT_T, PTR_FCT_T, PTR_VOID_T, FCT_T } type_t;
+/*typedef enum { INT_T, STRUCT_T, VOID_T, PTR_INT_T, PTR_STRUCT_T, PTR_FCT_T, PTR_VOID_T, FCT_T } type_t;*/
+typedef enum { INT_T, VOID_T, ERROR_T } type_t;
 
 typedef struct _symbole_t {
  char *nom;

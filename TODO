@@ -3,7 +3,7 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 TODO:
 -gestions des structures !
-
+-controle des types
 -GESTION DES TYPES/DECLARATION DES VAR TEMPORAIRES (type t_x; t_x=...)
 
 
@@ -14,8 +14,27 @@ A DEMANDER :
 -nom des variables temporaires (collision avec un nom dans le programme)
 -pointeur sur type_t ??
 -manipulation structures avec name.champs (faut-il le supprimer de la grammaire oui ou non?)
--code généré sur le terminal ou dans un fichier?
 
+
+
+
+
+Bonjour,
+
+Chloé et moi avons quelques questions à vous poser pour poursuivre le projet de compilation.
+
+1) Puisque nous générons un code 3 adresses, nous avons besoin de créer des variables temporaires.
+Ainsi, nous avons une fonction qui permet de générer le nom de ces variables (par exemple: t_1, t_2,...). Cependant, nous ne sommes pas sûrs de la façon dont nous devons générer ces noms. Effectivement, nous avons compris qu'il faut une sorte de compteur qu'on incrémente à chaque nouvelle variable temporaire. Mais comment pouvons nous être certain que le nom que nous générons n'est pas un nom déjà utilisé dans le code source (ou même un nom qui pourrait l'être dans le code pas encore analysé) ?
+
+2) Le sujet précise que le code en entrée impose la manipulation des structures via des pointeurs, la syntaxe name.champs est-elle bien invalide?
+
+3) Dernière question: nous avons du mal à comprendre comment nous pouvons implémenter les types composés. Nous avons fait une enum pour les types de bases, mais nous n'avons aucune idée de la facon de créer des types composés (par exemple: pointeur sur type, typage des fonctions, ...). Nous avons le principe théorique (du cours) pour le typage, mais nous n'arrivons pas à le mettre en application. Pourriez-vous nous donner une piste ?
+
+Nous vous remercions par avance pour votre réponse !
+
+Cordialement,
+
+Chloé Dubas et Rousseau Bastien
 
 
 NOUS SOMMES PERPLEXE:
@@ -261,6 +280,93 @@ il faut ecrire une fonction size_if_type qui genere la somme des size des champs
 imaginons une structure s dont les 3 champs sont de type int
 on a cette "équivalence" s->champs3 = *(s+size_of_type(champs1)+size_of_type(champs2))
 en pratique, on veut generer ce code = *s+sizeof(int)+sizeof(int)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+typedef enum {int_t, void_t, ptr_int_t), struct(type_t1, type_t2...), error} type_t ;
+
+
+
+type_t ptr(t type_t) -> ajoute un nouveau à type_t
+fct(type_depart, type_arrive)
+
+
+int f(int, int, int*)    int x int x ptr(int) -> int
+
+f(1,2,p,4) int x int x ptr(int) x int
+
+int *add(int a, int b);
+
+type(add)= int x int -> int*
+
+
+
+s= add(1,2)
+
+
+foo(t1, t2, t3)
+
+
+type(foo)= t1xt2xt3 -> tau
+
+
+
+
+
+
+nom	| type
+________|___________________
+add	| int x int -> int*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+int main()
+{
+
+int f(int x);
+
+return 0;
+}
+
+
+
 
 
 
