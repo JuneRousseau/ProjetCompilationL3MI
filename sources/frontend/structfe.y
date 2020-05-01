@@ -727,65 +727,19 @@ $$.code = concatener($$.code, $1.code, " " ,$2.code, $3.code, NULL);
 	 
 int main()
 {
-    /*
     init_pile();
     init_cpt_var();
-    init_cpt_label();*/
-
-    arbre_t *base_int1= basic_type(INT_T, "");
-    arbre_t *base_int2= basic_type(INT_T, "");
-    arbre_t *base_int3= basic_type(INT_T, "");
-    arbre_t *base_int4= basic_type(INT_T, "");
-    arbre_t *base_voidd= basic_type(VOID_T, "");
-    arbre_t *ptr_int1= ptr_type(base_int1, "");
-    arbre_t *ptr_int2= ptr_type(base_int2, "");
-    arbre_t *ptr_voidd= ptr_type(base_voidd, "");
-
-    arbre_t *prod_int1= prod_type(base_int1, base_int2, "");
-    arbre_t *prod_int2= prod_type(base_int3, base_int4, "");
-    arbre_t *prod_div= prod_type(base_int1, base_voidd, "");
-
-    arbre_t *prod4= prod_type(ptr_int1, prod_int1, "");
-    arbre_t *prod5= prod_type(ptr_int2, prod_int2, "");
-    arbre_t *prod6= prod_type(ptr_int1, prod_div, "");
-
-    arbre_t *fct1= fct_type(prod_int1, base_int3, "");
-    arbre_t *fct2= fct_type(prod_int2, base_int4, "");
-    arbre_t *fct3= fct_type(prod_div, base_int4, "");
-    arbre_t *fct4= fct_type(prod_int2, base_voidd, "");
-    arbre_t *fct5= fct_type(prod_int1, ptr_int1, "");
-    arbre_t *fct6= fct_type(prod_int2, ptr_int2, "");
-    arbre_t *fct7= fct_type(prod_int1, ptr_voidd, "");
-    
-    
-
-
-    printf("int et int (1): %d\n", compare_arbre_t(base_int1, base_int2));
-    printf("int et void (0): %d\n", compare_arbre_t(base_int1, base_voidd));
-    printf("ptr_int et ptr_int (1): %d\n", compare_arbre_t(ptr_int1, ptr_int2));
-    printf("ptr_int et ptr_void (0): %d\n", compare_arbre_t(ptr_int1, ptr_voidd));
-    printf("prod_int et prod_int (1): %d\n", compare_arbre_t(prod_int1, prod_int2));
-
-    printf("prod4 et prod5 (1): %d\n", compare_arbre_t(prod4, prod5));
-    printf("prod5 et prod6 (0): %d\n", compare_arbre_t(prod5, prod6));
-    
-    printf("fct1 et fct2 (1): %d\n", compare_arbre_t(fct1, fct2));
-    printf("fct1 et fct3 (0): %d\n", compare_arbre_t(fct1, fct3));
-    printf("fct2 et fct4 (0): %d\n", compare_arbre_t(fct2, fct4));
-    printf("fct5 et fct6 (1): %d\n", compare_arbre_t(fct5, fct6));
-    printf("fct6 et fct7 (0): %d\n", compare_arbre_t(fct6, fct7));
-
-
-    
-    /*
+    init_cpt_label();
     int c = yyparse();
     while(c)
     {
 	c=yyparse();
-	}*/
+	}
 
     /*afficher_pile();*/
+
     printf("\n\n\nAccepted\n");
+    exit(0);
 }
 
 extern int yylineno;
