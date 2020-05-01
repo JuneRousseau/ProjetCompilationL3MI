@@ -8,7 +8,15 @@ int yylex();
 int yyerror(char* s);
 
 /*typedef enum { INT_T, STRUCT_T, VOID_T, PTR_INT_T, PTR_STRUCT_T, PTR_FCT_T, PTR_VOID_T, FCT_T } type_t;*/
-typedef enum { INT_T, VOID_T, ERROR_T } type_t;
+
+typedef enum { INT_T, VOID_T, ERROR_T, FCT_T, PTR_T, PROD_T, STRUCT_T} type_t;
+
+typedef struct _arbre_t {
+  type_t root;
+  struct _arbre_t *fils_gauche;
+  struct _arbre_t *fils_droit;
+  char* name;
+} arbre_t;
 
 typedef struct _symbole_t {
  char *nom;
@@ -59,3 +67,15 @@ void init_cpt_label();
 char *new_label(char *str);
 
 char *concatener(char *cs, ...);
+
+int compare_arbre_struct(arbre_t *arbre1, arbre_t *arbre2); /*si cmp_strct!=0, on compare le nom des feuilles*/
+int compare_arbre_t(arbre_t *arbre1, arbre_t *arbre2);
+int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2, int cmp_strct);/*si cmp_strct!=0, on compare le nom des feuilles*/
+int is_leaf(arbre_t *arbre);
+
+arbre_t *basic_type(type_t t, char* name); /* creer type de base (int_t ou void_t) */
+arbre_t *fct_type(arbre_t *depart, arbre_t *arrivee, char* name);
+arbre_t *ptr_type(arbre_t *t, char* name);
+arbre_t *prod_type(arbre_t *t1, arbre_t *t2, char* name);
+arbre_t *struct_type(arbre_t *champs, char* name);
+

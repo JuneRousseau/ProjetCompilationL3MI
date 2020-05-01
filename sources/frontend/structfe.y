@@ -85,10 +85,6 @@ $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res,"(", $3.re
 $$.type= VOID_T; /* attention au type d'arrivée de la fonction*/
 }
 
-
-| postfix_expression '.' IDENTIFIER
-{printf("NORMALEMENT ON PEUT PAS UTILISER CA"); $$.code=NULL; $$.res=NULL;}
-
 | postfix_expression PTR_OP IDENTIFIER /* ATTENTION, les structures n'existent pas dans le backend, il faudra modifier cet routine sémantique */
 {
 $$.code = strdup($1.code);
@@ -384,11 +380,11 @@ $$.type = $3.type;
 ;
 
 declaration
-        : declaration_specifiers {$1.type= $0.type; /*declarator.type= specifier.type;*/} declarator ';'
+        : declaration_specifiers declarator ';'
 {
 $$.code=init_code($$.code);
-$$.code=concatener($$.code, $1.code, " ", $3.code, ";\n", NULL);
-$$.type= $3.type;
+$$.code=concatener($$.code, $1.code, " ", $2.code, ";\n", NULL);
+$$.type= $2.type;
 }
 
 | struct_specifier ';'
@@ -452,29 +448,31 @@ struct_declaration
         ;
 
 declarator
-: '*' {$3.type= VOID_T; /*pointeur sur $$.type*/} direct_declarator
+: '*' direct_declarator
 {
 $$.code= init_code($$.code);
 $$.code= concatener($$.code, "*", $2.code, NULL);
-$$.type= $3.type;
+$$.type= VOID_T;
 }
 
-| {$2.type= $$.type;} direct_declarator
+| direct_declarator
 {
-$$.code= strdup($2.code);
+$$.code= strdup($1.code);
+$$.type=VOID_T;
 }
         ;
 
 direct_declarator
-:  '(' {$3.type= $$.type;} declarator ')'
+:  '(' declarator ')'
 {
 $$.code = init_code($$.code); $$.code = concatener($$.code, "(", $3.code, ")", NULL);
+$$.type=VOID_T;
 }
 
 | IDENTIFIER
 {
 $$.code = strdup($1->nom);
-$1->type= $$.type;
+$1->type= VOID_T;
 }
 
 | direct_declarator '(' parameter_list ')'
@@ -508,10 +506,10 @@ $$.type = VOID_T; /*produit cartesien des types*/
         ;
 
 parameter_declaration
-: declaration_specifiers {$3.type= $1.type;} declarator
+: declaration_specifiers declarator
 {
-$$.code=init_code($$.code); $$.code=concatener($$.code, $1.code, " ", $3.code," ", NULL);
-$$.type= $3.type;
+$$.code=init_code($$.code); $$.code=concatener($$.code, $1.code, " ", $2.code," ", NULL);
+$$.type= VOID_T;
 }
         ;
 
@@ -718,27 +716,73 @@ $$.code = strdup($1.code);
         ;
 
 function_definition
-: declaration_specifiers {$3.type= VOID_T; /* type fonction */} declarator compound_statement
+: declaration_specifiers declarator compound_statement
 {
 $$.code = init_code($$.code);
-$$.code = concatener($$.code, $1.code, " " ,$3.code, $4.code, NULL);
+$$.code = concatener($$.code, $1.code, " " ,$2.code, $3.code, NULL);
 }
-        ;
+;
 
 %%
 	 
 int main()
 {
-
+    /*
     init_pile();
     init_cpt_var();
-    init_cpt_label();
+    init_cpt_label();*/
 
+    arbre_t *base_int1= basic_type(INT_T, "");
+    arbre_t *base_int2= basic_type(INT_T, "");
+    arbre_t *base_int3= basic_type(INT_T, "");
+    arbre_t *base_int4= basic_type(INT_T, "");
+    arbre_t *base_voidd= basic_type(VOID_T, "");
+    arbre_t *ptr_int1= ptr_type(base_int1, "");
+    arbre_t *ptr_int2= ptr_type(base_int2, "");
+    arbre_t *ptr_voidd= ptr_type(base_voidd, "");
+
+    arbre_t *prod_int1= prod_type(base_int1, base_int2, "");
+    arbre_t *prod_int2= prod_type(base_int3, base_int4, "");
+    arbre_t *prod_div= prod_type(base_int1, base_voidd, "");
+
+    arbre_t *prod4= prod_type(ptr_int1, prod_int1, "");
+    arbre_t *prod5= prod_type(ptr_int2, prod_int2, "");
+    arbre_t *prod6= prod_type(ptr_int1, prod_div, "");
+
+    arbre_t *fct1= fct_type(prod_int1, base_int3, "");
+    arbre_t *fct2= fct_type(prod_int2, base_int4, "");
+    arbre_t *fct3= fct_type(prod_div, base_int4, "");
+    arbre_t *fct4= fct_type(prod_int2, base_voidd, "");
+    arbre_t *fct5= fct_type(prod_int1, ptr_int1, "");
+    arbre_t *fct6= fct_type(prod_int2, ptr_int2, "");
+    arbre_t *fct7= fct_type(prod_int1, ptr_voidd, "");
+    
+    
+
+
+    printf("int et int (1): %d\n", compare_arbre_t(base_int1, base_int2));
+    printf("int et void (0): %d\n", compare_arbre_t(base_int1, base_voidd));
+    printf("ptr_int et ptr_int (1): %d\n", compare_arbre_t(ptr_int1, ptr_int2));
+    printf("ptr_int et ptr_void (0): %d\n", compare_arbre_t(ptr_int1, ptr_voidd));
+    printf("prod_int et prod_int (1): %d\n", compare_arbre_t(prod_int1, prod_int2));
+
+    printf("prod4 et prod5 (1): %d\n", compare_arbre_t(prod4, prod5));
+    printf("prod5 et prod6 (0): %d\n", compare_arbre_t(prod5, prod6));
+    
+    printf("fct1 et fct2 (1): %d\n", compare_arbre_t(fct1, fct2));
+    printf("fct1 et fct3 (0): %d\n", compare_arbre_t(fct1, fct3));
+    printf("fct2 et fct4 (0): %d\n", compare_arbre_t(fct2, fct4));
+    printf("fct5 et fct6 (1): %d\n", compare_arbre_t(fct5, fct6));
+    printf("fct6 et fct7 (0): %d\n", compare_arbre_t(fct6, fct7));
+
+
+    
+    /*
     int c = yyparse();
     while(c)
     {
 	c=yyparse();
-    }
+	}*/
 
     /*afficher_pile();*/
     printf("\n\n\nAccepted\n");

@@ -292,3 +292,106 @@ char *concatener_nulle(char *cs, ...)
    }
    return s;
 }
+
+int is_leaf(arbre_t *arbre)
+    {
+	int g = (arbre->fils_gauche == NULL);
+        int d = (arbre->fils_droit == NULL);
+
+	return d && g;
+    }
+
+
+int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2, int cmp_strct)
+{
+    if(arbre1 == NULL && arbre2 == NULL) {return 1;}
+    else if(arbre1 == NULL || arbre2 == NULL) {return 0;}
+    else
+	{
+	    if(arbre1->root == arbre2->root)
+		{
+		    if (is_leaf(arbre1) && is_leaf(arbre2))
+			{
+			    if(cmp_strct && !strcmp(arbre1->name, arbre2->name))
+				{return 0;} /*verifier nom d'une feuille ou de tout les noeud intermediaire?*/
+		return 1;
+		}
+		    else
+			{
+			    int g= cmp_arbre_t(arbre1->fils_gauche, arbre2->fils_gauche, cmp_strct);
+			    if(g)
+				{return cmp_arbre_t(arbre1->fils_droit, arbre2->fils_droit, cmp_strct);}
+			    else {return 0;}
+			}
+		}
+    else {
+	return 0;}
+    }
+}
+
+int compare_arbre_struct(arbre_t *arbre1, arbre_t *arbre2)
+{return cmp_arbre_t(arbre1, arbre2, 1);}
+
+int compare_arbre_t(arbre_t *arbre1, arbre_t *arbre2)
+{return cmp_arbre_t(arbre1, arbre2, 0);}
+
+arbre_t *basic_type(type_t t, char* name) /* creer type de base (int_t ou void_t) */
+    {
+	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
+
+	
+	if(t == INT_T || t == VOID_T || t== ERROR_T)
+	    {
+		arbre->root= t;
+		arbre->fils_gauche= NULL;
+		arbre->fils_droit= NULL;
+		arbre->name= strdup(name);
+
+		return arbre;
+	    }
+	else {return NULL;}
+    }
+
+arbre_t *fct_type(arbre_t *depart, arbre_t *arrivee, char* name)
+    {
+	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
+	arbre->root= FCT_T;
+	arbre->fils_gauche= depart;
+	arbre->fils_droit= arrivee;
+	arbre->name= strdup(name);
+
+	return arbre;
+    }
+
+arbre_t *ptr_type(arbre_t *t, char* name)
+    {
+	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
+	arbre->root= PTR_T;	
+	arbre->fils_gauche= t;
+	arbre->fils_droit= NULL;
+	arbre->name= strdup(name);
+
+	return arbre;
+    }
+
+arbre_t *prod_type(arbre_t *t1, arbre_t *t2, char* name)
+    {
+	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
+	arbre->root= PROD_T;
+	arbre->fils_gauche= t1;
+	arbre->fils_droit= t2;
+	arbre->name= strdup(name);
+
+	return arbre;
+    }
+
+arbre_t *struct_type(arbre_t *champs, char* name)
+    {
+	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
+	arbre->root= STRUCT_T;	
+	arbre->fils_gauche= champs;
+	arbre->fils_droit= NULL;
+	arbre->name= strdup(name);
+
+	return arbre;
+    }
