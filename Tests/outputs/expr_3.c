@@ -1,26 +1,40 @@
+Type error line 10 > Expected type: INT_T , Found_type: VOID_T 
+Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
+Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
+Type error line 10 > Expected type: INT_T , Found_type: VOID_T 
+Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
+Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
+Type error line 10 > Expected type: INT_T , Found_type: VOID_T 
+Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
+Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
+Type error line 10 > Expected type: INT_T , Found_type: VOID_T 
+Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
+Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
+Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
+Type error line 10 > Expected type: FCT_T , Found_type: VOID_T 
 extern int printd(int i );
 int main(){
 int i;
 int j;
 int k;
 i = 45000;
-t_0 = -123;
-j = t_0;
+temp_41413942_0 = -123;
+j = temp_41413942_0;
 k = 43;
-t_1 = i+j;
-t_2 = t_1*k;
-t_3 = t_2/100;
-t_4 = j*k;
-t_5 = t_4*i;
-t_6 = t_3+t_5;
-t_7 = j*2;
-t_8 = t_7*k;
-t_9 = t_6-t_8;
-t_10 = j*2;
-t_11 = t_10*k;
-t_12 = k-t_11;
-t_13 = t_9/t_12;
-t_14 = printd(t_13);
+temp_91441184_1 = i+j;
+temp_73312411_2 = temp_91441184_1*k;
+temp_36994175_3 = temp_73312411_2/100;
+temp_92964358_4 = j*k;
+temp_48817969_5 = temp_92964358_4*i;
+temp_49749460_6 = temp_36994175_3+temp_48817969_5;
+temp_10408657_7 = j*2;
+temp_36021990_8 = temp_10408657_7*k;
+temp_77450264_9 = temp_49749460_6-temp_36021990_8;
+temp_16814527_10 = j*2;
+temp_24738534_11 = temp_16814527_10*k;
+temp_89766863_12 = k-temp_24738534_11;
+temp_99988220_13 = temp_77450264_9/temp_89766863_12;
+temp_43655295_14 = printd(temp_99988220_13);
 return 0 ;
 }
 

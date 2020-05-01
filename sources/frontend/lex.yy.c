@@ -514,13 +514,15 @@ char *yytext;
 #include <stdio.h>
 #include "structfe.h"
 #include "structfe.tab.h"
+#include <time.h>
 #define TAILLE 103
+#define RANDMAX 100000000
 
 pile_t *pile;
 int cpt_var;
 int cpt_label;
-#line 523 "lex.yy.c"
-#line 524 "lex.yy.c"
+#line 525 "lex.yy.c"
+#line 526 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -737,9 +739,9 @@ YY_DECL
 		}
 
 	{
-#line 17 "ANSI-frontend.l"
+#line 19 "ANSI-frontend.l"
 
-#line 743 "lex.yy.c"
+#line 745 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -808,122 +810,122 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 18 "ANSI-frontend.l"
+#line 20 "ANSI-frontend.l"
 { return ELSE; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 19 "ANSI-frontend.l"
+#line 21 "ANSI-frontend.l"
 { return EXTERN; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 20 "ANSI-frontend.l"
+#line 22 "ANSI-frontend.l"
 { return FOR; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 21 "ANSI-frontend.l"
+#line 23 "ANSI-frontend.l"
 { return IF; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 22 "ANSI-frontend.l"
+#line 24 "ANSI-frontend.l"
 { return INT; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 23 "ANSI-frontend.l"
+#line 25 "ANSI-frontend.l"
 { return RETURN; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 24 "ANSI-frontend.l"
+#line 26 "ANSI-frontend.l"
 { return SIZEOF; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 25 "ANSI-frontend.l"
+#line 27 "ANSI-frontend.l"
 { return STRUCT; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 26 "ANSI-frontend.l"
+#line 28 "ANSI-frontend.l"
 { return VOID; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 27 "ANSI-frontend.l"
+#line 29 "ANSI-frontend.l"
 { return WHILE; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 29 "ANSI-frontend.l"
+#line 31 "ANSI-frontend.l"
 { yylval.symbol= ajouter(top(), yytext); return IDENTIFIER; } /*identificateurs de variable*/
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 30 "ANSI-frontend.l"
+#line 32 "ANSI-frontend.l"
 { yylval.number= strdup(yytext); return CONSTANT; } /* constance numérique */
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 32 "ANSI-frontend.l"
+#line 34 "ANSI-frontend.l"
 ; /* Commentaires */
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 34 "ANSI-frontend.l"
+#line 36 "ANSI-frontend.l"
 { return PTR_OP; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 35 "ANSI-frontend.l"
+#line 37 "ANSI-frontend.l"
 { return AND_OP; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 36 "ANSI-frontend.l"
+#line 38 "ANSI-frontend.l"
 { return OR_OP; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 37 "ANSI-frontend.l"
+#line 39 "ANSI-frontend.l"
 { return LE_OP; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 38 "ANSI-frontend.l"
+#line 40 "ANSI-frontend.l"
 { return GE_OP; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 39 "ANSI-frontend.l"
+#line 41 "ANSI-frontend.l"
 { return EQ_OP; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 40 "ANSI-frontend.l"
+#line 42 "ANSI-frontend.l"
 { return NE_OP; }
 	YY_BREAK
 case 21:
 /* rule 21 can match eol */
 YY_RULE_SETUP
-#line 43 "ANSI-frontend.l"
+#line 45 "ANSI-frontend.l"
 ;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 45 "ANSI-frontend.l"
+#line 47 "ANSI-frontend.l"
 { return yytext[0]; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 47 "ANSI-frontend.l"
+#line 49 "ANSI-frontend.l"
 ECHO;
 	YY_BREAK
-#line 927 "lex.yy.c"
+#line 929 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1940,7 +1942,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 47 "ANSI-frontend.l"
+#line 49 "ANSI-frontend.l"
 
 
 /* Gestion tables des symboles */
@@ -2124,11 +2126,20 @@ char *concatener(char *strs, ...)
 
 void init_cpt_var(){
     cpt_var = 0;
+    srand((unsigned) time(NULL));
     }
+
 
 char *new_var(char *var){
     var = malloc(50);
-    sprintf(var, "t_%d", cpt_var);
+    int random_part;
+
+
+    do {
+    random_part= rand() % RANDMAX;
+    sprintf(var, "temp_%d_%d", random_part, cpt_var);
+    } while(find(var) != NULL);
+
     cpt_var++;
 
     return var;
@@ -2136,59 +2147,23 @@ char *new_var(char *var){
 
 void init_cpt_label(){
     cpt_label = 0;
+    srand((unsigned) time(NULL));
     }
 
 char *new_label(char *label){
     label = malloc(50);
-    sprintf(label, "label_%d", cpt_label);
+    int random_part;
+
+    do {
+    random_part= rand() % RANDMAX;
+    sprintf(label, "label_%d_%d", random_part, cpt_label);
+    } while(find(label) != NULL);
+    
     cpt_label++;
 
     return label;
 }
 
-
-char *concatener_nulle(char *cs, ...)
-{
-   va_list va;
-   const char *ct;
-   char *s = NULL;
-   size_t size = 0;
-
-   va_start (va, cs);
-/* (1) */
-   while ((ct = va_arg (va, char *)) != NULL)
-   {
-      void *tmp = NULL;
-
-/* (2) */
-      size += strlen (ct) + strlen (cs);
-      tmp = realloc (s, sizeof (*s) * (size + 1));
-      if (tmp != NULL)
-      {
-         if (s == NULL)
-         {
-/* (3) */
-            s = tmp;
-            strcpy (s, ct);
-         }
-         else
-         {
-/* (4) */
-             s = tmp;
-             strcat (s, cs);
-             strcat (s, ct);
-         }
-      }
-      else
-      {
-         fprintf (stderr, "Memoire insuffisante\n");
-         free (s);
-         s = NULL;
-         exit (EXIT_FAILURE);
-      }
-   }
-   return s;
-}
 
 int is_leaf(arbre_t *arbre)
     {
@@ -2291,5 +2266,62 @@ arbre_t *struct_type(arbre_t *champs, char* name)
 	arbre->name= strdup(name);
 
 	return arbre;
+    }
+
+
+int verif_type(arbre_t *expr_type, type_t expected_type)
+    {
+	if(expr_type == NULL){return 0;}
+	else
+	    { return expr_type->root == expected_type; }
+    }
+
+void type_error(type_t expected_type, arbre_t *found_type, int line, attributs_t *attribut)
+    {
+	char *expected_type_readable= get_type_readable(expected_type);
+       
+	if(found_type==NULL)
+	    {
+		fprintf(stderr, "Type error line %d > Expected type: %s , Found_type: NULL \n", line, expected_type_readable);
+	    }
+	else
+	    {
+		fprintf(stderr, "Type error line %d > Expected type: %s , Found_type: %s \n", line, expected_type_readable, get_type_readable(found_type->root));
+		}
+	attribut->type= basic_type(ERROR_T, "");
+	return ;
+    }
+
+
+char* get_type_readable(type_t type)
+{
+        switch(type)
+	    {
+	    case 0: 
+	        return strdup("INT_T");
+	        break;
+	    case 1:
+	        return strdup("VOID_T");
+	        break;
+	    case 2:
+	        return strdup("ERROR_T");
+	        break;
+	    case 3:
+	        return strdup("FCT_T");
+	        break;
+	    case 4:
+	        return strdup("PTR_T");
+	        break;
+	    case 5:
+	        return strdup("PROD_T");
+	        break;
+	    case 6:
+	        return strdup("STRUCT_T");
+	        break;
+	    default:
+		printf("ERREUUUUUUUUUUUUUR TYPE_ERROR\n");
+		return NULL;
+		break;
+	    }
     }
 

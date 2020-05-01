@@ -3,231 +3,25 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 TODO:
 -gestions des structures !
--controle des types
--GESTION DES TYPES/DECLARATION DES VAR TEMPORAIRES (type t_x; t_x=...)
+-(controle des types)
+-gestion des types pour les declarations
+-DECLARATION DES VAR TEMPORAIRES (type t_x; t_x=...)
+-entree sortie de bloc => faire productions pour push et pop les TS de la pile
+-faire completement les message d'erreurs pour les types specifiques (cf commentaires dans le code)
+
+-revoir le script pour une affichage des tests un pue mieux que ca
 
 
+ERREURS GRAVES : 
 
 
 A DEMANDER :
 
--nom des variables temporaires (collision avec un nom dans le programme)
--pointeur sur type_t ??
--manipulation structures avec name.champs (faut-il le supprimer de la grammaire oui ou non?)
-
-
-
-
-
-Bonjour,
-
-Chloé et moi avons quelques questions à vous poser pour poursuivre le projet de compilation.
-
-1) Puisque nous générons un code 3 adresses, nous avons besoin de créer des variables temporaires.
-Ainsi, nous avons une fonction qui permet de générer le nom de ces variables (par exemple: t_1, t_2,...). Cependant, nous ne sommes pas sûrs de la façon dont nous devons générer ces noms. Effectivement, nous avons compris qu'il faut une sorte de compteur qu'on incrémente à chaque nouvelle variable temporaire. Mais comment pouvons nous être certain que le nom que nous générons n'est pas un nom déjà utilisé dans le code source (ou même un nom qui pourrait l'être dans le code pas encore analysé) ?
-
-2) Le sujet précise que le code en entrée impose la manipulation des structures via des pointeurs, la syntaxe name.champs est-elle bien invalide?
-
-3) Dernière question: nous avons du mal à comprendre comment nous pouvons implémenter les types composés. Nous avons fait une enum pour les types de bases, mais nous n'avons aucune idée de la facon de créer des types composés (par exemple: pointeur sur type, typage des fonctions, ...). Nous avons le principe théorique (du cours) pour le typage, mais nous n'arrivons pas à le mettre en application. Pourriez-vous nous donner une piste ?
-
-Nous vous remercions par avance pour votre réponse !
-
-Cordialement,
-
-Chloé Dubas et Rousseau Bastien
 
 
 NOUS SOMMES PERPLEXE:
 sizeof ~~~~~~~~~
 le free pour la concatenation
-
-
-
-
-
-
-
-a = b = 1
-
-a = (b = 1)
-
-b= 1
-t_1= b
-a = t_1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-exp1 && exp2 ...
-
-
-code exp1
-if $1.res goto label_suite
-goto label_false
-
-
-label_suite:
-code exp2
-if $2.res goto label_true
-goto label_false
-
-label_true:
-$$.res= 1
-
-label_false:
-$$.res= 0
-
-
-
-
-exp1 || exp2
-
-code exp1
-if $1.res goto label_true
-goto label_suite
-
-label_suite:
-code exp2
-if $2.res goto label_true
-goto label_false
-
-label_true:
-$$.res= 1
-
-label_false:
-$$.res= 0
-
-
-
-if (exp) :
- corps
-
-
-if $$.res goto label_true
-goto label_false
-
-label_true:
-code_corps
-
-label_false:
-
-
-
-
-
-
-t_1 = p-> suivant
-t_2=sizeof(p)
-t_3=malloc(t_2)                t_3 = malloc (sizeof(p))
-t_1 =
-
-
-
-
-
-p->suivant=malloc(sizeof(p));
-return p->suivant;
-
-
-t_1= sizeof(p)
-t_2=malloc(t_1)
-p->suivant=t_2
-t_4= p->suivant
-return t_4
-
-
-
-
-
-
-a=(1+2)+3
-
-b=a+1
-c=a+b
-
-return c
-
-
-t_1=1+2
-t_2=t_1+3
-a=t_2
-
-t_3=a+1
-b=t_3
-
-t_4=a+b
-c=t_4
-
-t_5= c
-
-return t_5
-
-
-
-
-
-
-
-p->suivant=malloc(sizeof(p));
-
-
-expression 	-> postfix_exp 			"=" 	expression
-		-> postfix_exp "->" ID   	"=" 	postfix_exp
-		-> ID "->" ID			"=" 	postfix_exp "(" arg_list ")"
-		-> ID "->" ID 			"="	ID(expression)
-		
-
-
-
-
-
-
-p->suivant <=> (*p).suivant
-
-
-
-
-for(exp_stm1 exp_stm2 exp3) stm4
-
-<=> 
-exp_stm1 
-while(exp_stm2) {stm4 exp3}
-
-
-for(i=0; i<10; i++) corps
-
-
-code_exp_stm1
-code_exp_stm2
-if (res_stm_2) goto label_loop
-goto label_end
-
-label_loop:
-	code_stm4
-	code_exp3
-	code_exp_stm2
-	if(res_code_exp_stm2) goto label_loop
-	goto label_end
-
-label_end:
-	
-
-
-
-
-
-
-
 
 
 
@@ -248,24 +42,12 @@ on enregistre liste comme etant une structure (dans la table des symboles) avec 
 
 
 
-
-
-
-
-
-
 p est une structure liste
 
 p->suivant=malloc(sizeof(p));
 
 p->valeur ~=~ (*p).valeur ~=~ *(p)
 p->suivant ~=~ (*p).suivant ~=~ *(p+sizeof(type(valeur)))
-
-
---->
-
-t_0= 
-
 
 
 

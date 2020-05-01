@@ -1,5 +1,6 @@
 %{
 #include "structfe.h"
+extern int yylineno;
 
 %}
 
@@ -40,12 +41,12 @@ $$.res = strdup($2.res);
 $$.type= $2.type;
 }
 
-|	CONSTANT
+| CONSTANT
 {
 $$.code = init_code($$.code);
 $$.res = $1;
 
-$$.type= INT_T;
+$$.type= basic_type(INT_T, "");
 }
 
 
@@ -54,7 +55,8 @@ $$.type= INT_T;
 $$.code = init_code($$.code);
 $$.res = strdup($1->nom);
 
-$$.type = $1->type;
+$$.type = basic_type(VOID_T, "");
+//$$.type = $1->type;
 } ;
 
 postfix_expression
@@ -66,14 +68,26 @@ $$.res = strdup($1.res);
 $$.type= $1.type;
 }
 
+
 | postfix_expression '(' ')'
 {
 $$.code = strdup($1.code);
 $$.res = strdup(new_var($$.res));
 $$.code = concatener($$.code, $1.code, $$.res, " = ", $1.res, "()", ";\n", NULL);
 
-$$.type= VOID_T ; /* attention au type d'arrivée de la fonction*/
+/* on vérifie que le type de postfix_expression est une fonction qui prend void en entrée*/
+if(verif_type($1.type, FCT_T)) /*on a bien une fonction*/
+{
+    arbre_t *depart= $1.type->fils_gauche;
+    if (verif_type(depart, VOID_T)) /*l'espace de départ est bien VOID_T*/ /* VOID OU NULL??*/
+    {$$.type = $1.type->fils_droit;}
+    else
+	{type_error(VOID_T, depart, yylineno, &$$);}
 }
+else
+    { type_error(FCT_T, $1.type, yylineno, &$$);}
+}
+
 
 
 | postfix_expression '(' argument_expression_list ')'
@@ -82,16 +96,27 @@ $$.code = strdup($1.code);
 $$.res = strdup(new_var($$.res));
 $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res,"(", $3.res, ")", ";\n", NULL);
 
-$$.type= VOID_T; /* attention au type d'arrivée de la fonction*/
+/* on vérifie que le type de postfix_expression est une fonction qui prend le bon type en entrée*/
+if(verif_type($1.type, FCT_T)) /*on a bien une fonction*/
+{
+    arbre_t *depart= $1.type->fils_gauche;
+    if (compare_arbre_t(depart, $3.type)) /*l'espace de départ est bien du bon type*/
+    {$$.type = $1.type->fils_droit;}
+    else
+	{type_error(VOID_T, depart, yylineno, &$$);}
 }
+else
+    { type_error(FCT_T, $1.type, yylineno, &$$);}
+}
+
+
 
 | postfix_expression PTR_OP IDENTIFIER /* ATTENTION, les structures n'existent pas dans le backend, il faudra modifier cet routine sémantique */
 {
 $$.code = strdup($1.code);
 $$.res = strdup(new_var($$.res));
 $$.code = concatener($$.code, $1.code, $$.res, " = ", $1.res, "->", strdup($3->nom), ";\n", NULL);
-
-$$.type= VOID_T; /*type du champs de structure....*/
+$$.type= basic_type(VOID_T, ""); /*type du champs de structure....*/
 }
 ;
 
@@ -110,7 +135,8 @@ $$.code = init_code($$.code);
 $$.code = concatener($$.code, $1.code, $3.code, NULL);
 $$.res = init_code($$.res);
 $$.res = concatener($$.res, $1.res, ",", $3.res, NULL);
-$$.type = VOID_T; /* faire le produit des type */
+
+$$.type= prod_type($1.type, $3.type, ""); /*c'est un arbre "recursif a gauche"*/
 }
 ;
 
@@ -124,6 +150,7 @@ $$.res = strdup($1.res);
 $$.type= $1.type;
 }
 
+
 | unary_operator unary_expression
 {
 $$.code = init_code($$.code);
@@ -131,19 +158,32 @@ $$.res = strdup(new_var($$.res)); /* stockage du resultat*/
 $$.code = concatener($$.code, $2.code, $$.res, " = ", $1.code, $2.res,";\n", NULL);
 
 
-if(strcmp($1.code, "-")) {$$.type = INT_T;}
-else if(strcmp($1.code, "&")) {$$.type = VOID_T; /* retourne un pointeur sur $2.type*/}
-else {$$.type = VOID_T; /* retourne le type de l'objet pointé par $2*/}
-
-$$.type = $1.type; /*on associe le type voulu à l'opérateur cf unary_operator*/
+if(strcmp($1.code, "-"))
+{
+    if(verif_type($2.type, INT_T)) {$$.type = basic_type(INT_T, "");}
+    else {type_error(INT_T, $2.type, yylineno, &$$);}
 }
+
+else if(strcmp($1.code, "&"))
+{
+    if($2.type == NULL) {$$.type= basic_type(ERROR_T, ""); /*creer message d'erreur*/}
+    else{$$.type = ptr_type($2.type, ""); }
+}
+
+else
+{
+    if(verif_type($2.type, PTR_T)) {$$.type= $2.type->fils_gauche;}
+    else {type_error(PTR_T, $2.type, yylineno, &$$);}
+}
+}
+
 
 | SIZEOF '(' type_specifier ')'
 {
 $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
 $$.code = concatener($$.code, $$.res, " = sizeof(", $3.code , ");\n", NULL);
-$$.type= INT_T;
+$$.type= basic_type(INT_T, "");
 }
 
 | SIZEOF unary_expression
@@ -151,11 +191,10 @@ $$.type= INT_T;
 $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
 $$.code = concatener($$.code, $$.res, " = sizeof(",$2.res , ");\n", NULL);
-$$.type= INT_T;
-}
-
-       
+$$.type= basic_type(INT_T, "");
+}       
 ; 
+
 
 unary_operator
 : '&'
@@ -176,6 +215,7 @@ $$.code = ajouter_code($$.code, "-");
 }
 ;
 
+
 multiplicative_expression
 : unary_expression
 {
@@ -184,23 +224,38 @@ $$.res = strdup($1.res);
 $$.type = $1.type;
 }
 
+
 | multiplicative_expression '*' unary_expression
 {
 $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
-$$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "*", $3.res, ";\n", NULL); 
-$$.type = INT_T;
+$$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "*", $3.res, ";\n", NULL);
+
+if(verif_type($1.type, INT_T))
+{
+    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
+    else {type_error(INT_T, $1.type, yylineno, &$$);}
 }
+else {type_error(INT_T, $1.type, yylineno, &$$);}
+
+}
+
 
 | multiplicative_expression '/' unary_expression
 {
 $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
 $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "/", $3.res, ";\n", NULL);
-$$.type = INT_T;
-}
 
-        ;
+if(verif_type($1.type, INT_T))
+{
+    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
+    else {type_error(INT_T, $1.type, yylineno, &$$);}
+}
+else {type_error(INT_T, $1.type, yylineno, &$$);}
+}
+;
+
 
 additive_expression
         : multiplicative_expression
@@ -210,16 +265,28 @@ $$.res = strdup($1.res);
 $$.type = $1.type;
 }
 
+
 | additive_expression '+' multiplicative_expression
 {
 $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
 $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "+", $3.res, ";\n",  NULL);
 
-if(($1.type == INT_T) && ($3.type == INT_T)) {$$.type = INT_T;}
-else if ($1.type == INT_T) { $$.type= VOID_T; /*verifier qu'on a bien un pointeur -> renvoie un pointeur*/}
-else { $$.type= VOID_T; /*verifier qu'on a bien un int pour $3 -> renvoie un pointeur*/}
+
+if(verif_type($1.type, INT_T))
+{
+    if(verif_type($3.type, INT_T)) {$$.type = basic_type(INT_T, "");}
+    else if (verif_type($3.type, PTR_T)) {$$.type= $3.type;}
+    else {type_error(INT_T, $3.type, yylineno, &$$); /*int_t ou ptr_t*/}
+} 
+else if (verif_type($1.type, PTR_T))
+{
+    if (verif_type($3.type, INT_T)) {$$.type= $1.type;}
+    else {type_error(INT_T, $3.type, yylineno, &$$); /*int_t */}
 }
+else {type_error(INT_T, $3.type, yylineno, &$$); /*int_t ou ptr_t*/}
+}
+
 
 | additive_expression '-' multiplicative_expression
 {
@@ -227,12 +294,20 @@ $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
 $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "-", $3.res, ";\n", NULL);
 
-if(($1.type == INT_T) && ($3.type == INT_T)) {$$.type = INT_T;}
-else if ($1.type == INT_T) { $$.type= ERROR_T; /*verifier qu'on a bien un pointeur -> renvoie un pointeur*/}
-else if ($3.type == INT_T) {$$.type= VOID_T;} /*pointeur*/
-else {$$.type= INT_T;} /* ptr - ptr = int*/
+if(verif_type($1.type, INT_T))
+{
+    if(verif_type($3.type, INT_T)) {$$.type = basic_type(INT_T, "");}
+    else {type_error(INT_T, $3.type, yylineno, &$$);}
+} 
+else if (verif_type($1.type, PTR_T))
+{
+    if(verif_type($3.type, INT_T)) {$$.type = $1.type;}
+    else if (verif_type($3.type, PTR_T)) {$$.type= basic_type(INT_T, "");}
+    else {type_error(INT_T, $3.type, yylineno, &$$); /*int_t ou ptr_t*/}
 }
-        ;
+else {type_error(INT_T, $3.type, yylineno, &$$); /*int_t ou ptr_t*/}
+}
+;
 
 relational_expression
         : additive_expression
@@ -247,7 +322,13 @@ $$.type = $1.type;
 $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
 $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "<", $3.res, ";\n", NULL);
-$$.type = INT_T;
+
+if(verif_type($1.type, INT_T))
+{
+    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
+    else {type_error(INT_T, $1.type, yylineno, &$$);}
+}
+else {type_error(INT_T, $1.type, yylineno, &$$);}
 }
 
 | relational_expression '>' additive_expression
@@ -255,7 +336,13 @@ $$.type = INT_T;
 $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
 $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, ">", $3.res, ";\n", NULL);
-$$.type = INT_T;
+
+if(verif_type($1.type, INT_T))
+{
+    if(verif_type($2.type, INT_T)) {$$.type= basic_type(INT_T, "");}
+    else {type_error(INT_T, $1.type, yylineno, &$$);}
+}
+else {type_error(INT_T, $1.type, yylineno, &$$);}
 }
 
 | relational_expression LE_OP additive_expression
@@ -263,7 +350,13 @@ $$.type = INT_T;
 $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
 $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "<=", $3.res, ";\n", NULL);
-$$.type = INT_T;
+
+if(verif_type($1.type, INT_T))
+{
+    if(verif_type($2.type, INT_T)) {$$.type= basic_type(INT_T, "");}
+    else {type_error(INT_T, $1.type, yylineno, &$$);}
+}
+else {type_error(INT_T, $1.type, yylineno, &$$);}
 }
 
 | relational_expression GE_OP additive_expression
@@ -271,7 +364,13 @@ $$.type = INT_T;
 $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
 $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, ">=", $3.res, ";\n", NULL);
-$$.type = INT_T;
+
+if(verif_type($1.type, INT_T))
+{
+    if(verif_type($2.type, INT_T)) {$$.type= basic_type(INT_T, "");}
+    else {type_error(INT_T, $1.type, yylineno, &$$);}
+}
+else {type_error(INT_T, $1.type, yylineno, &$$);}
 }
 ;
 
@@ -288,7 +387,9 @@ $$.type = $1.type;
 $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
 $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "==", $3.res, ";\n", NULL);
-$$.type = INT_T;
+
+if(compare_arbre_t($1.type, $3.type)) {$$.type= basic_type(INT_T, "");}
+else { $$.type= basic_type(ERROR_T, ""); /*generer message d'erreur*/ }
 }
 
 | equality_expression NE_OP relational_expression
@@ -296,9 +397,11 @@ $$.type = INT_T;
 $$.code = init_code($$.code);
 $$.res = strdup(new_var($$.res));
 $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "!=", $3.res, ";\n",  NULL);
-$$.type = INT_T;
+
+if(compare_arbre_t($1.type, $3.type)) {$$.type= basic_type(INT_T, "");}
+else { $$.type= basic_type(ERROR_T, ""); /*generer message d'erreur*/ }
 }
-        ;
+;
 
 logical_and_expression
         : equality_expression
@@ -327,7 +430,12 @@ $$.code = concatener($$.code,"goto ", label_falsee, ";\n", NULL);
 $$.code = concatener($$.code,"\n",  label_truee,":\n", $$.res, "= 1;\n", NULL);
 $$.code = concatener($$.code,"\n", label_falsee,":\n", $$.res, "= 0;\n", NULL);
 
-$$.type = INT_T;
+if(verif_type($1.type, INT_T))
+{
+    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
+    else {type_error(INT_T, $1.type, yylineno, &$$);}
+}
+else {type_error(INT_T, $1.type, yylineno, &$$);}
 }
         ;
 
@@ -358,7 +466,12 @@ $$.code = concatener($$.code,"", "goto ", label_falsee, ";\n", NULL);
 $$.code = concatener($$.code,"", label_truee,":\n", $$.res, "= 1;\n", NULL);
 $$.code = concatener($$.code,"", label_falsee,":\n", $$.res, "= 0;\n", NULL);
 
-$$.type = INT_T;
+if(verif_type($1.type, INT_T))
+{
+    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
+    else {type_error(INT_T, $1.type, yylineno, &$$);}
+}
+else {type_error(INT_T, $1.type, yylineno, &$$);}
 }
         ;
 
@@ -375,7 +488,11 @@ $$.type= $1.type;
 $$.code = init_code($$.code);
 $$.res = strdup($1.res);
 $$.code = concatener($$.code, $1.code, $3.code, $1.res, " = ", $3.res, ";\n", NULL);
-$$.type = $3.type;
+
+if(compare_arbre_t($1.type, $3.type)) {
+$$.type= $1.type;}
+else {
+$$.type= basic_type(ERROR_T, ""); /*generer message d'erreur*/ }
 }
 ;
 
@@ -390,7 +507,7 @@ $$.type= $2.type;
 | struct_specifier ';'
 {
 $$.code= strdup("not yet implemented: struct specifier");
-$$.type= VOID_T; /*type structure*/
+$$.type= basic_type(VOID_T, ""); /*type structure*/
 }
 ;
 
@@ -415,19 +532,19 @@ type_specifier
         : VOID
 {
 $$.code= strdup("void");
-$$.type= VOID_T;
+$$.type= basic_type(VOID_T, "");
 }
 
 | INT
 {
 $$.code= strdup("int");
-$$.type= INT_T;
+$$.type= basic_type(INT_T, "");
 }
 
 | struct_specifier
 {
 $$.code= strdup("not yet implemented: struct_specifier");
-$$.type= VOID_T; /* type structure*/
+$$.type= basic_type(VOID_T, ""); /* type structure*/
 }
 ;
 
@@ -452,41 +569,39 @@ declarator
 {
 $$.code= init_code($$.code);
 $$.code= concatener($$.code, "*", $2.code, NULL);
-$$.type= VOID_T;
+$$.type= basic_type(VOID_T, "");
 }
 
 | direct_declarator
 {
 $$.code= strdup($1.code);
-$$.type=VOID_T;
+$$.type= basic_type(VOID_T, "");
 }
         ;
 
 direct_declarator
 :  '(' declarator ')'
 {
-$$.code = init_code($$.code); $$.code = concatener($$.code, "(", $3.code, ")", NULL);
-$$.type=VOID_T;
+$$.code = init_code($$.code); $$.code = concatener($$.code, "(", $2.code, ")", NULL);
+$$.type= basic_type(VOID_T, "");
 }
 
 | IDENTIFIER
 {
 $$.code = strdup($1->nom);
-$1->type= VOID_T;
+$$.type= basic_type(VOID_T, "");
 }
 
 | direct_declarator '(' parameter_list ')'
 {
 $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "(",$3.code,")", NULL);
-/*ON VERIFIE QUE LE TYPE DE DIRECT_DECLARATOR EST UNE FONCTION OUI OU NON?!*/
-$$.type= VOID_T; /*type fonction*/
+$$.type= basic_type(VOID_T, ""); /*type fonction*/
 }	      
 
 | direct_declarator '(' ')'
 {
 $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "()", NULL);
-/* J'ACHETE !!!!!!*/
-$$.type= VOID_T; /*type fonction*/
+$$.type= basic_type(VOID_T, ""); /*type fonction*/
 }
         ;
 
@@ -501,7 +616,7 @@ $$.type = $1.type;
 {
 $$.code = init_code($$.code);
 $$.code = concatener($$.code, $1.code, "," , $3.code, NULL);
-$$.type = VOID_T; /*produit cartesien des types*/
+$$.type= prod_type($1.type, $3.type, ""); /*c'est un arbre "recursif a gauche"*/
 }
         ;
 
@@ -509,7 +624,7 @@ parameter_declaration
 : declaration_specifiers declarator
 {
 $$.code=init_code($$.code); $$.code=concatener($$.code, $1.code, " ", $2.code," ", NULL);
-$$.type= VOID_T;
+$$.type= $1.type;
 }
         ;
 
@@ -525,7 +640,7 @@ compound_statement
 : '{' '}'
 {
 $$.code = init_code($$.code); $$.code= ajouter_code($$.code, "{ }\n");
-$$.type = VOID_T;
+$$.type= basic_type(VOID_T, "");
 }
 
 
@@ -549,7 +664,7 @@ $$.code = init_code($$.code);
 $$.code = concatener($$.code, "{\n", $2.code, $3.code ,"}\n", NULL);
 $$.type = $3.type;
 }
-        ;
+;
 
 declaration_list
         : declaration
@@ -564,7 +679,7 @@ $$.code= init_code($$.code);
 $$.code= concatener($$.code, $1.code, $2.code, NULL);
 $$.type= $2.type;
 }
-        ;
+;
 
 statement_list
         : statement
@@ -579,14 +694,14 @@ $$.code=init_code($$.code);
 $$.code=concatener($$.code, $1.code, $2.code, NULL);
 $$.type= $2.type;
 }
-        ;
+;
 
 expression_statement
         : ';'
 {
 $$.code = init_code($$.code);
 $$.code=ajouter_code($$.code, ";\n"); $$.res= NULL;
-$$.type= VOID_T;
+$$.type= basic_type(VOID_T, "");
 }
 
 | expression ';'
@@ -595,7 +710,7 @@ $$.code= strdup($1.code);
 $$.res= strdup($1.res);
 $$.type= $1.type;
 }
-        ;
+;
 
 selection_statement
         : IF '(' expression ')' statement %prec "then"
@@ -611,7 +726,7 @@ $$.code= concatener($$.code, "goto ", label_falsee, ";\n", NULL);
 $$.code = concatener($$.code, label_truee, ":\n", $5.code, label_falsee, ":\n", NULL);
 $$.res = NULL;
 
-$$.type = VOID_T;
+$$.type= basic_type(VOID_T, "");
 }
 
 | IF '(' expression ')' statement ELSE statement
@@ -628,7 +743,7 @@ $$.code = concatener($$.code, label_truee, ":\n", $5.code, NULL);
 $$.code = concatener($$.code, label_falsee, ":\n", $7.code,  NULL);
 $$.res= NULL;
 
-$$.type = VOID_T;
+$$.type= basic_type(VOID_T, "");
 }
         ;
 
@@ -649,7 +764,7 @@ $$.code= concatener($$.code, "if ", $3.res , " goto ", label_loop, ";\n", NULL);
 $$.code= concatener($$.code, "goto ", label_end, ";\n",label_end,":\n", NULL);
 $$.res= NULL;
 
-$$.type= VOID_T;
+$$.type= basic_type(VOID_T, "");
 }
 
 
@@ -670,7 +785,7 @@ $$.code= concatener($$.code, "if ", $4.res , " goto ", label_loop, ";\n", NULL);
 $$.code= concatener($$.code, "goto ", label_end, ";\n",label_end,":\n", NULL);
 $$.res= NULL;
 
-$$.type= VOID_T;
+$$.type= basic_type(VOID_T, "");
 }
         ;
 
@@ -679,16 +794,16 @@ jump_statement
 {
 $$.code= init_code($$.code);
 $$.code= ajouter_code($$.code, "return ;\n");
-$$.type= VOID_T;
+$$.type= basic_type(VOID_T, "");
 }
 
 | RETURN expression ';'
 {
 $$.code= strdup($2.code);
 $$.code= concatener($$.code, "return ", $2.res," ;\n", NULL);
-$$.type= $2.type;
+$$.type= basic_type(VOID_T, "");
 }
-        ;
+;
 program_start
 : program {printf("%s",$1.code);}
 
@@ -708,10 +823,12 @@ external_declaration
         : function_definition
 {
 $$.code = strdup($1.code);
+$$.type = basic_type(VOID_T, "");
 }
         | declaration
 {
 $$.code = strdup($1.code);
+$$.type = basic_type(VOID_T, "");
 }
         ;
 
@@ -720,6 +837,7 @@ function_definition
 {
 $$.code = init_code($$.code);
 $$.code = concatener($$.code, $1.code, " " ,$2.code, $3.code, NULL);
+$$.type = basic_type(VOID_T, "");
 }
 ;
 
@@ -734,7 +852,7 @@ int main()
     while(c)
     {
 	c=yyparse();
-	}
+    }
 
     /*afficher_pile();*/
 
@@ -742,10 +860,9 @@ int main()
     exit(0);
 }
 
-extern int yylineno;
 int yyerror(char* s)
 {
-    printf("line %d: %s\n", yylineno, s);
+  printf("line %d: %s\n", yylineno, s);
   exit(1);
 
 }

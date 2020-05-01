@@ -7,7 +7,9 @@ L                       [a-zA-Z_]
 #include <stdio.h>
 #include "structfe.h"
 #include "structfe.tab.h"
+#include <time.h>
 #define TAILLE 103
+#define RANDMAX 100000000
 
 pile_t *pile;
 int cpt_var;
@@ -227,11 +229,19 @@ char *concatener(char *strs, ...)
 
 void init_cpt_var(){
     cpt_var = 0;
+    srand((unsigned) time(NULL));
     }
+
 
 char *new_var(char *var){
     var = malloc(50);
-    sprintf(var, "t_%d", cpt_var);
+    int random_part;
+
+    do {
+    random_part= rand() % RANDMAX;
+    sprintf(var, "temp_%d_%d", random_part, cpt_var);
+    } while(find(var) != NULL);
+
     cpt_var++;
 
     return var;
@@ -239,59 +249,23 @@ char *new_var(char *var){
 
 void init_cpt_label(){
     cpt_label = 0;
+    srand((unsigned) time(NULL));
     }
 
 char *new_label(char *label){
     label = malloc(50);
-    sprintf(label, "label_%d", cpt_label);
+    int random_part;
+
+    do {
+    random_part= rand() % RANDMAX;
+    sprintf(label, "label_%d_%d", random_part, cpt_label);
+    } while(find(label) != NULL);
+    
     cpt_label++;
 
     return label;
 }
 
-
-char *concatener_nulle(char *cs, ...)
-{
-   va_list va;
-   const char *ct;
-   char *s = NULL;
-   size_t size = 0;
-
-   va_start (va, cs);
-/* (1) */
-   while ((ct = va_arg (va, char *)) != NULL)
-   {
-      void *tmp = NULL;
-
-/* (2) */
-      size += strlen (ct) + strlen (cs);
-      tmp = realloc (s, sizeof (*s) * (size + 1));
-      if (tmp != NULL)
-      {
-         if (s == NULL)
-         {
-/* (3) */
-            s = tmp;
-            strcpy (s, ct);
-         }
-         else
-         {
-/* (4) */
-             s = tmp;
-             strcat (s, cs);
-             strcat (s, ct);
-         }
-      }
-      else
-      {
-         fprintf (stderr, "Memoire insuffisante\n");
-         free (s);
-         s = NULL;
-         exit (EXIT_FAILURE);
-      }
-   }
-   return s;
-}
 
 int is_leaf(arbre_t *arbre)
     {
@@ -394,4 +368,61 @@ arbre_t *struct_type(arbre_t *champs, char* name)
 	arbre->name= strdup(name);
 
 	return arbre;
+    }
+
+
+int verif_type(arbre_t *expr_type, type_t expected_type)
+    {
+	if(expr_type == NULL){return 0;}
+	else
+	    { return expr_type->root == expected_type; }
+    }
+
+void type_error(type_t expected_type, arbre_t *found_type, int line, attributs_t *attribut)
+    {
+	char *expected_type_readable= get_type_readable(expected_type);
+       
+	if(found_type==NULL)
+	    {
+		fprintf(stderr, "Type error line %d > Expected type: %s , Found_type: NULL \n", line, expected_type_readable);
+	    }
+	else
+	    {
+		fprintf(stderr, "Type error line %d > Expected type: %s , Found_type: %s \n", line, expected_type_readable, get_type_readable(found_type->root));
+		}
+	attribut->type= basic_type(ERROR_T, "");
+	return ;
+    }
+
+
+char* get_type_readable(type_t type)
+{
+        switch(type)
+	    {
+	    case 0: 
+	        return strdup("INT_T");
+	        break;
+	    case 1:
+	        return strdup("VOID_T");
+	        break;
+	    case 2:
+	        return strdup("ERROR_T");
+	        break;
+	    case 3:
+	        return strdup("FCT_T");
+	        break;
+	    case 4:
+	        return strdup("PTR_T");
+	        break;
+	    case 5:
+	        return strdup("PROD_T");
+	        break;
+	    case 6:
+	        return strdup("STRUCT_T");
+	        break;
+	    default:
+		printf("ERREUUUUUUUUUUUUUR TYPE_ERROR\n");
+		return NULL;
+		break;
+	    }
     }

@@ -10,6 +10,6 @@ do
 	echo
 	name=${file%%.*}
 	name_output="./outputs/$name$output"
-	(./../sources/frontend/structfe < $file) > $name_output
+	(./../sources/frontend/structfe < $file) > $name_output 2>&1
     fi
 done
