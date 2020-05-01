@@ -568,13 +568,15 @@ declarator
 {
   $$.code= init_code($$.code);
   $$.code= concatener($$.code, "*", $2.code, NULL);
-  $$.type= basic_type(VOID_T, "");
+  $$.type= ptr_type($<attributs>0.type, "");
+  //$$.type= basic_type(VOID_T, "");
 }
 
 | direct_declarator
 {
-  $$.code= strdup($1.code);
-  $$.type= basic_type(VOID_T, "");
+    $$.code= strdup($1.code);
+    $$.type= $<attributs>0.type;
+    //$$.type= basic_type(VOID_T, "");
 }
 ;
 
@@ -582,18 +584,21 @@ direct_declarator
 :  '(' declarator ')'
 {
   $$.code = init_code($$.code); $$.code = concatener($$.code, "(", $2.code, ")", NULL);
-  $$.type= basic_type(VOID_T, "");
+  $$.type= $<attributs>0.type;
 }
 
 | IDENTIFIER
 {
   $$.code = strdup($1->nom);
-  $$.type= basic_type(VOID_T, "");
+  $1->type= $<attributs>0.type;
+  if($1->type != NULL) {fprintf(stderr, "TYPE DE L'ID %s: %s\n",$1->nom, get_type_readable( ($1->type)->root) );}
+  $$.type= $1->type;
 }
 
 | direct_declarator '(' parameter_list ')'
 {
   $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "(",$3.code,")", NULL);
+  if($1.type != NULL) {fprintf(stderr, "TYPE DE DIRECT DECLA: %s\n", get_type_readable( ($1.type)->root) );}
   $$.type= basic_type(VOID_T, ""); /*type fonction*/
 }	      
 
