@@ -1960,52 +1960,52 @@ void supprimer_table(table_t *table)
 }
 
 symbole_t *rechercher(table_t *tableSymbole, char *nom)
-    {
-	int h;
-	symbole_t *s;
-	symbole_t *precedent;
-	h = hash(nom);
-	s = tableSymbole->table[h];
-	precedent = NULL;
-	while ( s != NULL )
+{
+    int h;
+    symbole_t *s;
+    symbole_t *precedent;
+    h = hash(nom);
+    s = tableSymbole->table[h];
+    precedent = NULL;
+    while ( s != NULL )
 	{
 	    if ( strcmp( s->nom, nom ) == 0 )
 		return s;
 	    precedent = s;
 	    s = s->suivant;
 	}
-	return s;
-    }
+    return s;
+}
 
- symbole_t *ajouter(table_t *tableSymbole, char *nom)
-    {
-	int h;
-	symbole_t *s;
-	symbole_t *precedent;
-	h = hash(nom);
-	s = tableSymbole->table[h];
-	precedent = NULL;
-	while ( s != NULL )
+symbole_t *ajouter(table_t *tableSymbole, char *nom)
+{
+    int h;
+    symbole_t *s;
+    symbole_t *precedent;
+    h = hash(nom);
+    s = tableSymbole->table[h];
+    precedent = NULL;
+    while ( s != NULL )
 	{
 	    if ( strcmp( s->nom, nom ) == 0 )
 		return s; /* Si l'identifiant existe déjà, on retourne NULL */
 	    precedent = s;
 	    s = s->suivant;
 	}
-	if ( precedent == NULL )
+    if ( precedent == NULL )
 	{
 	    tableSymbole->table[h] = (symbole_t *) malloc(sizeof(symbole_t));
 	    s = tableSymbole->table[h];
 	}
-	else
-	    {
-		precedent->suivant = (symbole_t *) malloc(sizeof(symbole_t));
-		s = precedent->suivant;
-	    }
+    else
+	{
+	    precedent->suivant = (symbole_t *) malloc(sizeof(symbole_t));
+	    s = precedent->suivant;
+	}
     s->nom = strdup(nom);
     s->suivant = NULL;
     return s;
-    }
+}
 
 
 int hash( char *nom ) {
@@ -2133,7 +2133,6 @@ void init_cpt_var(){
 char *new_var(char *var){
     var = malloc(50);
     int random_part;
-
 
     do {
     random_part= rand() % RANDMAX;

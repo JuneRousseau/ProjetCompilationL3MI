@@ -1,40 +1,26 @@
-Type error line 10 > Expected type: INT_T , Found_type: VOID_T 
-Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
-Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
-Type error line 10 > Expected type: INT_T , Found_type: VOID_T 
-Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
-Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
-Type error line 10 > Expected type: INT_T , Found_type: VOID_T 
-Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
-Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
-Type error line 10 > Expected type: INT_T , Found_type: VOID_T 
-Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
-Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
-Type error line 10 > Expected type: INT_T , Found_type: ERROR_T 
-Type error line 10 > Expected type: FCT_T , Found_type: VOID_T 
 extern int printd(int i );
 int main(){
 int i;
 int j;
 int k;
 i = 45000;
-temp_41413942_0 = -123;
-j = temp_41413942_0;
+temp_84934189_0 = -123;
+j = temp_84934189_0;
 k = 43;
-temp_91441184_1 = i+j;
-temp_73312411_2 = temp_91441184_1*k;
-temp_36994175_3 = temp_73312411_2/100;
-temp_92964358_4 = j*k;
-temp_48817969_5 = temp_92964358_4*i;
-temp_49749460_6 = temp_36994175_3+temp_48817969_5;
-temp_10408657_7 = j*2;
-temp_36021990_8 = temp_10408657_7*k;
-temp_77450264_9 = temp_49749460_6-temp_36021990_8;
-temp_16814527_10 = j*2;
-temp_24738534_11 = temp_16814527_10*k;
-temp_89766863_12 = k-temp_24738534_11;
-temp_99988220_13 = temp_77450264_9/temp_89766863_12;
-temp_43655295_14 = printd(temp_99988220_13);
+temp_10771506_1 = i+j;
+temp_93507495_2 = temp_10771506_1*k;
+temp_11836802_3 = temp_93507495_2/100;
+temp_55388038_4 = j*k;
+temp_70879922_5 = temp_55388038_4*i;
+temp_60942217_6 = temp_11836802_3+temp_70879922_5;
+temp_71438167_7 = j*2;
+temp_83807607_8 = temp_71438167_7*k;
+temp_73380972_9 = temp_60942217_6-temp_83807607_8;
+temp_84128972_10 = j*2;
+temp_28041448_11 = temp_84128972_10*k;
+temp_1301355_12 = k-temp_28041448_11;
+temp_97466734_13 = temp_73380972_9/temp_1301355_12;
+temp_11619151_14 = printd(temp_97466734_13);
 return 0 ;
 }
 

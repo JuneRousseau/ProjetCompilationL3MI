@@ -17,10 +17,10 @@ typedef struct _arbre_t {
 } arbre_t;
 
 typedef struct _symbole_t {
- char *nom;
- arbre_t *type;
- struct _symbole_t *suivant;
- } symbole_t;
+  char *nom;
+  arbre_t *type;
+  struct _symbole_t *suivant;
+} symbole_t;
 
 typedef struct _attributs_t {
   char *code;
@@ -29,10 +29,10 @@ typedef struct _attributs_t {
 } attributs_t;
 
 typedef struct _table_t {
-    symbole_t *table[TAILLE];
-    struct _table_t *suivant;
-    struct _table_t *precedent;
-    } table_t;
+  symbole_t *table[TAILLE];
+  struct _table_t *suivant;
+  struct _table_t *precedent;
+} table_t;
 
 symbole_t *ajouter( table_t *table, char *nom);
 symbole_t *rechercher( table_t *table, char *nom );
@@ -41,8 +41,8 @@ void supprimer_table();
 int hash(char *nom);
 
 typedef struct _pile_t {
-    table_t *premier;
-    } pile_t;
+  table_t *premier;
+} pile_t;
 
 pile_t *init_pile();
 pile_t *push(table_t *table);
