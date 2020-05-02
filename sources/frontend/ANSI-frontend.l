@@ -10,10 +10,13 @@ L                       [a-zA-Z_]
 #include <time.h>
 #define TAILLE 103
 #define RANDMAX 100000000
+#define SEMANTICERROR 2
+#define SYNTAXERROR 1
 
 pile_t *pile;
 int cpt_var;
 int cpt_label;
+int error;
 %}
 
 %%
@@ -388,12 +391,46 @@ void type_error(type_t expected_type, arbre_t *found_type, int line, attributs_t
 	    }
 	else
 	    {
-		fprintf(stderr, "Type error line %d > Expected type: %s , Found_type: %s \n", line, expected_type_readable, get_type_readable(found_type->root));
+		fprintf(stderr, "Type error line %d > Expected type: %s , Found_type: %s \n", line, expected_type_readable, draw_type_expr(found_type));
 		}
 	attribut->type= basic_type(ERROR_T, "");
+	error=SEMANTICERROR;
 	return ;
     }
 
+void type_error_function_arguments(arbre_t *expected_depart, arbre_t *found_depart, int line, attributs_t *attribut)
+    {
+	if(expected_depart==NULL)
+	    {fprintf(stderr, "Type error line %d > Expected arguments type: NULL, Found arguments type: %s \n", line, draw_type_expr(found_depart)); }
+	else if (found_depart == NULL)
+	    {fprintf(stderr, "Type error line %d > Expected arguments type: %s, Found arguments type: NULL \n", line, draw_type_expr(expected_depart)); }
+	else
+	    {fprintf(stderr, "Type error line %d > Expected arguments type: %s, Found arguments type: %s \n", line, draw_type_expr(expected_depart), draw_type_expr(found_depart) ); }
+	attribut->type= basic_type(ERROR_T, "");
+	error=SEMANTICERROR;
+	return ;
+	}
+
+void type_error_affect(arbre_t *expected_type, arbre_t *found_type, int line, attributs_t *attribut)
+    {
+	if(expected_type==NULL)
+	    {fprintf(stderr, "Type error line %d > Expected type: NULL, Found type: %s \n", line, draw_type_expr(found_type)); }
+	else if (found_type == NULL)
+	    {fprintf(stderr, "Type error line %d > Expected type: %s, Found type: NULL \n", line, draw_type_expr(expected_type)); }
+	else
+	    {fprintf(stderr, "Type error line %d > Expected type: %s, Found type: %s \n", line, draw_type_expr(expected_type), draw_type_expr(found_type) ); }
+	attribut->type= basic_type(ERROR_T, "");
+	error=SEMANTICERROR;
+	return ;
+	}
+	
+void type_error_relational(arbre_t *found_left_type, arbre_t *found_right_type, int line, attributs_t *attribut)
+{
+    fprintf(stderr, "Type error line %d Relationnal expression > left type: %s, right type: %s \n", line, draw_type_expr(found_left_type), draw_type_expr(found_right_type) );
+    attribut->type= basic_type(ERROR_T, "");
+    error=SEMANTICERROR;
+    return;
+}
 
 char* get_type_readable(type_t type)
 {
@@ -426,3 +463,49 @@ char* get_type_readable(type_t type)
 		break;
 	    }
     }
+
+
+char *draw_type_expr(arbre_t *type_expr)
+{
+
+    if(type_expr== NULL){return strdup("NULL");}
+    else
+	{
+	    char *s;
+	    s= init_code(s);
+	    type_t root= type_expr->root;
+	    switch(root)
+		{
+		case 0: //INT_T
+		    return strdup("int");
+		    break;
+		case 1: //VOID_T
+		    return strdup("void");
+		    break;
+		case 2: //ERROR_T
+		    return strdup("error");
+		    break;
+		case 3: //FCT_T		    
+		    return concatener(s, strdup("("), draw_type_expr(type_expr->fils_gauche), strdup(") -> "), draw_type_expr(type_expr->fils_droit), NULL);
+		    //return strdup("FCT_T");
+		    break;
+		case 4: //PTR_T
+		    return concatener(s, strdup("PTR("), draw_type_expr(type_expr->fils_gauche), strdup(")"), NULL);
+		    //return strdup("PTR_T");
+		    break;
+		case 5://PROD_T
+		    return concatener(s, draw_type_expr(type_expr->fils_gauche), strdup(" x "), draw_type_expr(type_expr->fils_droit), NULL);
+		    //return strdup("PROD_T");
+		    break;
+		case 6://STRUCT_T
+		    return strdup("STRUCT_T");
+		    break;
+		default:
+		    return NULL;
+		    break;
+		}
+	}
+}
+
+void init_error() {error=0;}
+int get_error_code() {return error;}

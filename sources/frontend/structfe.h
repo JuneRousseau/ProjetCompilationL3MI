@@ -78,4 +78,13 @@ arbre_t *struct_type(arbre_t *champs, char* name);
 
 int verif_type(arbre_t *expr_type, type_t expected_type);
 void type_error(type_t expected_type, arbre_t *found_type, int line, attributs_t *attribut);
+void type_error_function_arguments(arbre_t *expected_depart, arbre_t *found_depart, int line, attributs_t *attribut);
+void type_error_affect(arbre_t *expected_type, arbre_t *found_type, int line, attributs_t *attribut);
+void type_error_relational(arbre_t *found_left_type, arbre_t *found_right_type, int line, attributs_t *attribut);
+  
 char* get_type_readable(type_t type);
+char *draw_type_expr(arbre_t *type_expr);
+
+
+void init_error();
+int get_error_code();

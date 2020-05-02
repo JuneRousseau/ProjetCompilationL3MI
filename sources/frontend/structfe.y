@@ -1,7 +1,10 @@
 %{
 #include "structfe.h"
-  extern int yylineno;
-  %}
+#define SEMANTICERROR 2
+#define SYNTAXERROR 1
+
+extern int yylineno;
+%}
 
 %token <attributs> SIZEOF
 %token <attributs> PTR_OP LE_OP GE_OP EQ_OP NE_OP
@@ -54,8 +57,8 @@ primary_expression
   $$.code = init_code($$.code);
   $$.res = strdup($1->nom);
 
-  $$.type = basic_type(VOID_T, "");
-  //$$.type = $1->type;
+  //$$.type = basic_type(VOID_T, "");
+  $$.type = $1->type;
 } ;
 
 postfix_expression
@@ -81,7 +84,7 @@ postfix_expression
       if (verif_type(depart, VOID_T)) /*l'espace de départ est bien VOID_T*/ /* VOID OU NULL??*/
 	{$$.type = $1.type->fils_droit;}
       else
-	{type_error(VOID_T, depart, yylineno, &$$);}
+	  {type_error_function_arguments(basic_type(VOID_T, ""), depart, yylineno, &$$);}
     }
   else
     {type_error(FCT_T, $1.type, yylineno, &$$);}
@@ -156,16 +159,15 @@ unary_expression
   $$.res = strdup(new_var($$.res)); /* stockage du resultat*/
   $$.code = concatener($$.code, $2.code, $$.res, " = ", $1.code, $2.res,";\n", NULL);
 
-
-  if(strcmp($1.code, "-"))
+  if(!(strcmp($1.code, "-")))
     {
       if(verif_type($2.type, INT_T)) {$$.type = basic_type(INT_T, "");}
       else {type_error(INT_T, $2.type, yylineno, &$$);}
     }
 
-  else if(strcmp($1.code, "&"))
+  else if(!(strcmp($1.code, "&")))
     {
-      if($2.type == NULL) {$$.type= basic_type(ERROR_T, ""); /*creer message d'erreur*/}
+	if($2.type == NULL) {fprintf(stderr, "Type error line %d > Expected type: not NULL , Found_type: NULL \n", yylineno); $$.type=basic_type(ERROR_T, ""); }
       else{$$.type = ptr_type($2.type, ""); }
     }
 
@@ -388,7 +390,7 @@ equality_expression
   $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "==", $3.res, ";\n", NULL);
 
   if(compare_arbre_t($1.type, $3.type)) {$$.type= basic_type(INT_T, "");}
-  else { $$.type= basic_type(ERROR_T, ""); /*generer message d'erreur*/ }
+  else { type_error_relational($1.type, $3.type, yylineno, &$$);}
 }
 
 | equality_expression NE_OP relational_expression
@@ -398,7 +400,7 @@ equality_expression
   $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "!=", $3.res, ";\n",  NULL);
 
   if(compare_arbre_t($1.type, $3.type)) {$$.type= basic_type(INT_T, "");}
-  else { $$.type= basic_type(ERROR_T, ""); /*generer message d'erreur*/ }
+  else { type_error_relational($1.type, $3.type, yylineno, &$$); }
 }
 ;
 
@@ -490,8 +492,7 @@ expression
 
   if(compare_arbre_t($1.type, $3.type)) {
     $$.type= $1.type;}
-  else {
-    $$.type= basic_type(ERROR_T, ""); /*generer message d'erreur*/ }
+  else {type_error_affect($1.type, $3.type, yylineno, &$$);}
 }
 ;
 
@@ -564,18 +565,19 @@ struct_declaration
 ;
 
 declarator
-: '*' direct_declarator
+: '*' direct_declarator {$<attributs>$.type= ptr_type($<attributs>0.type, "");}
 {
   $$.code= init_code($$.code);
   $$.code= concatener($$.code, "*", $2.code, NULL);
-  $$.type= ptr_type($<attributs>0.type, "");
+  $$.type= $<attributs>3.type;
   //$$.type= basic_type(VOID_T, "");
 }
 
-| direct_declarator
+| direct_declarator {$<attributs>$.type= $<attributs>0.type;}
 {
     $$.code= strdup($1.code);
-    $$.type= $<attributs>0.type;
+    $$.type= $<attributs>2.type;
+    //$$.type= $<attributs>0.type;
     //$$.type= basic_type(VOID_T, "");
 }
 ;
@@ -591,21 +593,22 @@ direct_declarator
 {
   $$.code = strdup($1->nom);
   $1->type= $<attributs>0.type;
-  if($1->type != NULL) {fprintf(stderr, "TYPE DE L'ID %s: %s\n",$1->nom, get_type_readable( ($1->type)->root) );}
+  //if($1->type != NULL) {fprintf(stderr, "TYPE DE L'ID %s: %s\n",$1->nom, get_type_readable( ($1->type)->root) );}
   $$.type= $1->type;
 }
+
 
 | direct_declarator '(' parameter_list ')'
 {
   $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "(",$3.code,")", NULL);
   if($1.type != NULL) {fprintf(stderr, "TYPE DE DIRECT DECLA: %s\n", get_type_readable( ($1.type)->root) );}
-  $$.type= basic_type(VOID_T, ""); /*type fonction*/
+  $$.type= basic_type(ERROR_T, ""); //type fonction
 }	      
 
 | direct_declarator '(' ')'
 {
   $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "()", NULL);
-  $$.type= basic_type(VOID_T, ""); /*type fonction*/
+  $$.type= basic_type(ERROR_T, ""); //type fonction
 }
 ;
 
@@ -807,7 +810,7 @@ jump_statement
 {
   $$.code= strdup($2.code);
   $$.code= concatener($$.code, "return ", $2.res," ;\n", NULL);
-  $$.type= basic_type(VOID_T, "");
+  $$.type= $2.type;
 }
 ;
 
@@ -830,12 +833,12 @@ external_declaration
 : function_definition
 {
   $$.code = strdup($1.code);
-  $$.type = basic_type(VOID_T, "");
+  $$.type = $1.type;
 }
 | declaration
 {
   $$.code = strdup($1.code);
-  $$.type = basic_type(VOID_T, "");
+  $$.type = $1.type;
 }
 ;
 
@@ -844,7 +847,7 @@ function_definition
 {
   $$.code = init_code($$.code);
   $$.code = concatener($$.code, $1.code, " " ,$2.code, $3.code, NULL);
-  $$.type = basic_type(VOID_T, "");
+  $$.type = $2.type;
 }
 ;
 
@@ -852,23 +855,25 @@ function_definition
 	 
 int main()
 {
-  init_pile();
-  init_cpt_var();
-  init_cpt_label();
-  int c = yyparse();
-  while(c)
-    {
-      c=yyparse();
-    }
 
-  /*afficher_pile();*/
+    init_pile();
+    init_cpt_var();
+    init_cpt_label();
+    init_error();
+    int c = yyparse();
+    while(c)
+	{
+	    c=yyparse();
+	}
 
-  printf("\n\n\nAccepted\n");
-  exit(0);
+    /*afficher_pile();*/
+
+    printf("\n\n\nAccepted\n");
+    exit(get_error_code());
 }
 
 int yyerror(char* s)
 {
   fprintf(stderr, "line %d: %s\n", yylineno, s);
-  exit(1);
+  exit(SYNTAXERROR);
 }

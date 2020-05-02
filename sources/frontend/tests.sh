@@ -10,14 +10,23 @@ do
 	echo
 	name=${file%%.*}
 	name_output="./outputs/$name$output"
-	(./../sources/frontend/structfe < $file) > $name_output 
-	if [ $? == 0 ]
+	(./../sources/frontend/structfe < $file) > $name_output
+	code="$?"
+	echo
+	if [ $code == 0 ]
 	then
 	    echo $file: OK
 	else
-	    echo $file: ERROR
+	    if [ $code == 1 ]
+	    then
+		echo $file: Syntax error
+	    else
+		if [ $code == 2 ]
+		then
+		    echo $file: Semantic error
+		fi
+	    fi
 	fi
-	echo
 	echo
     fi
 done

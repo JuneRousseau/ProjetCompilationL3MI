@@ -59,3 +59,29 @@ arbre_t *base_int1= basic_type(INT_T, "");
     printf("fct5 et fct6 (1): %d\n", compare_arbre_t(fct5, fct6));
     printf("fct6 et fct7 (0): %d\n", compare_arbre_t(fct6, fct7));
 
+printf("%s\n", draw_type_expr(base_int1));
+printf("%s\n", draw_type_expr(base_int2));
+printf("%s\n", draw_type_expr(base_int3));
+printf("%s\n", draw_type_expr(base_int4));
+printf("%s\n", draw_type_expr(base_voidd));
+printf("%s\n", draw_type_expr(ptr_int1));
+printf("%s\n", draw_type_expr(ptr_int2));
+printf("%s\n", draw_type_expr(ptr_voidd));
+
+printf("%s\n", draw_type_expr(prod_int1));
+printf("%s\n", draw_type_expr(prod_int2));
+printf("%s\n", draw_type_expr(prod_div));
+
+printf("%s\n", draw_type_expr(prod4));
+printf("%s\n", draw_type_expr(prod5));
+printf("%s\n", draw_type_expr(prod6));
+
+printf("%s\n", draw_type_expr(fct1));
+printf("%s\n", draw_type_expr(fct2));
+printf("%s\n", draw_type_expr(fct3));
+printf("%s\n", draw_type_expr(fct4));
+printf("%s\n", draw_type_expr(fct5));
+printf("%s\n", draw_type_expr(fct6));
+printf("%s\n", draw_type_expr(fct7)); 
+
+

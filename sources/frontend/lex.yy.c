@@ -517,12 +517,15 @@ char *yytext;
 #include <time.h>
 #define TAILLE 103
 #define RANDMAX 100000000
+#define SEMANTICERROR 2
+#define SYNTAXERROR 1
 
 pile_t *pile;
 int cpt_var;
 int cpt_label;
-#line 525 "lex.yy.c"
-#line 526 "lex.yy.c"
+int error;
+#line 528 "lex.yy.c"
+#line 529 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -739,9 +742,9 @@ YY_DECL
 		}
 
 	{
-#line 19 "ANSI-frontend.l"
+#line 22 "ANSI-frontend.l"
 
-#line 745 "lex.yy.c"
+#line 748 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -810,122 +813,122 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 20 "ANSI-frontend.l"
+#line 23 "ANSI-frontend.l"
 { return ELSE; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 21 "ANSI-frontend.l"
+#line 24 "ANSI-frontend.l"
 { return EXTERN; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 22 "ANSI-frontend.l"
+#line 25 "ANSI-frontend.l"
 { return FOR; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 23 "ANSI-frontend.l"
+#line 26 "ANSI-frontend.l"
 { return IF; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 24 "ANSI-frontend.l"
+#line 27 "ANSI-frontend.l"
 { return INT; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 25 "ANSI-frontend.l"
+#line 28 "ANSI-frontend.l"
 { return RETURN; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 26 "ANSI-frontend.l"
+#line 29 "ANSI-frontend.l"
 { return SIZEOF; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 27 "ANSI-frontend.l"
+#line 30 "ANSI-frontend.l"
 { return STRUCT; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 28 "ANSI-frontend.l"
+#line 31 "ANSI-frontend.l"
 { return VOID; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 29 "ANSI-frontend.l"
+#line 32 "ANSI-frontend.l"
 { return WHILE; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 31 "ANSI-frontend.l"
+#line 34 "ANSI-frontend.l"
 { yylval.symbol= ajouter(top(), yytext); return IDENTIFIER; } /*identificateurs de variable*/
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 32 "ANSI-frontend.l"
+#line 35 "ANSI-frontend.l"
 { yylval.number= strdup(yytext); return CONSTANT; } /* constance numérique */
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 34 "ANSI-frontend.l"
+#line 37 "ANSI-frontend.l"
 ; /* Commentaires */
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 36 "ANSI-frontend.l"
+#line 39 "ANSI-frontend.l"
 { return PTR_OP; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 37 "ANSI-frontend.l"
+#line 40 "ANSI-frontend.l"
 { return AND_OP; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 38 "ANSI-frontend.l"
+#line 41 "ANSI-frontend.l"
 { return OR_OP; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 39 "ANSI-frontend.l"
+#line 42 "ANSI-frontend.l"
 { return LE_OP; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 40 "ANSI-frontend.l"
+#line 43 "ANSI-frontend.l"
 { return GE_OP; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 41 "ANSI-frontend.l"
+#line 44 "ANSI-frontend.l"
 { return EQ_OP; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 42 "ANSI-frontend.l"
+#line 45 "ANSI-frontend.l"
 { return NE_OP; }
 	YY_BREAK
 case 21:
 /* rule 21 can match eol */
 YY_RULE_SETUP
-#line 45 "ANSI-frontend.l"
+#line 48 "ANSI-frontend.l"
 ;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 47 "ANSI-frontend.l"
+#line 50 "ANSI-frontend.l"
 { return yytext[0]; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 49 "ANSI-frontend.l"
+#line 52 "ANSI-frontend.l"
 ECHO;
 	YY_BREAK
-#line 929 "lex.yy.c"
+#line 932 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1942,7 +1945,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 49 "ANSI-frontend.l"
+#line 52 "ANSI-frontend.l"
 
 
 /* Gestion tables des symboles */
@@ -2285,12 +2288,46 @@ void type_error(type_t expected_type, arbre_t *found_type, int line, attributs_t
 	    }
 	else
 	    {
-		fprintf(stderr, "Type error line %d > Expected type: %s , Found_type: %s \n", line, expected_type_readable, get_type_readable(found_type->root));
+		fprintf(stderr, "Type error line %d > Expected type: %s , Found_type: %s \n", line, expected_type_readable, draw_type_expr(found_type));
 		}
 	attribut->type= basic_type(ERROR_T, "");
+	error=SEMANTICERROR;
 	return ;
     }
 
+void type_error_function_arguments(arbre_t *expected_depart, arbre_t *found_depart, int line, attributs_t *attribut)
+    {
+	if(expected_depart==NULL)
+	    {fprintf(stderr, "Type error line %d > Expected arguments type: NULL, Found arguments type: %s \n", line, draw_type_expr(found_depart)); }
+	else if (found_depart == NULL)
+	    {fprintf(stderr, "Type error line %d > Expected arguments type: %s, Found arguments type: NULL \n", line, draw_type_expr(expected_depart)); }
+	else
+	    {fprintf(stderr, "Type error line %d > Expected arguments type: %s, Found arguments type: %s \n", line, draw_type_expr(expected_depart), draw_type_expr(found_depart) ); }
+	attribut->type= basic_type(ERROR_T, "");
+	error=SEMANTICERROR;
+	return ;
+	}
+
+void type_error_affect(arbre_t *expected_type, arbre_t *found_type, int line, attributs_t *attribut)
+    {
+	if(expected_type==NULL)
+	    {fprintf(stderr, "Type error line %d > Expected type: NULL, Found type: %s \n", line, draw_type_expr(found_type)); }
+	else if (found_type == NULL)
+	    {fprintf(stderr, "Type error line %d > Expected type: %s, Found type: NULL \n", line, draw_type_expr(expected_type)); }
+	else
+	    {fprintf(stderr, "Type error line %d > Expected type: %s, Found type: %s \n", line, draw_type_expr(expected_type), draw_type_expr(found_type) ); }
+	attribut->type= basic_type(ERROR_T, "");
+	error=SEMANTICERROR;
+	return ;
+	}
+	
+void type_error_relational(arbre_t *found_left_type, arbre_t *found_right_type, int line, attributs_t *attribut)
+{
+    fprintf(stderr, "Type error line %d Relationnal expression > left type: %s, right type: %s \n", line, draw_type_expr(found_left_type), draw_type_expr(found_right_type) );
+    attribut->type= basic_type(ERROR_T, "");
+    error=SEMANTICERROR;
+    return;
+}
 
 char* get_type_readable(type_t type)
 {
@@ -2323,4 +2360,50 @@ char* get_type_readable(type_t type)
 		break;
 	    }
     }
+
+
+char *draw_type_expr(arbre_t *type_expr)
+{
+
+    if(type_expr== NULL){return strdup("NULL");}
+    else
+	{
+	    char *s;
+	    s= init_code(s);
+	    type_t root= type_expr->root;
+	    switch(root)
+		{
+		case 0: //INT_T
+		    return strdup("int");
+		    break;
+		case 1: //VOID_T
+		    return strdup("void");
+		    break;
+		case 2: //ERROR_T
+		    return strdup("error");
+		    break;
+		case 3: //FCT_T		    
+		    return concatener(s, strdup("("), draw_type_expr(type_expr->fils_gauche), strdup(") -> "), draw_type_expr(type_expr->fils_droit), NULL);
+		    //return strdup("FCT_T");
+		    break;
+		case 4: //PTR_T
+		    return concatener(s, strdup("PTR("), draw_type_expr(type_expr->fils_gauche), strdup(")"), NULL);
+		    //return strdup("PTR_T");
+		    break;
+		case 5://PROD_T
+		    return concatener(s, draw_type_expr(type_expr->fils_gauche), strdup(" x "), draw_type_expr(type_expr->fils_droit), NULL);
+		    //return strdup("PROD_T");
+		    break;
+		case 6://STRUCT_T
+		    return strdup("STRUCT_T");
+		    break;
+		default:
+		    return NULL;
+		    break;
+		}
+	}
+}
+
+void init_error() {error=0;}
+int get_error_code() {return error;}
 
