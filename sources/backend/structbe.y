@@ -4,6 +4,7 @@
 
 int yylex();
 int yyerror(char* s);
+extern int yylineno;
 %}
 
 %token IDENTIFIER CONSTANT 
@@ -176,9 +177,9 @@ int main()
 	exit(0);
     }
 
-extern int yylineno;
 int yyerror(char* s)
 {
     fprintf(stderr, "line %d: %s\n", yylineno, s);
+    
     exit(1);
 }

@@ -69,8 +69,9 @@
 
 int yylex();
 int yyerror(char* s);
+extern int yylineno;
 
-#line 74 "structbe.tab.c" /* yacc.c:339  */
+#line 75 "structbe.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -136,7 +137,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 140 "structbe.tab.c" /* yacc.c:358  */
+#line 141 "structbe.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -434,13 +435,13 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    19,    19,    20,    24,    25,    26,    30,    31,    35,
-      36,    40,    41,    42,    46,    47,    48,    52,    53,    54,
-      58,    59,    60,    61,    62,    66,    67,    68,    72,    73,
-      74,    78,    82,    83,    87,    88,    92,    93,    97,    98,
-      99,   103,   104,   108,   112,   113,   114,   115,   116,   120,
-     121,   122,   123,   127,   128,   132,   133,   137,   141,   142,
-     146,   149,   150,   151,   155,   156,   160,   161,   165
+       0,    20,    20,    21,    25,    26,    27,    31,    32,    36,
+      37,    41,    42,    43,    47,    48,    49,    53,    54,    55,
+      59,    60,    61,    62,    63,    67,    68,    69,    73,    74,
+      75,    79,    83,    84,    88,    89,    93,    94,    98,    99,
+     100,   104,   105,   109,   113,   114,   115,   116,   117,   121,
+     122,   123,   124,   128,   129,   133,   134,   138,   142,   143,
+     147,   150,   151,   152,   156,   157,   161,   162,   166
 };
 #endif
 
@@ -1302,7 +1303,7 @@ yyreduce:
   switch (yyn)
     {
       
-#line 1306 "structbe.tab.c" /* yacc.c:1646  */
+#line 1307 "structbe.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1530,7 +1531,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 168 "structbe.y" /* yacc.c:1906  */
+#line 169 "structbe.y" /* yacc.c:1906  */
 
 int main()
     {
@@ -1542,9 +1543,9 @@ int main()
 	exit(0);
     }
 
-extern int yylineno;
 int yyerror(char* s)
 {
     fprintf(stderr, "line %d: %s\n", yylineno, s);
-    exit(1);
+    
+    exit(yylineno+1);
 }
