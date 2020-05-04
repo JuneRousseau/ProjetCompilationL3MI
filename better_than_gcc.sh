@@ -65,8 +65,25 @@ test_compilation()
 	rm compil_log
     fi
 }
-    
 
+
+echo -e "Voulez vous compiler le structfe ? [y ou n]: \c"
+read answer
+if [ $answer == 'y' ]
+then
+    cd ./sources/frontend
+    touch log
+    ./compil.sh ANSI-frontend.l structfe 2>log
+    compilation=$?
+    if [ $compilation != 0 ]
+    then
+	echo "Compilateur non recompile (fail):"
+	cat log
+    fi
+    rm log
+    cd ../..
+fi
+echo
 if [ $# == 0 ]
 then
     list_file=`ls ./Tests`

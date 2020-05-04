@@ -505,10 +505,10 @@ logical_and_expression
     label_falsee= strdup(new_label(label_falsee));
     label_truee= strdup(new_label(label_truee));
 
-    $$.code = concatener($$.code, $1.code, "if ", $1.res, " goto ", label_suite,";\n", NULL);
+    $$.code = concatener($$.code, $1.code, "if (", $1.res, ") goto ", label_suite,";\n", NULL);
     $$.code = concatener($$.code, "goto ", label_falsee, ";\n", NULL);
     $$.code = concatener($$.code,"\n",  label_suite, ":\n", NULL);
-    $$.code = concatener($$.code, $3.code, "if ", $3.res, " goto ", label_truee,";\n", NULL);
+    $$.code = concatener($$.code, $3.code, "if (", $3.res, ") goto ", label_truee,";\n", NULL);
     $$.code = concatener($$.code,"goto ", label_falsee, ";\n", NULL);
     $$.code = concatener($$.code,"\n",  label_truee,":\n", $$.res, "= 1;\n", NULL);
     $$.code = concatener($$.code,"\n", label_falsee,":\n", $$.res, "= 0;\n", NULL);
@@ -547,10 +547,10 @@ logical_or_expression
     label_falsee= strdup(new_label(label_falsee));
     label_truee= strdup(new_label(label_truee));
  
-    $$.code = concatener($$.code,"", $1.code, "if ", $1.res, "goto ", label_truee,";\n", NULL);
+    $$.code = concatener($$.code,"", $1.code, "if (", $1.res, ") goto ", label_truee,";\n", NULL);
     $$.code = concatener($$.code,"", "goto ", label_suite, ";\n", NULL);
     $$.code = concatener($$.code,"", label_suite, ":\n", NULL);
-    $$.code = concatener($$.code,"", $3.code, "if ", $3.res, "goto ", label_truee,";\n", NULL);
+    $$.code = concatener($$.code,"", $3.code, "if (", $3.res, ") goto ", label_truee,";\n", NULL);
     $$.code = concatener($$.code,"", "goto ", label_falsee, ";\n", NULL);
     $$.code = concatener($$.code,"", label_truee,":\n", $$.res, "= 1;\n", NULL);
     $$.code = concatener($$.code,"", label_falsee,":\n", $$.res, "= 0;\n", NULL);
@@ -925,10 +925,10 @@ iteration_statement
 
     $$.code=init_code($$.code);
     $$.code= concatener($$.code, $3.code, "\n", NULL);
-    $$.code= concatener($$.code, "if ", $3.res , " goto ", label_loop, ";\n", NULL);
+    $$.code= concatener($$.code, "if (", $3.res , ") goto ", label_loop, ";\n", NULL);
     $$.code= concatener($$.code, "goto ", label_end, ";\n", NULL);
     $$.code= concatener($$.code, label_loop, ":\n", $5.code, "\n", $3.code, "\n", NULL);
-    $$.code= concatener($$.code, "if ", $3.res , " goto ", label_loop, ";\n", NULL);
+    $$.code= concatener($$.code, "if (", $3.res , ") goto ", label_loop, ";\n", NULL);
     $$.code= concatener($$.code, "goto ", label_end, ";\n",label_end,":\n", NULL);
     $$.res= NULL;
     $$.declarations= strdup($3.declarations);
@@ -947,10 +947,10 @@ iteration_statement
     $$.code= init_code($$.code);
     $$.code= concatener($$.code, $3.code, NULL);
     $$.code= concatener($$.code, $4.code, NULL);
-    $$.code= concatener($$.code, "if ", $4.res , " goto ", label_loop, ";\n", NULL);
+    $$.code= concatener($$.code, "if (", $4.res , ") goto ", label_loop, ";\n", NULL);
     $$.code= concatener($$.code, "goto ", label_end, ";\n", NULL);
     $$.code= concatener($$.code, label_loop, ":\n", $7.code, "\n", $5.code, "\n", $4.code, NULL);
-    $$.code= concatener($$.code, "if ", $4.res , " goto ", label_loop, ";\n", NULL);
+    $$.code= concatener($$.code, "if (", $4.res , ") goto ", label_loop, ";\n", NULL);
     $$.code= concatener($$.code, "goto ", label_end, ";\n",label_end,":\n", NULL);
     $$.res= NULL;
 
