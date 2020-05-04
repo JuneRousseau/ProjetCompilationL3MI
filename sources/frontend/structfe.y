@@ -39,14 +39,15 @@ primary_expression
     $$.code = init_code($$.code);
     $$.code = concatener($$.code, $2.code, NULL);
     $$.res = strdup($2.res);
-
+    $$.declarations= strdup($2.declarations);
     $$.type= $2.type;
 }
 
 | CONSTANT
 {
     $$.code = init_code($$.code);
-    $$.res = $1;
+    $$.res = strdup($1);
+    $$.declarations=strdup("");
 
     $$.type= basic_type(INT_T, "");
 }
@@ -56,9 +57,9 @@ primary_expression
 {
     $$.code = init_code($$.code);
     $$.res = strdup($1->nom);
-
-    //$$.type = basic_type(VOID_T, "");
+    
     $$.type = $1->type;
+    $$.declarations=strdup("");
 } ;
 
 postfix_expression
@@ -66,6 +67,7 @@ postfix_expression
 {
     $$.code = strdup($1.code);
     $$.res = strdup($1.res);
+    $$.declarations= strdup($1.declarations);
 
     $$.type= $1.type;
 }
@@ -73,11 +75,7 @@ postfix_expression
 
 | postfix_expression '(' ')'
 {
-    $$.code = strdup($1.code);
-    $$.res = strdup(new_var($$.res));
-    $$.code = concatener($$.code, $1.code, $$.res, " = ", $1.res, "()", ";\n", NULL);
-
-    /* on vérifie que le type de postfix_expression est une fonction qui prend void en entrée*/
+/* on vérifie que le type de postfix_expression est une fonction qui prend void en entrée*/
     if(verif_type($1.type, FCT_T)) /*on a bien une fonction*/
 	{
 	    arbre_t *depart= $1.type->fils_gauche;
@@ -88,15 +86,17 @@ postfix_expression
 	}
     else
 	{type_error(FCT_T, $1.type, yylineno, &$$);}
+
+    $$.code = strdup($1.code);
+    $$.res = strdup(new_var($$.res));
+    $$.code = concatener($$.code, $1.code, $$.res, " = ", $1.res, "()", ";\n", NULL);
+    $$.declarations= add_declaration($$.res, $$.type, $1.declarations);
 }
 
 
 
 | postfix_expression '(' argument_expression_list ')'
 {
-    $$.code = strdup($1.code);
-    $$.res = strdup(new_var($$.res));
-    $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res,"(", $3.res, ")", ";\n", NULL);
 
     /* on vérifie que le type de postfix_expression est une fonction qui prend le bon type en entrée*/
     if(verif_type($1.type, FCT_T)) /*on a bien une fonction*/
@@ -109,6 +109,15 @@ postfix_expression
 	}
     else
 	{ type_error(FCT_T, $1.type, yylineno, &$$);}
+
+    $$.code = strdup($1.code);
+    $$.res = strdup(new_var($$.res));
+    $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res,"(", $3.res, ")", ";\n", NULL);
+
+    char* tmp_decla;
+    tmp_decla= init_code(tmp_decla);
+    tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
+    $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
 }
 
 
@@ -119,6 +128,7 @@ postfix_expression
     $$.res = strdup(new_var($$.res));
     $$.code = concatener($$.code, $1.code, $$.res, " = ", $1.res, "->", strdup($3->nom), ";\n", NULL);
     $$.type= basic_type(VOID_T, ""); /*type du champs de structure....*/
+    $$.declarations=strdup("");
 }
 ;
 
@@ -129,6 +139,7 @@ argument_expression_list
     $$.code = strdup($1.code);
     $$.res = strdup($1.res);
     $$.type = $1.type;
+    $$.declarations= strdup($1.declarations);
 }
 
 | argument_expression_list ',' expression
@@ -137,6 +148,8 @@ argument_expression_list
     $$.code = concatener($$.code, $1.code, $3.code, NULL);
     $$.res = init_code($$.res);
     $$.res = concatener($$.res, $1.res, ",", $3.res, NULL);
+    $$.declarations= init_code($$.declarations);
+    $$.declarations= concatener($$.declarations, $1.declarations, $3.declarations, NULL);
 
     $$.type= prod_type($1.type, $3.type, ""); /*c'est un arbre "recursif a gauche"*/
 }
@@ -150,15 +163,12 @@ unary_expression
     $$.code = strdup($1.code);
     $$.res = strdup($1.res);
     $$.type= $1.type;
+    $$.declarations= strdup($1.declarations);
 }
 
 
 | unary_operator unary_expression
 {
-    $$.code = init_code($$.code);
-    $$.res = strdup(new_var($$.res)); /* stockage du resultat*/
-    $$.code = concatener($$.code, $2.code, $$.res, " = ", $1.code, $2.res,";\n", NULL);
-
     if(!(strcmp($1.code, "-")))
 	{
 	    if(verif_type($2.type, INT_T)) {$$.type = basic_type(INT_T, "");}
@@ -176,6 +186,11 @@ unary_expression
 	    if(verif_type($2.type, PTR_T)) {$$.type= $2.type->fils_gauche;}
 	    else {type_error(PTR_T, $2.type, yylineno, &$$);}
 	}
+
+    $$.code = init_code($$.code);
+    $$.res = strdup(new_var($$.res)); /* stockage du resultat*/
+    $$.code = concatener($$.code, $2.code, $$.res, " = ", $1.code, $2.res,";\n", NULL);
+    $$.declarations= add_declaration($$.res, $$.type, $2.declarations);
 }
 
 
@@ -185,6 +200,7 @@ unary_expression
     $$.res = strdup(new_var($$.res));
     $$.code = concatener($$.code, $$.res, " = sizeof(", $3.code , ");\n", NULL);
     $$.type= basic_type(INT_T, "");
+    $$.declarations= add_declaration($$.res, $$.type, strdup(""));
 }
 
 | SIZEOF unary_expression
@@ -193,6 +209,7 @@ unary_expression
     $$.res = strdup(new_var($$.res));
     $$.code = concatener($$.code, $$.res, " = sizeof(",$2.res , ");\n", NULL);
     $$.type= basic_type(INT_T, "");
+    $$.declarations= add_declaration($$.res, $$.type, $2.declarations);
 }       
 ; 
 
@@ -223,30 +240,32 @@ multiplicative_expression
     $$.code = strdup($1.code);
     $$.res = strdup($1.res);
     $$.type = $1.type;
+    $$.declarations= strdup($1.declarations);
 }
 
 
 | multiplicative_expression '*' unary_expression
 {
-    $$.code = init_code($$.code);
-    $$.res = strdup(new_var($$.res));
-    $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "*", $3.res, ";\n", NULL);
-
     if(verif_type($1.type, INT_T))
 	{
 	    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
 	    else {type_error(INT_T, $1.type, yylineno, &$$);}
 	}
     else {type_error(INT_T, $1.type, yylineno, &$$);}
+
+    $$.code = init_code($$.code);
+    $$.res = strdup(new_var($$.res));
+    $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "*", $3.res, ";\n", NULL);
+    char* tmp_decla;
+    tmp_decla= init_code(tmp_decla);
+    tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
+    $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
 
 }
 
 
 | multiplicative_expression '/' unary_expression
 {
-    $$.code = init_code($$.code);
-    $$.res = strdup(new_var($$.res));
-    $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "/", $3.res, ";\n", NULL);
 
     if(verif_type($1.type, INT_T))
 	{
@@ -254,6 +273,15 @@ multiplicative_expression
 	    else {type_error(INT_T, $1.type, yylineno, &$$);}
 	}
     else {type_error(INT_T, $1.type, yylineno, &$$);}
+
+    $$.code = init_code($$.code);
+    $$.res = strdup(new_var($$.res));
+    $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "/", $3.res, ";\n", NULL);
+
+    char* tmp_decla;
+    tmp_decla= init_code(tmp_decla);
+    tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
+    $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
 }
 ;
 
@@ -264,16 +292,12 @@ additive_expression
     $$.code = strdup($1.code);
     $$.res = strdup($1.res);
     $$.type = $1.type;
+    $$.declarations= strdup($1.declarations);
 }
 
 
 | additive_expression '+' multiplicative_expression
 {
-    $$.code = init_code($$.code);
-    $$.res = strdup(new_var($$.res));
-    $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "+", $3.res, ";\n",  NULL);
-
-
     if(verif_type($1.type, INT_T))
 	{
 	    if(verif_type($3.type, INT_T)) {$$.type = basic_type(INT_T, "");}
@@ -286,15 +310,20 @@ additive_expression
 	    else {type_error(INT_T, $3.type, yylineno, &$$); /*int_t */}
 	}
     else {type_error(INT_T, $3.type, yylineno, &$$); /*int_t ou ptr_t*/}
+
+    $$.code = init_code($$.code);
+    $$.res = strdup(new_var($$.res));
+    $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "+", $3.res, ";\n",  NULL);
+
+    char* tmp_decla;
+    tmp_decla= init_code(tmp_decla);
+    tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
+    $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
 }
 
 
 | additive_expression '-' multiplicative_expression
 {
-    $$.code = init_code($$.code);
-    $$.res = strdup(new_var($$.res));
-    $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "-", $3.res, ";\n", NULL);
-
     if(verif_type($1.type, INT_T))
 	{
 	    if(verif_type($3.type, INT_T)) {$$.type = basic_type(INT_T, "");}
@@ -307,6 +336,15 @@ additive_expression
 	    else {type_error(INT_T, $3.type, yylineno, &$$); /*int_t ou ptr_t*/}
 	}
     else {type_error(INT_T, $3.type, yylineno, &$$); /*int_t ou ptr_t*/}
+
+    $$.code = init_code($$.code);
+    $$.res = strdup(new_var($$.res));
+    $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "-", $3.res, ";\n", NULL);
+
+    char* tmp_decla;
+    tmp_decla= init_code(tmp_decla);
+    tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
+    $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
 }
 ;
 
@@ -316,62 +354,84 @@ relational_expression
     $$.code = strdup($1.code);
     $$.res = strdup($1.res);
     $$.type = $1.type;
+    $$.declarations= strdup($1.declarations);
 }
 
 | relational_expression '<' additive_expression
 {
+    if(verif_type($1.type, INT_T))
+	{
+	    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
+	    else {type_error(INT_T, $1.type, yylineno, &$$);}
+	}
+    else {type_error(INT_T, $1.type, yylineno, &$$);}
+
     $$.code = init_code($$.code);
     $$.res = strdup(new_var($$.res));
     $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "<", $3.res, ";\n", NULL);
 
-    if(verif_type($1.type, INT_T))
-	{
-	    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
-	    else {type_error(INT_T, $1.type, yylineno, &$$);}
-	}
-    else {type_error(INT_T, $1.type, yylineno, &$$);}
+    char* tmp_decla;
+    tmp_decla= init_code(tmp_decla);
+    tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
+    $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
 }
 
 | relational_expression '>' additive_expression
 {
+    if(verif_type($1.type, INT_T))
+	{
+	    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
+	    else {type_error(INT_T, $1.type, yylineno, &$$);}
+	}
+    else {type_error(INT_T, $1.type, yylineno, &$$);}
+
+
     $$.code = init_code($$.code);
     $$.res = strdup(new_var($$.res));
     $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, ">", $3.res, ";\n", NULL);
 
-    if(verif_type($1.type, INT_T))
-	{
-	    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
-	    else {type_error(INT_T, $1.type, yylineno, &$$);}
-	}
-    else {type_error(INT_T, $1.type, yylineno, &$$);}
+    char* tmp_decla;
+    tmp_decla= init_code(tmp_decla);
+    tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
+    $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
 }
 
 | relational_expression LE_OP additive_expression
 {
+    if(verif_type($1.type, INT_T))
+	{
+	    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
+	    else {type_error(INT_T, $1.type, yylineno, &$$);}
+	}
+    else {type_error(INT_T, $1.type, yylineno, &$$);}
+
     $$.code = init_code($$.code);
     $$.res = strdup(new_var($$.res));
     $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "<=", $3.res, ";\n", NULL);
 
-    if(verif_type($1.type, INT_T))
-	{
-	    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
-	    else {type_error(INT_T, $1.type, yylineno, &$$);}
-	}
-    else {type_error(INT_T, $1.type, yylineno, &$$);}
+    char* tmp_decla;
+    tmp_decla= init_code(tmp_decla);
+    tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
+    $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
 }
 
 | relational_expression GE_OP additive_expression
 {
-    $$.code = init_code($$.code);
-    $$.res = strdup(new_var($$.res));
-    $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, ">=", $3.res, ";\n", NULL);
-
     if(verif_type($1.type, INT_T))
 	{
 	    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
 	    else {type_error(INT_T, $1.type, yylineno, &$$);}
 	}
     else {type_error(INT_T, $1.type, yylineno, &$$);}
+
+    $$.code = init_code($$.code);
+    $$.res = strdup(new_var($$.res));
+    $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, ">=", $3.res, ";\n", NULL);
+
+    char* tmp_decla;
+    tmp_decla= init_code(tmp_decla);
+    tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
+    $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
 }
 ;
 
@@ -381,26 +441,40 @@ equality_expression
     $$.code = strdup($1.code);
     $$.res = strdup($1.res);
     $$.type = $1.type;
+    $$.declarations= strdup($1.declarations);
 }
 
 | equality_expression EQ_OP relational_expression
 {
+    //$$.res = init_code($$.res);
+    //$$.res = concatener($$.res, $$.res, " = ", $1.res, "==", $3.res);
+
+    if(compare_arbre_t($1.type, $3.type)) {$$.type= basic_type(INT_T, "");}
+    else { type_error_relational($1.type, $3.type, yylineno, &$$);}
+
     $$.code = init_code($$.code);
     $$.res = strdup(new_var($$.res));
     $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "==", $3.res, ";\n", NULL);
 
-    if(compare_arbre_t($1.type, $3.type)) {$$.type= basic_type(INT_T, "");}
-    else { type_error_relational($1.type, $3.type, yylineno, &$$);}
+    char* tmp_decla;
+    tmp_decla= init_code(tmp_decla);
+    tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
+    $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
 }
 
 | equality_expression NE_OP relational_expression
 {
+    if(compare_arbre_t($1.type, $3.type)) {$$.type= basic_type(INT_T, "");}
+    else { type_error_relational($1.type, $3.type, yylineno, &$$); }
+
     $$.code = init_code($$.code);
     $$.res = strdup(new_var($$.res));
     $$.code = concatener($$.code, $1.code, $3.code, $$.res, " = ", $1.res, "!=", $3.res, ";\n",  NULL);
 
-    if(compare_arbre_t($1.type, $3.type)) {$$.type= basic_type(INT_T, "");}
-    else { type_error_relational($1.type, $3.type, yylineno, &$$); }
+    char* tmp_decla;
+    tmp_decla= init_code(tmp_decla);
+    tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
+    $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
 }
 ;
 
@@ -410,10 +484,18 @@ logical_and_expression
     $$.code = strdup($1.code);
     $$.res = strdup($1.res);
     $$.type = $1.type;
+    $$.declarations= strdup($1.declarations);
 }
 
 | logical_and_expression AND_OP equality_expression
 {
+    if(verif_type($1.type, INT_T))
+	{
+	    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
+	    else {type_error(INT_T, $1.type, yylineno, &$$);}
+	}
+    else {type_error(INT_T, $1.type, yylineno, &$$);}
+
     $$.code = init_code($$.code);
     $$.res = strdup(new_var($$.res));
     char* label_suite;
@@ -431,12 +513,10 @@ logical_and_expression
     $$.code = concatener($$.code,"\n",  label_truee,":\n", $$.res, "= 1;\n", NULL);
     $$.code = concatener($$.code,"\n", label_falsee,":\n", $$.res, "= 0;\n", NULL);
 
-    if(verif_type($1.type, INT_T))
-	{
-	    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
-	    else {type_error(INT_T, $1.type, yylineno, &$$);}
-	}
-    else {type_error(INT_T, $1.type, yylineno, &$$);}
+    char* tmp_decla;
+    tmp_decla= init_code(tmp_decla);
+    tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
+    $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
 }
 ;
 
@@ -446,10 +526,18 @@ logical_or_expression
     $$.code = strdup($1.code);
     $$.res = strdup($1.res);
     $$.type = $1.type;
+    $$.declarations= strdup($1.declarations);
 }
 
 | logical_or_expression OR_OP logical_and_expression
 {
+    if(verif_type($1.type, INT_T))
+	{
+	    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
+	    else {type_error(INT_T, $1.type, yylineno, &$$);}
+	}
+    else {type_error(INT_T, $1.type, yylineno, &$$);}
+
     $$.code = init_code($$.code);
     $$.res = strdup(new_var($$.res));
     char* label_suite;
@@ -467,12 +555,10 @@ logical_or_expression
     $$.code = concatener($$.code,"", label_truee,":\n", $$.res, "= 1;\n", NULL);
     $$.code = concatener($$.code,"", label_falsee,":\n", $$.res, "= 0;\n", NULL);
 
-    if(verif_type($1.type, INT_T))
-	{
-	    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
-	    else {type_error(INT_T, $1.type, yylineno, &$$);}
-	}
-    else {type_error(INT_T, $1.type, yylineno, &$$);}
+    char* tmp_decla;
+    tmp_decla= init_code(tmp_decla);
+    tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
+    $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
 }
 ;
 
@@ -482,17 +568,19 @@ expression
     $$.code = strdup($1.code);
     $$.res = strdup($1.res);
     $$.type= $1.type;
+    $$.declarations= strdup($1.declarations);
 }
 
 | unary_expression '=' expression
 {
-    $$.code = init_code($$.code);
-    $$.res = strdup($1.res);
-    $$.code = concatener($$.code, $1.code, $3.code, $1.res, " = ", $3.res, ";\n", NULL);
-
     if(compare_arbre_t($1.type, $3.type)) {
 	$$.type= $1.type;}
     else {type_error_affect($1.type, $3.type, yylineno, &$$);}
+
+    $$.code = init_code($$.code);
+    $$.res = strdup($1.res);
+    $$.code = concatener($$.code, $1.code, $3.code, $1.res, " = ", $3.res, ";\n", NULL);
+    $$.declarations= strdup($3.declarations);
 }
 ;
 
@@ -502,12 +590,15 @@ declaration
     $$.code=init_code($$.code);
     $$.code=concatener($$.code, $1.code, " ", $2.code, ";\n", NULL);
     $$.type= $2.type;
+    //fprintf(stderr, "DECLARATION: %s %s\n", draw_type_expr($$.type), $2.id->nom);
+    $$.declarations=strdup("");
 }
 
 | struct_specifier ';'
 {
     $$.code= strdup("not yet implemented: struct specifier");
     $$.type= basic_type(VOID_T, ""); /*type structure*/
+    $$.declarations=strdup("");
 }
 ;
 
@@ -518,12 +609,14 @@ declaration_specifiers
     $$.code=init_code($$.code);
     $$.code= concatener($$.code, "extern ", $2.code, NULL);
     $$.type = $2.type;
+$$.declarations=strdup("");
 }
 
 | type_specifier
 {
     $$.code= strdup($1.code);
     $$.type= $1.type;
+    $$.declarations=strdup("");
 }
 ;
 
@@ -533,18 +626,21 @@ type_specifier
 {
     $$.code= strdup("void");
     $$.type= basic_type(VOID_T, "");
+$$.declarations=strdup("");
 }
 
 | INT
 {
     $$.code= strdup("int");
     $$.type= basic_type(INT_T, "");
+$$.declarations=strdup("");
 }
 
 | struct_specifier
 {
     $$.code= strdup("not yet implemented: struct_specifier");
     $$.type= basic_type(VOID_T, ""); /* type structure*/
+$$.declarations=strdup("");
 }
 ;
 
@@ -565,46 +661,59 @@ struct_declaration
 ;
 
 declarator
-: '*' {$<attributs>$.type= ptr_type($<attributs>0.type, "");} direct_declarator 
+//: '*' {$<attributs>$.type= ptr_type($<attributs>0.type, ""); fprintf(stderr, "* %s\n", draw_type_expr($<attributs>$.type));} direct_declarator
+: '*' {$<attributs>$.type= $<attributs>0.type;} direct_declarator 
 {
     $$.code= init_code($$.code);
     $$.code= concatener($$.code, "*", $3.code, NULL);
-    $$.type= $<attributs>2.type;
+    //$$.type= $3.type;
+    $$.type= ptr_type($3.type, "");
     $$.id = $3.id;
+    ($$.id)->type = $$.type;
+    //fprintf(stderr, "****%s %s\n",($$.id->nom), draw_type_expr($$.type));
+    $$.declarations=strdup("");
 }
 
 | {$<attributs>$.type= $<attributs>0.type;} direct_declarator
 {
     $$.code= strdup($2.code);
-    $$.type= $<attributs>1.type;
+    $$.type= $2.type;
     $$.id = $2.id;
+    //fprintf(stderr, "%s %s\n",($$.id->nom), draw_type_expr($$.type));
+    $$.declarations=strdup("");
 }
 ;
 
 direct_declarator
-:  '(' declarator ')'
+:  '(' {$<attributs>$.type= $<attributs>0.type;} declarator ')'
 {
-    $$.code = init_code($$.code); $$.code = concatener($$.code, "(", $2.code, ")", NULL);
+    $$.code = init_code($$.code); $$.code = concatener($$.code, "(", $3.code, ")", NULL);
     $$.type= $<attributs>0.type;
-    $$.id= $2.id;
+    //$$.type=basic_type(VOID_T, "");
+    $$.id= $3.id;
+    //fprintf(stderr, "(decla)  %s\n", draw_type_expr($$.type));
+$$.declarations=strdup("");
 }
 
 | IDENTIFIER
 {
     $$.code = strdup($1->nom);
     $1->type= $<attributs>0.type;
-    //if($1->type != NULL) {fprintf(stderr, "TYPE DE L'ID %s: %s\n",$1->nom, get_type_readable( ($1->type)->root) );}
     $$.type= $1->type;
     $$.id= $1;
+    //fprintf(stderr, "IDENT:%s %s\n",$1->nom,  draw_type_expr($$.type));
+$$.declarations=strdup("");
 }
 
 
-| direct_declarator '(' parameter_list ')'
+|  direct_declarator '(' parameter_list ')'
 {
     $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "(",$3.code,")", NULL);
     //if($1.type != NULL) {fprintf(stderr, "TYPE DE DIRECT DECLA: %s\n", get_type_readable( ($1.type)->root) );}
-    $$.type= fct_type($3.type, $1.type, "");
+    $$.type= fct_type($3.type, $<attributs>0.type, "");
     ($1.id)->type= $$.type;
+    //fprintf(stderr, "direct(...) %s\n", draw_type_expr($$.type));
+$$.declarations=strdup("");
 }	      
 
 | direct_declarator '(' ')'
@@ -612,6 +721,8 @@ direct_declarator
     $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "()", NULL);
     $$.type= fct_type(basic_type(VOID_T, ""), $1.type, "");
     ($1.id)->type= $$.type;
+    //fprintf(stderr, "%s\n", draw_type_expr($$.type));
+    $$.declarations=strdup("");
 }
 ;
 
@@ -620,6 +731,7 @@ parameter_list
 {
     $$.code = strdup($1.code);
     $$.type = $1.type;
+$$.declarations=strdup("");
 }
 
 | parameter_list ',' parameter_declaration
@@ -627,6 +739,7 @@ parameter_list
     $$.code = init_code($$.code);
     $$.code = concatener($$.code, $1.code, "," , $3.code, NULL);
     $$.type= prod_type($1.type, $3.type, ""); /*c'est un arbre "recursif a gauche"*/
+    $$.declarations=strdup("");
 }
 ;
 
@@ -635,15 +748,45 @@ parameter_declaration
 {
     $$.code=init_code($$.code); $$.code=concatener($$.code, $1.code, " ", $2.code," ", NULL);
     $$.type= $1.type;
+    $$.declarations=strdup("");
 }
 ;
 
 statement
-: compound_statement {$$.code = strdup($1.code); $$.type= $1.type;}
-| expression_statement {$$.code = strdup($1.code); $$.type= $1.type;}
-| selection_statement {$$.code = strdup($1.code); $$.type= $1.type;}
-| iteration_statement {$$.code = strdup($1.code); $$.type= $1.type;}
-| jump_statement {$$.code = strdup($1.code); $$.type= $1.type;}
+: compound_statement
+{
+$$.code = strdup($1.code);
+$$.type= $1.type;
+$$.declarations= strdup($1.declarations);
+}
+
+| expression_statement
+{
+$$.code = strdup($1.code);
+$$.type= $1.type;
+$$.declarations= strdup($1.declarations);
+}
+
+| selection_statement
+{
+$$.code = strdup($1.code);
+$$.type= $1.type;
+$$.declarations= strdup($1.declarations);
+}
+
+| iteration_statement
+{
+$$.code = strdup($1.code);
+$$.type= $1.type;
+$$.declarations= strdup($1.declarations);
+}
+
+| jump_statement
+{
+$$.code = strdup($1.code);
+$$.type= $1.type;
+$$.declarations= strdup($1.declarations);
+}
 ;
 
 compound_statement
@@ -651,14 +794,16 @@ compound_statement
 {
     $$.code = init_code($$.code); $$.code= ajouter_code($$.code, "{ }\n");
     $$.type= basic_type(VOID_T, "");
+    $$.declarations= strdup("");
 }
 
 
 | '{' statement_list '}'
 {
     $$.code = init_code($$.code);
-    $$.code = concatener($$.code, "{\n", $2.code ,"}\n", NULL);
+    $$.code = concatener($$.code, "{\n", $2.declarations, $2.code ,"}\n", NULL);
     $$.type = $2.type;
+    $$.declarations= strdup($2.declarations);
 }
 
 
@@ -667,14 +812,16 @@ compound_statement
     $$.code = init_code($$.code);
     $$.code = concatener($$.code, "{\n", $2.code ,"}\n", NULL);
     $$.type = $2.type;
+    $$.declarations= strdup("");
 }
 
 
 | '{' declaration_list statement_list '}'
 {
     $$.code = init_code($$.code);
-    $$.code = concatener($$.code, "{\n", $2.code, $3.code ,"}\n", NULL);
+    $$.code = concatener($$.code, "{\n", $2.code, $3.declarations, $3.code ,"}\n", NULL);
     $$.type = $3.type;
+    $$.declarations= strdup($3.declarations);
 }
 ;
 
@@ -683,6 +830,7 @@ declaration_list
 {
     $$.code= strdup($1.code); /*verifier qu'on a pas une erreur de type*/
     $$.type= $1.type;
+    $$.declarations=strdup("");
 }
 
 | declaration_list declaration
@@ -690,6 +838,7 @@ declaration_list
     $$.code= init_code($$.code);
     $$.code= concatener($$.code, $1.code, $2.code, NULL);
     $$.type= $2.type;
+    $$.declarations=strdup("");
 }
 ;
 
@@ -698,6 +847,7 @@ statement_list
 {
     $$.code=strdup($1.code);
     $$.type=$1.type;
+    $$.declarations= strdup($1.declarations);
 }
 
 | statement_list statement
@@ -705,6 +855,8 @@ statement_list
     $$.code=init_code($$.code);
     $$.code=concatener($$.code, $1.code, $2.code, NULL);
     $$.type= $2.type;
+    $$.declarations= init_code($$.declarations);
+    $$.declarations= concatener($$.declarations, $1.declarations, $2.declarations, NULL);
 }
 ;
 
@@ -714,6 +866,7 @@ expression_statement
     $$.code = init_code($$.code);
     $$.code=ajouter_code($$.code, ";\n"); $$.res= NULL;
     $$.type= basic_type(VOID_T, "");
+    $$.declarations= strdup("");
 }
 
 | expression ';'
@@ -721,6 +874,7 @@ expression_statement
     $$.code= strdup($1.code);
     $$.res= strdup($1.res);
     $$.type= $1.type;
+    $$.declarations= strdup($1.declarations);
 }
 ;
 
@@ -733,12 +887,13 @@ selection_statement
     label_truee= strdup(new_label(label_truee));
     $$.code= init_code($$.code);
     $$.code= concatener($$.code, $3.code, NULL);
-    $$.code= concatener($$.code, "if ", $3.res, " goto ", label_truee, ";\n", NULL);
+    $$.code= concatener($$.code, "if (", $3.res, ") goto ", label_truee, ";\n", NULL);
     $$.code= concatener($$.code, "goto ", label_falsee, ";\n", NULL);
     $$.code = concatener($$.code, label_truee, ":\n", $5.code, label_falsee, ":\n", NULL);
     $$.res = NULL;
 
     $$.type= basic_type(VOID_T, "");
+    $$.declarations= strdup($3.declarations);
 }
 
 | IF '(' expression ')' statement ELSE statement
@@ -749,13 +904,14 @@ selection_statement
     label_truee= strdup(new_label(label_truee));
     $$.code= init_code($$.code);
     $$.code= concatener($$.code, $3.code,"\n", NULL);
-    $$.code= concatener($$.code, "if ", $3.res, " goto ", label_truee, ";\n", NULL);
+    $$.code= concatener($$.code, "if (", $3.res, ") goto ", label_truee, ";\n", NULL);
     $$.code= concatener($$.code, "goto ", label_falsee, ";\n", NULL);
     $$.code = concatener($$.code, label_truee, ":\n", $5.code, NULL);
     $$.code = concatener($$.code, label_falsee, ":\n", $7.code,  NULL);
     $$.res= NULL;
 
     $$.type= basic_type(VOID_T, "");
+    $$.declarations= strdup($3.declarations);
 }
 ;
 
@@ -775,6 +931,7 @@ iteration_statement
     $$.code= concatener($$.code, "if ", $3.res , " goto ", label_loop, ";\n", NULL);
     $$.code= concatener($$.code, "goto ", label_end, ";\n",label_end,":\n", NULL);
     $$.res= NULL;
+    $$.declarations= strdup($3.declarations);
 
     $$.type= basic_type(VOID_T, "");
 }
@@ -797,6 +954,8 @@ iteration_statement
     $$.code= concatener($$.code, "goto ", label_end, ";\n",label_end,":\n", NULL);
     $$.res= NULL;
 
+    $$.declarations=strdup("faut ptete mettre des declarations ici\n");
+
     $$.type= basic_type(VOID_T, "");
 }
 ;
@@ -807,6 +966,7 @@ jump_statement
     $$.code= init_code($$.code);
     $$.code= ajouter_code($$.code, "return ;\n");
     $$.type= basic_type(VOID_T, "");
+    $$.declarations= strdup("");
 }
 
 | RETURN expression ';'
@@ -814,6 +974,7 @@ jump_statement
     $$.code= strdup($2.code);
     $$.code= concatener($$.code, "return ", $2.res," ;\n", NULL);
     $$.type= $2.type;
+    $$.declarations= strdup($2.declarations);
 }
 ;
 
@@ -859,6 +1020,9 @@ function_definition
 	 
 int main()
 {
+
+
+    
     init_pile();
     init_cpt_var();
     init_cpt_label();
@@ -871,9 +1035,8 @@ int main()
 	}
 
     /*afficher_pile();*/
-
-    printf("\n\n\nAccepted\n");
     exit(get_error_code());
+    
 }
 
 int yyerror(char* s)

@@ -370,8 +370,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 23
-#define YY_END_OF_BUFFER 24
+#define YY_NUM_RULES 24
+#define YY_END_OF_BUFFER 25
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -379,34 +379,34 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[73] =
+static const flex_int16_t yy_accept[76] =
     {   0,
-        0,    0,   24,   22,   21,   21,   22,   22,   22,   22,
-       12,   22,   22,   22,   11,   11,   11,   11,   11,   11,
-       11,   11,   22,   20,   15,   14,    0,   12,   17,   19,
-       18,   11,   11,   11,   11,    4,   11,   11,   11,   11,
-       11,   11,   16,    0,    0,   11,   11,    3,    5,   11,
-       11,   11,   11,   11,   13,    1,   11,   11,   11,   11,
-        9,   11,   11,   11,   11,   11,   10,    2,    6,    7,
-        8,    0
+        0,    0,   25,   23,   22,   22,   23,   23,   23,   23,
+       12,   23,   23,   23,   11,   11,   11,   11,   11,   11,
+       11,   11,   23,   21,   16,   15,    0,    0,   12,   18,
+       20,   19,   11,   11,   11,   11,    4,   11,   11,   11,
+       11,   11,   11,   17,    0,    0,    0,   14,   11,   11,
+        3,    5,   11,   11,   11,   11,   11,   13,    1,   11,
+       11,   11,   11,    9,   11,   11,   11,   11,   11,   10,
+        2,    6,    7,    8,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
-        2,    2,    2,    1,    1,    1,    1,    1,    1,    1,
+        2,    2,    4,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    2,    4,    1,    1,    1,    1,    5,    1,    1,
-        1,    6,    1,    1,    7,    1,    8,    9,    9,    9,
-        9,    9,    9,    9,    9,    9,    9,    1,    1,   10,
-       11,   12,    1,    1,   13,   13,   13,   13,   13,   13,
-       13,   13,   13,   13,   13,   13,   13,   13,   13,   13,
-       13,   13,   13,   13,   13,   13,   13,   13,   13,   13,
-        1,    1,    1,    1,   13,    1,   13,   13,   14,   15,
+        1,    2,    5,    1,    1,    1,    1,    6,    1,    1,
+        1,    7,    1,    1,    8,    1,    9,   10,   10,   10,
+       10,   10,   10,   10,   10,   10,   10,    1,    1,   11,
+       12,   13,    1,    1,   14,   14,   14,   14,   14,   14,
+       14,   14,   14,   14,   14,   14,   14,   14,   14,   14,
+       14,   14,   14,   14,   14,   14,   14,   14,   14,   14,
+        1,    1,    1,    1,   14,    1,   14,   14,   15,   16,
 
-       16,   17,   13,   18,   19,   13,   13,   20,   13,   21,
-       22,   13,   13,   23,   24,   25,   26,   27,   28,   29,
-       13,   30,    1,   31,    1,    1,    1,    1,    1,    1,
+       17,   18,   14,   19,   20,   14,   14,   21,   14,   22,
+       23,   14,   14,   24,   25,   26,   27,   28,   29,   30,
+       14,   31,    1,   32,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -423,77 +423,79 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static const YY_CHAR yy_meta[32] =
+static const YY_CHAR yy_meta[33] =
     {   0,
-        1,    1,    1,    1,    1,    1,    1,    1,    2,    1,
-        1,    1,    2,    2,    2,    2,    2,    2,    2,    2,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    2,
+        1,    1,    1,    2,    2,    2,    2,    2,    2,    2,
         2,    2,    2,    2,    2,    2,    2,    2,    2,    2,
-        1
+        2,    1
     } ;
 
-static const flex_int16_t yy_base[75] =
+static const flex_int16_t yy_base[79] =
     {   0,
-        0,    0,   84,   85,   85,   85,   72,   77,   69,   74,
-       70,   67,   66,   65,    0,   12,   53,   16,   58,   15,
-       51,   54,   40,   85,   85,   85,   64,   60,   85,   85,
-       85,    0,   44,   42,   43,    0,   40,   39,   33,   39,
-       42,   41,   85,   53,   30,   42,   41,    0,    0,   30,
-       39,   28,   38,   32,   85,    0,   28,   27,   27,   34,
-        0,   31,   25,   24,   27,   14,    0,    0,    0,    0,
-        0,   85,   33,   41
+        0,    0,   92,   93,   93,   93,   79,   84,   76,   26,
+       78,   75,   74,   73,    0,   13,   61,   18,   66,   18,
+       59,   62,   48,   93,   93,   93,   72,   38,   68,   93,
+       93,   93,    0,   52,   50,   51,    0,   48,   47,   41,
+       47,   50,   49,   93,   61,   30,   42,   93,   50,   49,
+        0,    0,   38,   47,   36,   46,   40,   93,    0,   36,
+       35,   35,   42,    0,   39,   33,   32,   35,   26,    0,
+        0,    0,    0,    0,   93,   49,   46,   48
     } ;
 
-static const flex_int16_t yy_def[75] =
+static const flex_int16_t yy_def[79] =
     {   0,
-       72,    1,   72,   72,   72,   72,   72,   72,   72,   72,
-       72,   72,   72,   72,   73,   73,   73,   73,   73,   73,
-       73,   73,   72,   72,   72,   72,   74,   72,   72,   72,
-       72,   73,   73,   73,   73,   73,   73,   73,   73,   73,
-       73,   73,   72,   74,   74,   73,   73,   73,   73,   73,
-       73,   73,   73,   73,   72,   73,   73,   73,   73,   73,
-       73,   73,   73,   73,   73,   73,   73,   73,   73,   73,
-       73,    0,   72,   72
+       75,    1,   75,   75,   75,   75,   75,   75,   75,   75,
+       75,   75,   75,   75,   76,   76,   76,   76,   76,   76,
+       76,   76,   75,   75,   75,   75,   77,   78,   75,   75,
+       75,   75,   76,   76,   76,   76,   76,   76,   76,   76,
+       76,   76,   76,   75,   77,   77,   78,   75,   76,   76,
+       76,   76,   76,   76,   76,   76,   76,   75,   76,   76,
+       76,   76,   76,   76,   76,   76,   76,   76,   76,   76,
+       76,   76,   76,   76,    0,   75,   75,   75
     } ;
 
-static const flex_int16_t yy_nxt[117] =
+static const flex_int16_t yy_nxt[126] =
     {   0,
-        4,    5,    6,    7,    8,    4,    9,   10,   11,   12,
-       13,   14,   15,   15,   15,   16,   17,   15,   18,   15,
-       15,   15,   19,   20,   15,   15,   21,   22,   15,   15,
-       23,   33,   36,   39,   32,   45,   37,   55,   71,   40,
-       34,   44,   44,   70,   69,   68,   67,   66,   65,   64,
-       63,   62,   61,   60,   59,   58,   57,   56,   45,   54,
-       53,   52,   51,   50,   49,   48,   47,   46,   28,   45,
-       43,   42,   41,   38,   35,   31,   30,   29,   28,   27,
-       26,   25,   24,   72,    3,   72,   72,   72,   72,   72,
-       72,   72,   72,   72,   72,   72,   72,   72,   72,   72,
+        4,    5,    6,    5,    7,    8,    4,    9,   10,   11,
+       12,   13,   14,   15,   15,   15,   16,   17,   15,   18,
+       15,   15,   15,   19,   20,   15,   15,   21,   22,   15,
+       15,   23,   27,   34,   28,   37,   46,   40,   58,   38,
+       48,   48,   35,   41,   48,   48,   45,   45,   47,   47,
+       33,   74,   73,   72,   71,   70,   69,   68,   67,   66,
+       65,   64,   63,   62,   61,   60,   59,   46,   57,   56,
+       55,   54,   53,   52,   51,   50,   49,   29,   46,   44,
+       43,   42,   39,   36,   32,   31,   30,   29,   26,   25,
+       24,   75,    3,   75,   75,   75,   75,   75,   75,   75,
 
-       72,   72,   72,   72,   72,   72,   72,   72,   72,   72,
-       72,   72,   72,   72,   72,   72
+       75,   75,   75,   75,   75,   75,   75,   75,   75,   75,
+       75,   75,   75,   75,   75,   75,   75,   75,   75,   75,
+       75,   75,   75,   75,   75
     } ;
 
-static const flex_int16_t yy_chk[117] =
+static const flex_int16_t yy_chk[126] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,   16,   18,   20,   73,   45,   18,   45,   66,   20,
-       16,   74,   74,   65,   64,   63,   62,   60,   59,   58,
-       57,   54,   53,   52,   51,   50,   47,   46,   44,   42,
-       41,   40,   39,   38,   37,   35,   34,   33,   28,   27,
-       23,   22,   21,   19,   17,   14,   13,   12,   11,   10,
-        9,    8,    7,    3,   72,   72,   72,   72,   72,   72,
-       72,   72,   72,   72,   72,   72,   72,   72,   72,   72,
+        1,    1,   10,   16,   10,   18,   46,   20,   46,   18,
+       28,   28,   16,   20,   47,   47,   77,   77,   78,   78,
+       76,   69,   68,   67,   66,   65,   63,   62,   61,   60,
+       57,   56,   55,   54,   53,   50,   49,   45,   43,   42,
+       41,   40,   39,   38,   36,   35,   34,   29,   27,   23,
+       22,   21,   19,   17,   14,   13,   12,   11,    9,    8,
+        7,    3,   75,   75,   75,   75,   75,   75,   75,   75,
 
-       72,   72,   72,   72,   72,   72,   72,   72,   72,   72,
-       72,   72,   72,   72,   72,   72
+       75,   75,   75,   75,   75,   75,   75,   75,   75,   75,
+       75,   75,   75,   75,   75,   75,   75,   75,   75,   75,
+       75,   75,   75,   75,   75
     } ;
 
 /* Table of booleans, true if rule could match eol. */
-static const flex_int32_t yy_rule_can_match_eol[24] =
+static const flex_int32_t yy_rule_can_match_eol[25] =
     {   0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 
-    0, 1, 0, 0,     };
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 
+    0, 0, 1, 0, 0,     };
 
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
@@ -524,8 +526,8 @@ pile_t *pile;
 int cpt_var;
 int cpt_label;
 int error;
-#line 528 "lex.yy.c"
-#line 529 "lex.yy.c"
+#line 530 "lex.yy.c"
+#line 531 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -744,7 +746,7 @@ YY_DECL
 	{
 #line 22 "ANSI-frontend.l"
 
-#line 748 "lex.yy.c"
+#line 750 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -771,13 +773,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 73 )
+				if ( yy_current_state >= 76 )
 					yy_c = yy_meta[yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 85 );
+		while ( yy_base[yy_current_state] != 93 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -878,57 +880,63 @@ YY_RULE_SETUP
 ; /* Commentaires */
 	YY_BREAK
 case 14:
+/* rule 14 can match eol */
 YY_RULE_SETUP
-#line 39 "ANSI-frontend.l"
-{ return PTR_OP; }
+#line 38 "ANSI-frontend.l"
+
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 40 "ANSI-frontend.l"
-{ return AND_OP; }
+{ return PTR_OP; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 41 "ANSI-frontend.l"
-{ return OR_OP; }
+{ return AND_OP; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 42 "ANSI-frontend.l"
-{ return LE_OP; }
+{ return OR_OP; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 43 "ANSI-frontend.l"
-{ return GE_OP; }
+{ return LE_OP; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 44 "ANSI-frontend.l"
-{ return EQ_OP; }
+{ return GE_OP; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 45 "ANSI-frontend.l"
-{ return NE_OP; }
+{ return EQ_OP; }
 	YY_BREAK
 case 21:
-/* rule 21 can match eol */
 YY_RULE_SETUP
-#line 48 "ANSI-frontend.l"
-;
+#line 46 "ANSI-frontend.l"
+{ return NE_OP; }
 	YY_BREAK
 case 22:
+/* rule 22 can match eol */
 YY_RULE_SETUP
-#line 50 "ANSI-frontend.l"
-{ return yytext[0]; }
+#line 49 "ANSI-frontend.l"
+;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 52 "ANSI-frontend.l"
+#line 51 "ANSI-frontend.l"
+{ return yytext[0]; }
+	YY_BREAK
+case 24:
+YY_RULE_SETUP
+#line 53 "ANSI-frontend.l"
 ECHO;
 	YY_BREAK
-#line 932 "lex.yy.c"
+#line 940 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1225,7 +1233,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 73 )
+			if ( yy_current_state >= 76 )
 				yy_c = yy_meta[yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -1253,11 +1261,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 73 )
+		if ( yy_current_state >= 76 )
 			yy_c = yy_meta[yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-	yy_is_jam = (yy_current_state == 72);
+	yy_is_jam = (yy_current_state == 75);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -1945,7 +1953,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 52 "ANSI-frontend.l"
+#line 53 "ANSI-frontend.l"
 
 
 /* Gestion tables des symboles */
@@ -2138,27 +2146,47 @@ char *new_var(char *var){
     int random_part;
 
     do {
-    random_part= rand() % RANDMAX;
-    sprintf(var, "temp_%d_%d", random_part, cpt_var);
+	random_part= rand() % RANDMAX;
+	sprintf(var, "temp_%d_%d", cpt_var, random_part);
     } while(find(var) != NULL);
-
+    
     cpt_var++;
-
     return var;
+}
+
+char *add_declaration(char* var, arbre_t *type, char* declarations)
+{
+    char *new_declarations;
+    new_declarations= strdup(declarations);
+    if(type != NULL)
+	{
+	    if(type->root == INT_T)
+		{new_declarations=concatener(new_declarations, "int ", var, ";\n", NULL);}
+	    else if(type->root == PTR_T)
+		{
+		    if(verif_type(type->fils_gauche, INT_T))
+			{new_declarations=concatener(new_declarations, "int *", var, ";\n", NULL);}
+		    else
+			{new_declarations=concatener(new_declarations, "void *", var, ";\n", NULL);}
+		}
+	}
+    else
+	{fprintf(stderr, "WTF POURQUOI C'EST NULL??"); exit(42);}
+    return new_declarations;
 }
 
 void init_cpt_label(){
     cpt_label = 0;
     srand((unsigned) time(NULL));
-    }
+}
 
 char *new_label(char *label){
     label = malloc(50);
     int random_part;
 
     do {
-    random_part= rand() % RANDMAX;
-    sprintf(label, "label_%d_%d", random_part, cpt_label);
+	random_part= rand() % RANDMAX;
+	sprintf(label, "label_%d_%d", cpt_label, random_part);
     } while(find(label) != NULL);
     
     cpt_label++;
@@ -2167,7 +2195,7 @@ char *new_label(char *label){
 }
 
 
-int is_leaf(arbre_t *arbre)
+    int is_leaf(arbre_t *arbre)
     {
 	int g = (arbre->fils_gauche == NULL);
         int d = (arbre->fils_droit == NULL);
@@ -2176,40 +2204,40 @@ int is_leaf(arbre_t *arbre)
     }
 
 
-int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2, int cmp_strct)
-{
-    if(arbre1 == NULL && arbre2 == NULL) {return 1;}
-    else if(arbre1 == NULL || arbre2 == NULL) {return 0;}
-    else
-	{
-	    if(arbre1->root == arbre2->root)
-		{
-		    if (is_leaf(arbre1) && is_leaf(arbre2))
-			{
-			    if(cmp_strct && !strcmp(arbre1->name, arbre2->name))
-				{return 0;} /*verifier nom d'une feuille ou de tout les noeud intermediaire?*/
-		return 1;
-		}
-		    else
-			{
-			    int g= cmp_arbre_t(arbre1->fils_gauche, arbre2->fils_gauche, cmp_strct);
-			    if(g)
-				{return cmp_arbre_t(arbre1->fils_droit, arbre2->fils_droit, cmp_strct);}
-			    else {return 0;}
-			}
-		}
-    else {
-	return 0;}
+    int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2, int cmp_strct)
+    {
+	if(arbre1 == NULL && arbre2 == NULL) {return 1;}
+	else if(arbre1 == NULL || arbre2 == NULL) {return 0;}
+	else
+	    {
+		if(arbre1->root == arbre2->root)
+		    {
+			if (is_leaf(arbre1) && is_leaf(arbre2))
+			    {
+				if(cmp_strct && !strcmp(arbre1->name, arbre2->name))
+				    {return 0;} /*verifier nom d'une feuille ou de tout les noeud intermediaire?*/
+				return 1;
+			    }
+			else
+			    {
+				int g= cmp_arbre_t(arbre1->fils_gauche, arbre2->fils_gauche, cmp_strct);
+				if(g)
+				    {return cmp_arbre_t(arbre1->fils_droit, arbre2->fils_droit, cmp_strct);}
+				else {return 0;}
+			    }
+		    }
+		else {
+		    return 0;}
+	    }
     }
-}
 
-int compare_arbre_struct(arbre_t *arbre1, arbre_t *arbre2)
-{return cmp_arbre_t(arbre1, arbre2, 1);}
+    int compare_arbre_struct(arbre_t *arbre1, arbre_t *arbre2)
+    {return cmp_arbre_t(arbre1, arbre2, 1);}
 
-int compare_arbre_t(arbre_t *arbre1, arbre_t *arbre2)
-{return cmp_arbre_t(arbre1, arbre2, 0);}
+    int compare_arbre_t(arbre_t *arbre1, arbre_t *arbre2)
+    {return cmp_arbre_t(arbre1, arbre2, 0);}
 
-arbre_t *basic_type(type_t t, char* name) /* creer type de base (int_t ou void_t) */
+    arbre_t *basic_type(type_t t, char* name) /* creer type de base (int_t ou void_t) */
     {
 	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
 
@@ -2226,7 +2254,7 @@ arbre_t *basic_type(type_t t, char* name) /* creer type de base (int_t ou void_t
 	else {return NULL;}
     }
 
-arbre_t *fct_type(arbre_t *depart, arbre_t *arrivee, char* name)
+    arbre_t *fct_type(arbre_t *depart, arbre_t *arrivee, char* name)
     {
 	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
 	arbre->root= FCT_T;
@@ -2237,7 +2265,7 @@ arbre_t *fct_type(arbre_t *depart, arbre_t *arrivee, char* name)
 	return arbre;
     }
 
-arbre_t *ptr_type(arbre_t *t, char* name)
+    arbre_t *ptr_type(arbre_t *t, char* name)
     {
 	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
 	arbre->root= PTR_T;	
@@ -2248,7 +2276,7 @@ arbre_t *ptr_type(arbre_t *t, char* name)
 	return arbre;
     }
 
-arbre_t *prod_type(arbre_t *t1, arbre_t *t2, char* name)
+    arbre_t *prod_type(arbre_t *t1, arbre_t *t2, char* name)
     {
 	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
 	arbre->root= PROD_T;
@@ -2259,7 +2287,7 @@ arbre_t *prod_type(arbre_t *t1, arbre_t *t2, char* name)
 	return arbre;
     }
 
-arbre_t *struct_type(arbre_t *champs, char* name)
+    arbre_t *struct_type(arbre_t *champs, char* name)
     {
 	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
 	arbre->root= STRUCT_T;	
@@ -2271,14 +2299,14 @@ arbre_t *struct_type(arbre_t *champs, char* name)
     }
 
 
-int verif_type(arbre_t *expr_type, type_t expected_type)
+    int verif_type(arbre_t *expr_type, type_t expected_type)
     {
 	if(expr_type == NULL){return 0;}
 	else
 	    { return expr_type->root == expected_type; }
     }
 
-void type_error(type_t expected_type, arbre_t *found_type, int line, attributs_t *attribut)
+    void type_error(type_t expected_type, arbre_t *found_type, int line, attributs_t *attribut)
     {
 	char *expected_type_readable= get_type_readable(expected_type);
        
@@ -2289,13 +2317,13 @@ void type_error(type_t expected_type, arbre_t *found_type, int line, attributs_t
 	else
 	    {
 		fprintf(stderr, "Type error line %d > Expected type: %s , Found_type: %s \n", line, expected_type_readable, draw_type_expr(found_type));
-		}
+	    }
 	attribut->type= basic_type(ERROR_T, "");
 	error=SEMANTICERROR;
 	return ;
     }
 
-void type_error_function_arguments(arbre_t *expected_depart, arbre_t *found_depart, int line, attributs_t *attribut)
+    void type_error_function_arguments(arbre_t *expected_depart, arbre_t *found_depart, int line, attributs_t *attribut)
     {
 	if(expected_depart==NULL)
 	    {fprintf(stderr, "Type error line %d > Expected arguments type: NULL, Found arguments type: %s \n", line, draw_type_expr(found_depart)); }
@@ -2306,9 +2334,9 @@ void type_error_function_arguments(arbre_t *expected_depart, arbre_t *found_depa
 	attribut->type= basic_type(ERROR_T, "");
 	error=SEMANTICERROR;
 	return ;
-	}
+    }
 
-void type_error_affect(arbre_t *expected_type, arbre_t *found_type, int line, attributs_t *attribut)
+    void type_error_affect(arbre_t *expected_type, arbre_t *found_type, int line, attributs_t *attribut)
     {
 	if(expected_type==NULL)
 	    {fprintf(stderr, "Type error line %d > Expected type: NULL, Found type: %s \n", line, draw_type_expr(found_type)); }
@@ -2319,18 +2347,18 @@ void type_error_affect(arbre_t *expected_type, arbre_t *found_type, int line, at
 	attribut->type= basic_type(ERROR_T, "");
 	error=SEMANTICERROR;
 	return ;
-	}
+    }
 	
-void type_error_relational(arbre_t *found_left_type, arbre_t *found_right_type, int line, attributs_t *attribut)
-{
-    fprintf(stderr, "Type error line %d Relationnal expression > left type: %s, right type: %s \n", line, draw_type_expr(found_left_type), draw_type_expr(found_right_type) );
-    attribut->type= basic_type(ERROR_T, "");
-    error=SEMANTICERROR;
-    return;
-}
+    void type_error_relational(arbre_t *found_left_type, arbre_t *found_right_type, int line, attributs_t *attribut)
+    {
+	fprintf(stderr, "Type error line %d Relationnal expression > left type: %s, right type: %s \n", line, draw_type_expr(found_left_type), draw_type_expr(found_right_type) );
+	attribut->type= basic_type(ERROR_T, "");
+	error=SEMANTICERROR;
+	return;
+    }
 
-char* get_type_readable(type_t type)
-{
+    char* get_type_readable(type_t type)
+    {
         switch(type)
 	    {
 	    case 0: 
@@ -2362,45 +2390,45 @@ char* get_type_readable(type_t type)
     }
 
 
-char *draw_type_expr(arbre_t *type_expr)
-{
+    char *draw_type_expr(arbre_t *type_expr)
+    {
 
-    if(type_expr== NULL){return strdup("NULL");}
-    else
-	{
-	    char *s;
-	    s= init_code(s);
-	    type_t root= type_expr->root;
-	    switch(root)
-		{
-		case 0: //INT_T
-		    return strdup("INT_T");
-		    break;
-		case 1: //VOID_T
-		    return strdup("VOID_T");
-		    break;
-		case 2: //ERROR_T
-		    return strdup("ERROR_T");
-		    break;
-		case 3: //FCT_T		    
-		    return concatener(s, strdup("("), draw_type_expr(type_expr->fils_gauche), strdup(") -> "), draw_type_expr(type_expr->fils_droit), NULL);
-		    break;
-		case 4: //PTR_T
-		    return concatener(s, strdup("PTR("), draw_type_expr(type_expr->fils_gauche), strdup(")"), NULL);
-		    break;
-		case 5://PROD_T
-		    return concatener(s, draw_type_expr(type_expr->fils_gauche), strdup(" x "), draw_type_expr(type_expr->fils_droit), NULL);
-		    break;
-		case 6://STRUCT_T
-		    return strdup("STRUCT_T");
-		    break;
-		default:
-		    return NULL;
-		    break;
-		}
-	}
-}
+	if(type_expr== NULL){return strdup("NULL");}
+	else
+	    {
+		char *s;
+		s= init_code(s);
+		type_t root= type_expr->root;
+		switch(root)
+		    {
+		    case 0: //INT_T
+			return strdup("INT_T");
+			break;
+		    case 1: //VOID_T
+			return strdup("VOID_T");
+			break;
+		    case 2: //ERROR_T
+			return strdup("ERROR_T");
+			break;
+		    case 3: //FCT_T		    
+			return concatener(s, strdup("("), draw_type_expr(type_expr->fils_gauche), strdup(") -> "), draw_type_expr(type_expr->fils_droit), NULL);
+			break;
+		    case 4: //PTR_T
+			return concatener(s, strdup("PTR("), draw_type_expr(type_expr->fils_gauche), strdup(")"), NULL);
+			break;
+		    case 5://PROD_T
+			return concatener(s, draw_type_expr(type_expr->fils_gauche), strdup(" x "), draw_type_expr(type_expr->fils_droit), NULL);
+			break;
+		    case 6://STRUCT_T
+			return strdup("STRUCT_T");
+			break;
+		    default:
+			return NULL;
+			break;
+		    }
+	    }
+    }
 
-void init_error() {error=0;}
-int get_error_code() {return error;}
+    void init_error() {error=0;}
+    int get_error_code() {return error;}
 

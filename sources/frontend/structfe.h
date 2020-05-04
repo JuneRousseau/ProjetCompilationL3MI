@@ -24,7 +24,7 @@ typedef struct _symbole_t {
 
 typedef struct _attributs_t {
   char *code;
-  char *declaration;
+  char *declarations;
   arbre_t *type;
   char *res;
   symbole_t *id;
@@ -61,6 +61,7 @@ char *ajouter_code(char *code, char *str);
 
 void init_cpt_var();
 char *new_var(char *str);
+char *add_declaration(char* var, arbre_t *type, char* declarations);
 
 void init_cpt_label();
 char *new_label(char *str);

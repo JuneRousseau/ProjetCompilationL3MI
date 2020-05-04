@@ -1,6 +1,7 @@
 extern int printd( int i );
 
-int (*fact) (int n); 
+int (*fact) (int n);
+int* (test)(int a, int b);
 int foo (int n)
 {
   if ( n <= 1 )

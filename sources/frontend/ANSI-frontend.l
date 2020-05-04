@@ -35,6 +35,7 @@ int error;
 {D}+                    { yylval.number= strdup(yytext); return CONSTANT; } /* constance numérique */
 
 "/*"([^*]|(\*+[^*/]))*\*+\/    ; /* Commentaires */
+"//"([^\n\r]*)[\n\r]
 
 "->"                    { return PTR_OP; }
 "&&"                    { return AND_OP; }
@@ -241,27 +242,47 @@ char *new_var(char *var){
     int random_part;
 
     do {
-    random_part= rand() % RANDMAX;
-    sprintf(var, "temp_%d_%d", random_part, cpt_var);
+	random_part= rand() % RANDMAX;
+	sprintf(var, "temp_%d_%d", cpt_var, random_part);
     } while(find(var) != NULL);
-
+    
     cpt_var++;
-
     return var;
+}
+
+char *add_declaration(char* var, arbre_t *type, char* declarations)
+{
+    char *new_declarations;
+    new_declarations= strdup(declarations);
+    if(type != NULL)
+	{
+	    if(type->root == INT_T)
+		{new_declarations=concatener(new_declarations, "int ", var, ";\n", NULL);}
+	    else if(type->root == PTR_T)
+		{
+		    if(verif_type(type->fils_gauche, INT_T))
+			{new_declarations=concatener(new_declarations, "int *", var, ";\n", NULL);}
+		    else
+			{new_declarations=concatener(new_declarations, "void *", var, ";\n", NULL);}
+		}
+	}
+    else
+	{fprintf(stderr, "WTF POURQUOI C'EST NULL??"); exit(42);}
+    return new_declarations;
 }
 
 void init_cpt_label(){
     cpt_label = 0;
     srand((unsigned) time(NULL));
-    }
+}
 
 char *new_label(char *label){
     label = malloc(50);
     int random_part;
 
     do {
-    random_part= rand() % RANDMAX;
-    sprintf(label, "label_%d_%d", random_part, cpt_label);
+	random_part= rand() % RANDMAX;
+	sprintf(label, "label_%d_%d", cpt_label, random_part);
     } while(find(label) != NULL);
     
     cpt_label++;
@@ -270,7 +291,7 @@ char *new_label(char *label){
 }
 
 
-int is_leaf(arbre_t *arbre)
+    int is_leaf(arbre_t *arbre)
     {
 	int g = (arbre->fils_gauche == NULL);
         int d = (arbre->fils_droit == NULL);
@@ -279,40 +300,40 @@ int is_leaf(arbre_t *arbre)
     }
 
 
-int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2, int cmp_strct)
-{
-    if(arbre1 == NULL && arbre2 == NULL) {return 1;}
-    else if(arbre1 == NULL || arbre2 == NULL) {return 0;}
-    else
-	{
-	    if(arbre1->root == arbre2->root)
-		{
-		    if (is_leaf(arbre1) && is_leaf(arbre2))
-			{
-			    if(cmp_strct && !strcmp(arbre1->name, arbre2->name))
-				{return 0;} /*verifier nom d'une feuille ou de tout les noeud intermediaire?*/
-		return 1;
-		}
-		    else
-			{
-			    int g= cmp_arbre_t(arbre1->fils_gauche, arbre2->fils_gauche, cmp_strct);
-			    if(g)
-				{return cmp_arbre_t(arbre1->fils_droit, arbre2->fils_droit, cmp_strct);}
-			    else {return 0;}
-			}
-		}
-    else {
-	return 0;}
+    int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2, int cmp_strct)
+    {
+	if(arbre1 == NULL && arbre2 == NULL) {return 1;}
+	else if(arbre1 == NULL || arbre2 == NULL) {return 0;}
+	else
+	    {
+		if(arbre1->root == arbre2->root)
+		    {
+			if (is_leaf(arbre1) && is_leaf(arbre2))
+			    {
+				if(cmp_strct && !strcmp(arbre1->name, arbre2->name))
+				    {return 0;} /*verifier nom d'une feuille ou de tout les noeud intermediaire?*/
+				return 1;
+			    }
+			else
+			    {
+				int g= cmp_arbre_t(arbre1->fils_gauche, arbre2->fils_gauche, cmp_strct);
+				if(g)
+				    {return cmp_arbre_t(arbre1->fils_droit, arbre2->fils_droit, cmp_strct);}
+				else {return 0;}
+			    }
+		    }
+		else {
+		    return 0;}
+	    }
     }
-}
 
-int compare_arbre_struct(arbre_t *arbre1, arbre_t *arbre2)
-{return cmp_arbre_t(arbre1, arbre2, 1);}
+    int compare_arbre_struct(arbre_t *arbre1, arbre_t *arbre2)
+    {return cmp_arbre_t(arbre1, arbre2, 1);}
 
-int compare_arbre_t(arbre_t *arbre1, arbre_t *arbre2)
-{return cmp_arbre_t(arbre1, arbre2, 0);}
+    int compare_arbre_t(arbre_t *arbre1, arbre_t *arbre2)
+    {return cmp_arbre_t(arbre1, arbre2, 0);}
 
-arbre_t *basic_type(type_t t, char* name) /* creer type de base (int_t ou void_t) */
+    arbre_t *basic_type(type_t t, char* name) /* creer type de base (int_t ou void_t) */
     {
 	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
 
@@ -329,7 +350,7 @@ arbre_t *basic_type(type_t t, char* name) /* creer type de base (int_t ou void_t
 	else {return NULL;}
     }
 
-arbre_t *fct_type(arbre_t *depart, arbre_t *arrivee, char* name)
+    arbre_t *fct_type(arbre_t *depart, arbre_t *arrivee, char* name)
     {
 	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
 	arbre->root= FCT_T;
@@ -340,7 +361,7 @@ arbre_t *fct_type(arbre_t *depart, arbre_t *arrivee, char* name)
 	return arbre;
     }
 
-arbre_t *ptr_type(arbre_t *t, char* name)
+    arbre_t *ptr_type(arbre_t *t, char* name)
     {
 	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
 	arbre->root= PTR_T;	
@@ -351,7 +372,7 @@ arbre_t *ptr_type(arbre_t *t, char* name)
 	return arbre;
     }
 
-arbre_t *prod_type(arbre_t *t1, arbre_t *t2, char* name)
+    arbre_t *prod_type(arbre_t *t1, arbre_t *t2, char* name)
     {
 	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
 	arbre->root= PROD_T;
@@ -362,7 +383,7 @@ arbre_t *prod_type(arbre_t *t1, arbre_t *t2, char* name)
 	return arbre;
     }
 
-arbre_t *struct_type(arbre_t *champs, char* name)
+    arbre_t *struct_type(arbre_t *champs, char* name)
     {
 	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
 	arbre->root= STRUCT_T;	
@@ -374,14 +395,14 @@ arbre_t *struct_type(arbre_t *champs, char* name)
     }
 
 
-int verif_type(arbre_t *expr_type, type_t expected_type)
+    int verif_type(arbre_t *expr_type, type_t expected_type)
     {
 	if(expr_type == NULL){return 0;}
 	else
 	    { return expr_type->root == expected_type; }
     }
 
-void type_error(type_t expected_type, arbre_t *found_type, int line, attributs_t *attribut)
+    void type_error(type_t expected_type, arbre_t *found_type, int line, attributs_t *attribut)
     {
 	char *expected_type_readable= get_type_readable(expected_type);
        
@@ -392,13 +413,13 @@ void type_error(type_t expected_type, arbre_t *found_type, int line, attributs_t
 	else
 	    {
 		fprintf(stderr, "Type error line %d > Expected type: %s , Found_type: %s \n", line, expected_type_readable, draw_type_expr(found_type));
-		}
+	    }
 	attribut->type= basic_type(ERROR_T, "");
 	error=SEMANTICERROR;
 	return ;
     }
 
-void type_error_function_arguments(arbre_t *expected_depart, arbre_t *found_depart, int line, attributs_t *attribut)
+    void type_error_function_arguments(arbre_t *expected_depart, arbre_t *found_depart, int line, attributs_t *attribut)
     {
 	if(expected_depart==NULL)
 	    {fprintf(stderr, "Type error line %d > Expected arguments type: NULL, Found arguments type: %s \n", line, draw_type_expr(found_depart)); }
@@ -409,9 +430,9 @@ void type_error_function_arguments(arbre_t *expected_depart, arbre_t *found_depa
 	attribut->type= basic_type(ERROR_T, "");
 	error=SEMANTICERROR;
 	return ;
-	}
+    }
 
-void type_error_affect(arbre_t *expected_type, arbre_t *found_type, int line, attributs_t *attribut)
+    void type_error_affect(arbre_t *expected_type, arbre_t *found_type, int line, attributs_t *attribut)
     {
 	if(expected_type==NULL)
 	    {fprintf(stderr, "Type error line %d > Expected type: NULL, Found type: %s \n", line, draw_type_expr(found_type)); }
@@ -422,18 +443,18 @@ void type_error_affect(arbre_t *expected_type, arbre_t *found_type, int line, at
 	attribut->type= basic_type(ERROR_T, "");
 	error=SEMANTICERROR;
 	return ;
-	}
+    }
 	
-void type_error_relational(arbre_t *found_left_type, arbre_t *found_right_type, int line, attributs_t *attribut)
-{
-    fprintf(stderr, "Type error line %d Relationnal expression > left type: %s, right type: %s \n", line, draw_type_expr(found_left_type), draw_type_expr(found_right_type) );
-    attribut->type= basic_type(ERROR_T, "");
-    error=SEMANTICERROR;
-    return;
-}
+    void type_error_relational(arbre_t *found_left_type, arbre_t *found_right_type, int line, attributs_t *attribut)
+    {
+	fprintf(stderr, "Type error line %d Relationnal expression > left type: %s, right type: %s \n", line, draw_type_expr(found_left_type), draw_type_expr(found_right_type) );
+	attribut->type= basic_type(ERROR_T, "");
+	error=SEMANTICERROR;
+	return;
+    }
 
-char* get_type_readable(type_t type)
-{
+    char* get_type_readable(type_t type)
+    {
         switch(type)
 	    {
 	    case 0: 
@@ -465,44 +486,44 @@ char* get_type_readable(type_t type)
     }
 
 
-char *draw_type_expr(arbre_t *type_expr)
-{
+    char *draw_type_expr(arbre_t *type_expr)
+    {
 
-    if(type_expr== NULL){return strdup("NULL");}
-    else
-	{
-	    char *s;
-	    s= init_code(s);
-	    type_t root= type_expr->root;
-	    switch(root)
-		{
-		case 0: //INT_T
-		    return strdup("INT_T");
-		    break;
-		case 1: //VOID_T
-		    return strdup("VOID_T");
-		    break;
-		case 2: //ERROR_T
-		    return strdup("ERROR_T");
-		    break;
-		case 3: //FCT_T		    
-		    return concatener(s, strdup("("), draw_type_expr(type_expr->fils_gauche), strdup(") -> "), draw_type_expr(type_expr->fils_droit), NULL);
-		    break;
-		case 4: //PTR_T
-		    return concatener(s, strdup("PTR("), draw_type_expr(type_expr->fils_gauche), strdup(")"), NULL);
-		    break;
-		case 5://PROD_T
-		    return concatener(s, draw_type_expr(type_expr->fils_gauche), strdup(" x "), draw_type_expr(type_expr->fils_droit), NULL);
-		    break;
-		case 6://STRUCT_T
-		    return strdup("STRUCT_T");
-		    break;
-		default:
-		    return NULL;
-		    break;
-		}
-	}
-}
+	if(type_expr== NULL){return strdup("NULL");}
+	else
+	    {
+		char *s;
+		s= init_code(s);
+		type_t root= type_expr->root;
+		switch(root)
+		    {
+		    case 0: //INT_T
+			return strdup("INT_T");
+			break;
+		    case 1: //VOID_T
+			return strdup("VOID_T");
+			break;
+		    case 2: //ERROR_T
+			return strdup("ERROR_T");
+			break;
+		    case 3: //FCT_T		    
+			return concatener(s, strdup("("), draw_type_expr(type_expr->fils_gauche), strdup(") -> "), draw_type_expr(type_expr->fils_droit), NULL);
+			break;
+		    case 4: //PTR_T
+			return concatener(s, strdup("PTR("), draw_type_expr(type_expr->fils_gauche), strdup(")"), NULL);
+			break;
+		    case 5://PROD_T
+			return concatener(s, draw_type_expr(type_expr->fils_gauche), strdup(" x "), draw_type_expr(type_expr->fils_droit), NULL);
+			break;
+		    case 6://STRUCT_T
+			return strdup("STRUCT_T");
+			break;
+		    default:
+			return NULL;
+			break;
+		    }
+	    }
+    }
 
-void init_error() {error=0;}
-int get_error_code() {return error;}
+    void init_error() {error=0;}
+    int get_error_code() {return error;}

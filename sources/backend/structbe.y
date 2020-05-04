@@ -173,12 +173,12 @@ int main()
 	    {
 		c=yyparse();
 	    }
-	printf("Accepted\n");
+	exit(0);
     }
 
 extern int yylineno;
 int yyerror(char* s)
 {
-    printf("line %d: %s\n", yylineno, s);
+    fprintf(stderr, "line %d: %s\n", yylineno, s);
     exit(1);
 }

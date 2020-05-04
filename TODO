@@ -2,20 +2,21 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 
 TODO:
--gestions des structures !
--(controle des types)
--gestion des types pour les declarations
--DECLARATION DES VAR TEMPORAIRES (type t_x; t_x=...)
--entree sortie de bloc => faire productions pour push et pop les TS de la pile
--faire completement les message d'erreurs pour les types specifiques (cf commentaires dans le code)
+-gestions des STRUCTURES !
 
--revoir le script pour une affichage des tests un pue mieux que ca
+
+-finir declarations variables temporaires pour les blocs (boucle, if ...)
+-entree sortie de bloc => faire productions pour push et pop les TS de la pile
+-changer la fonction du sizeof (pour calculer directement)
+-gestion du void*, qui permet d'accepter simplement n'importe quel type de pointeur !
+
 
 
 ERREURS GRAVES : 
-
+TOUJOURS CES PUTAINS DE TYPAGES AVEC LES POINTEURS SUR FONCTIONS DE MORT
 
 A DEMANDER :
+
 
 
 

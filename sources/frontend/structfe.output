@@ -82,74 +82,76 @@ Grammaire
 
    53 declarator: @2 direct_declarator
 
-   54 direct_declarator: '(' declarator ')'
-   55                  | IDENTIFIER
-   56                  | direct_declarator '(' parameter_list ')'
-   57                  | direct_declarator '(' ')'
+   54 @3: %empty
 
-   58 parameter_list: parameter_declaration
-   59               | parameter_list ',' parameter_declaration
+   55 direct_declarator: '(' @3 declarator ')'
+   56                  | IDENTIFIER
+   57                  | direct_declarator '(' parameter_list ')'
+   58                  | direct_declarator '(' ')'
 
-   60 parameter_declaration: declaration_specifiers declarator
+   59 parameter_list: parameter_declaration
+   60               | parameter_list ',' parameter_declaration
 
-   61 statement: compound_statement
-   62          | expression_statement
-   63          | selection_statement
-   64          | iteration_statement
-   65          | jump_statement
+   61 parameter_declaration: declaration_specifiers declarator
 
-   66 compound_statement: '{' '}'
-   67                   | '{' statement_list '}'
-   68                   | '{' declaration_list '}'
-   69                   | '{' declaration_list statement_list '}'
+   62 statement: compound_statement
+   63          | expression_statement
+   64          | selection_statement
+   65          | iteration_statement
+   66          | jump_statement
 
-   70 declaration_list: declaration
-   71                 | declaration_list declaration
+   67 compound_statement: '{' '}'
+   68                   | '{' statement_list '}'
+   69                   | '{' declaration_list '}'
+   70                   | '{' declaration_list statement_list '}'
 
-   72 statement_list: statement
-   73               | statement_list statement
+   71 declaration_list: declaration
+   72                 | declaration_list declaration
 
-   74 expression_statement: ';'
-   75                     | expression ';'
+   73 statement_list: statement
+   74               | statement_list statement
 
-   76 selection_statement: IF '(' expression ')' statement
-   77                    | IF '(' expression ')' statement ELSE statement
+   75 expression_statement: ';'
+   76                     | expression ';'
 
-   78 iteration_statement: WHILE '(' expression ')' statement
-   79                    | FOR '(' expression_statement expression_statement expression ')' statement
+   77 selection_statement: IF '(' expression ')' statement
+   78                    | IF '(' expression ')' statement ELSE statement
 
-   80 jump_statement: RETURN ';'
-   81               | RETURN expression ';'
+   79 iteration_statement: WHILE '(' expression ')' statement
+   80                    | FOR '(' expression_statement expression_statement expression ')' statement
 
-   82 program_start: program
+   81 jump_statement: RETURN ';'
+   82               | RETURN expression ';'
 
-   83 program: external_declaration
-   84        | program external_declaration
+   83 program_start: program
 
-   85 external_declaration: function_definition
-   86                     | declaration
+   84 program: external_declaration
+   85        | program external_declaration
 
-   87 function_definition: declaration_specifiers declarator compound_statement
+   86 external_declaration: function_definition
+   87                     | declaration
+
+   88 function_definition: declaration_specifiers declarator compound_statement
 
 
 Terminaux, suivis des règles où ils apparaissent
 
 $end (0) 0
 '&' (38) 14
-'(' (40) 1 5 6 12 54 56 57 76 77 78 79
-')' (41) 1 5 6 12 54 56 57 76 77 78 79
+'(' (40) 1 5 6 12 55 57 58 77 78 79 80
+')' (41) 1 5 6 12 55 57 58 77 78 79 80
 '*' (42) 15 18 51
 '+' (43) 21
-',' (44) 9 59
+',' (44) 9 60
 '-' (45) 16 22
 '.' (46)
 '/' (47) 19
-';' (59) 37 38 49 74 75 80 81
+';' (59) 37 38 49 75 76 81 82
 '<' (60) 24
 '=' (61) 36
 '>' (62) 25
-'{' (123) 44 45 66 67 68 69
-'}' (125) 44 45 66 67 68 69
+'{' (123) 44 45 67 68 69 70
+'}' (125) 44 45 67 68 69 70
 error (256)
 SIZEOF (258) 12 13
 PTR_OP (259) 7
@@ -163,12 +165,12 @@ EXTERN (266) 39
 INT (267) 42
 VOID (268) 41
 STRUCT (269) 44 45 46
-IF (270) 76 77
-ELSE (271) 77
-WHILE (272) 78
-FOR (273) 79
-RETURN (274) 80 81
-IDENTIFIER (275) 3 7 44 46 55
+IF (270) 77 78
+ELSE (271) 78
+WHILE (272) 79
+FOR (273) 80
+RETURN (274) 81 82
+IDENTIFIER (275) 3 7 44 46 56
 CONSTANT (276) 2
 "then" (277)
 
@@ -200,11 +202,11 @@ logical_and_expression (48)
 logical_or_expression (49)
     à gauche: 33 34, à droite: 34 35
 expression (50)
-    à gauche: 35 36, à droite: 1 8 9 36 75 76 77 78 79 81
+    à gauche: 35 36, à droite: 1 8 9 36 76 77 78 79 80 82
 declaration (51)
-    à gauche: 37 38, à droite: 70 71 86
+    à gauche: 37 38, à droite: 71 72 87
 declaration_specifiers (52)
-    à gauche: 39 40, à droite: 37 60 87
+    à gauche: 39 40, à droite: 37 61 88
 type_specifier (53)
     à gauche: 41 42 43, à droite: 12 39 40 49
 struct_specifier (54)
@@ -214,41 +216,43 @@ struct_declaration_list (55)
 struct_declaration (56)
     à gauche: 49, à droite: 47 48
 declarator (57)
-    à gauche: 51 53, à droite: 37 49 54 60 87
+    à gauche: 51 53, à droite: 37 49 55 61 88
 @1 (58)
     à gauche: 50, à droite: 51
 @2 (59)
     à gauche: 52, à droite: 53
 direct_declarator (60)
-    à gauche: 54 55 56 57, à droite: 51 53 56 57
-parameter_list (61)
-    à gauche: 58 59, à droite: 56 59
-parameter_declaration (62)
-    à gauche: 60, à droite: 58 59
-statement (63)
-    à gauche: 61 62 63 64 65, à droite: 72 73 76 77 78 79
-compound_statement (64)
-    à gauche: 66 67 68 69, à droite: 61 87
-declaration_list (65)
-    à gauche: 70 71, à droite: 68 69 71
-statement_list (66)
-    à gauche: 72 73, à droite: 67 69 73
-expression_statement (67)
-    à gauche: 74 75, à droite: 62 79
-selection_statement (68)
-    à gauche: 76 77, à droite: 63
-iteration_statement (69)
-    à gauche: 78 79, à droite: 64
-jump_statement (70)
-    à gauche: 80 81, à droite: 65
-program_start (71)
-    à gauche: 82, à droite: 0
-program (72)
-    à gauche: 83 84, à droite: 82 84
-external_declaration (73)
-    à gauche: 85 86, à droite: 83 84
-function_definition (74)
-    à gauche: 87, à droite: 85
+    à gauche: 55 56 57 58, à droite: 51 53 57 58
+@3 (61)
+    à gauche: 54, à droite: 55
+parameter_list (62)
+    à gauche: 59 60, à droite: 57 60
+parameter_declaration (63)
+    à gauche: 61, à droite: 59 60
+statement (64)
+    à gauche: 62 63 64 65 66, à droite: 73 74 77 78 79 80
+compound_statement (65)
+    à gauche: 67 68 69 70, à droite: 62 88
+declaration_list (66)
+    à gauche: 71 72, à droite: 69 70 72
+statement_list (67)
+    à gauche: 73 74, à droite: 68 70 74
+expression_statement (68)
+    à gauche: 75 76, à droite: 63 80
+selection_statement (69)
+    à gauche: 77 78, à droite: 64
+iteration_statement (70)
+    à gauche: 79 80, à droite: 65
+jump_statement (71)
+    à gauche: 81 82, à droite: 66
+program_start (72)
+    à gauche: 83, à droite: 0
+program (73)
+    à gauche: 84 85, à droite: 83 85
+external_declaration (74)
+    à gauche: 86 87, à droite: 84 85
+function_definition (75)
+    à gauche: 88, à droite: 86
 
 
 État 0
@@ -308,15 +312,15 @@ function_definition (74)
 
 État 5
 
-   86 external_declaration: declaration .
+   87 external_declaration: declaration .
 
-    $défaut  réduction par utilisation de la règle 86 (external_declaration)
+    $défaut  réduction par utilisation de la règle 87 (external_declaration)
 
 
 État 6
 
    37 declaration: declaration_specifiers . declarator ';'
-   87 function_definition: declaration_specifiers . declarator compound_statement
+   88 function_definition: declaration_specifiers . declarator compound_statement
 
     '*'  décalage et aller à l'état 17
 
@@ -352,15 +356,15 @@ function_definition (74)
 
 État 10
 
-   82 program_start: program .
-   84 program: program . external_declaration
+   83 program_start: program .
+   85 program: program . external_declaration
 
     EXTERN  décalage et aller à l'état 1
     INT     décalage et aller à l'état 2
     VOID    décalage et aller à l'état 3
     STRUCT  décalage et aller à l'état 4
 
-    $défaut  réduction par utilisation de la règle 82 (program_start)
+    $défaut  réduction par utilisation de la règle 83 (program_start)
 
     declaration             aller à l'état 5
     declaration_specifiers  aller à l'état 6
@@ -372,16 +376,16 @@ function_definition (74)
 
 État 11
 
-   83 program: external_declaration .
+   84 program: external_declaration .
 
-    $défaut  réduction par utilisation de la règle 83 (program)
+    $défaut  réduction par utilisation de la règle 84 (program)
 
 
 État 12
 
-   85 external_declaration: function_definition .
+   86 external_declaration: function_definition .
 
-    $défaut  réduction par utilisation de la règle 85 (external_declaration)
+    $défaut  réduction par utilisation de la règle 86 (external_declaration)
 
 
 État 13
@@ -434,7 +438,7 @@ function_definition (74)
 État 18
 
    37 declaration: declaration_specifiers declarator . ';'
-   87 function_definition: declaration_specifiers declarator . compound_statement
+   88 function_definition: declaration_specifiers declarator . compound_statement
 
     '{'  décalage et aller à l'état 28
     ';'  décalage et aller à l'état 29
@@ -468,9 +472,9 @@ function_definition (74)
 
 État 22
 
-   84 program: program external_declaration .
+   85 program: program external_declaration .
 
-    $défaut  réduction par utilisation de la règle 84 (program)
+    $défaut  réduction par utilisation de la règle 85 (program)
 
 
 État 23
@@ -533,10 +537,10 @@ function_definition (74)
 
 État 28
 
-   66 compound_statement: '{' . '}'
-   67                   | '{' . statement_list '}'
-   68                   | '{' . declaration_list '}'
-   69                   | '{' . declaration_list statement_list '}'
+   67 compound_statement: '{' . '}'
+   68                   | '{' . statement_list '}'
+   69                   | '{' . declaration_list '}'
+   70                   | '{' . declaration_list statement_list '}'
 
     SIZEOF      décalage et aller à l'état 39
     EXTERN      décalage et aller à l'état 1
@@ -591,35 +595,32 @@ function_definition (74)
 
 État 30
 
-   87 function_definition: declaration_specifiers declarator compound_statement .
+   88 function_definition: declaration_specifiers declarator compound_statement .
 
-    $défaut  réduction par utilisation de la règle 87 (function_definition)
+    $défaut  réduction par utilisation de la règle 88 (function_definition)
 
 
 État 31
 
-   54 direct_declarator: '(' . declarator ')'
+   55 direct_declarator: '(' . @3 declarator ')'
 
-    '*'  décalage et aller à l'état 17
+    $défaut  réduction par utilisation de la règle 54 (@3)
 
-    $défaut  réduction par utilisation de la règle 52 (@2)
-
-    declarator  aller à l'état 73
-    @2          aller à l'état 19
+    @3  aller à l'état 73
 
 
 État 32
 
-   55 direct_declarator: IDENTIFIER .
+   56 direct_declarator: IDENTIFIER .
 
-    $défaut  réduction par utilisation de la règle 55 (direct_declarator)
+    $défaut  réduction par utilisation de la règle 56 (direct_declarator)
 
 
 État 33
 
    53 declarator: @2 direct_declarator .
-   56 direct_declarator: direct_declarator . '(' parameter_list ')'
-   57                  | direct_declarator . '(' ')'
+   57 direct_declarator: direct_declarator . '(' parameter_list ')'
+   58                  | direct_declarator . '(' ')'
 
     '('  décalage et aller à l'état 74
 
@@ -665,8 +666,8 @@ function_definition (74)
 État 38
 
    51 declarator: '*' @1 direct_declarator .
-   56 direct_declarator: direct_declarator . '(' parameter_list ')'
-   57                  | direct_declarator . '(' ')'
+   57 direct_declarator: direct_declarator . '(' parameter_list ')'
+   58                  | direct_declarator . '(' ')'
 
     '('  décalage et aller à l'état 74
 
@@ -694,30 +695,30 @@ function_definition (74)
 
 État 40
 
-   76 selection_statement: IF . '(' expression ')' statement
-   77                    | IF . '(' expression ')' statement ELSE statement
+   77 selection_statement: IF . '(' expression ')' statement
+   78                    | IF . '(' expression ')' statement ELSE statement
 
     '('  décalage et aller à l'état 79
 
 
 État 41
 
-   78 iteration_statement: WHILE . '(' expression ')' statement
+   79 iteration_statement: WHILE . '(' expression ')' statement
 
     '('  décalage et aller à l'état 80
 
 
 État 42
 
-   79 iteration_statement: FOR . '(' expression_statement expression_statement expression ')' statement
+   80 iteration_statement: FOR . '(' expression_statement expression_statement expression ')' statement
 
     '('  décalage et aller à l'état 81
 
 
 État 43
 
-   80 jump_statement: RETURN . ';'
-   81               | RETURN . expression ';'
+   81 jump_statement: RETURN . ';'
+   82               | RETURN . expression ';'
 
     SIZEOF      décalage et aller à l'état 39
     '('         décalage et aller à l'état 44
@@ -768,16 +769,16 @@ function_definition (74)
 
 État 45
 
-   66 compound_statement: '{' '}' .
+   67 compound_statement: '{' '}' .
 
-    $défaut  réduction par utilisation de la règle 66 (compound_statement)
+    $défaut  réduction par utilisation de la règle 67 (compound_statement)
 
 
 État 46
 
-   74 expression_statement: ';' .
+   75 expression_statement: ';' .
 
-    $défaut  réduction par utilisation de la règle 74 (expression_statement)
+    $défaut  réduction par utilisation de la règle 75 (expression_statement)
 
 
 État 47
@@ -937,16 +938,16 @@ function_definition (74)
 
 État 62
 
-   75 expression_statement: expression . ';'
+   76 expression_statement: expression . ';'
 
     ';'  décalage et aller à l'état 101
 
 
 État 63
 
-   70 declaration_list: declaration .
+   71 declaration_list: declaration .
 
-    $défaut  réduction par utilisation de la règle 70 (declaration_list)
+    $défaut  réduction par utilisation de la règle 71 (declaration_list)
 
 
 État 64
@@ -963,23 +964,23 @@ function_definition (74)
 
 État 65
 
-   72 statement_list: statement .
+   73 statement_list: statement .
 
-    $défaut  réduction par utilisation de la règle 72 (statement_list)
+    $défaut  réduction par utilisation de la règle 73 (statement_list)
 
 
 État 66
 
-   61 statement: compound_statement .
+   62 statement: compound_statement .
 
-    $défaut  réduction par utilisation de la règle 61 (statement)
+    $défaut  réduction par utilisation de la règle 62 (statement)
 
 
 État 67
 
-   68 compound_statement: '{' declaration_list . '}'
-   69                   | '{' declaration_list . statement_list '}'
-   71 declaration_list: declaration_list . declaration
+   69 compound_statement: '{' declaration_list . '}'
+   70                   | '{' declaration_list . statement_list '}'
+   72 declaration_list: declaration_list . declaration
 
     SIZEOF      décalage et aller à l'état 39
     EXTERN      décalage et aller à l'état 1
@@ -1026,8 +1027,8 @@ function_definition (74)
 
 État 68
 
-   67 compound_statement: '{' statement_list . '}'
-   73 statement_list: statement_list . statement
+   68 compound_statement: '{' statement_list . '}'
+   74 statement_list: statement_list . statement
 
     SIZEOF      décalage et aller à l'état 39
     IF          décalage et aller à l'état 40
@@ -1065,43 +1066,48 @@ function_definition (74)
 
 État 69
 
-   62 statement: expression_statement .
-
-    $défaut  réduction par utilisation de la règle 62 (statement)
-
-
-État 70
-
-   63 statement: selection_statement .
+   63 statement: expression_statement .
 
     $défaut  réduction par utilisation de la règle 63 (statement)
 
 
-État 71
+État 70
 
-   64 statement: iteration_statement .
+   64 statement: selection_statement .
 
     $défaut  réduction par utilisation de la règle 64 (statement)
 
 
-État 72
+État 71
 
-   65 statement: jump_statement .
+   65 statement: iteration_statement .
 
     $défaut  réduction par utilisation de la règle 65 (statement)
 
 
+État 72
+
+   66 statement: jump_statement .
+
+    $défaut  réduction par utilisation de la règle 66 (statement)
+
+
 État 73
 
-   54 direct_declarator: '(' declarator . ')'
+   55 direct_declarator: '(' @3 . declarator ')'
 
-    ')'  décalage et aller à l'état 108
+    '*'  décalage et aller à l'état 17
+
+    $défaut  réduction par utilisation de la règle 52 (@2)
+
+    declarator  aller à l'état 108
+    @2          aller à l'état 19
 
 
 État 74
 
-   56 direct_declarator: direct_declarator '(' . parameter_list ')'
-   57                  | direct_declarator '(' . ')'
+   57 direct_declarator: direct_declarator '(' . parameter_list ')'
+   58                  | direct_declarator '(' . ')'
 
     EXTERN  décalage et aller à l'état 1
     INT     décalage et aller à l'état 2
@@ -1170,8 +1176,8 @@ function_definition (74)
 
 État 79
 
-   76 selection_statement: IF '(' . expression ')' statement
-   77                    | IF '(' . expression ')' statement ELSE statement
+   77 selection_statement: IF '(' . expression ')' statement
+   78                    | IF '(' . expression ')' statement ELSE statement
 
     SIZEOF      décalage et aller à l'état 39
     '('         décalage et aller à l'état 44
@@ -1196,7 +1202,7 @@ function_definition (74)
 
 État 80
 
-   78 iteration_statement: WHILE '(' . expression ')' statement
+   79 iteration_statement: WHILE '(' . expression ')' statement
 
     SIZEOF      décalage et aller à l'état 39
     '('         décalage et aller à l'état 44
@@ -1221,7 +1227,7 @@ function_definition (74)
 
 État 81
 
-   79 iteration_statement: FOR '(' . expression_statement expression_statement expression ')' statement
+   80 iteration_statement: FOR '(' . expression_statement expression_statement expression ')' statement
 
     SIZEOF      décalage et aller à l'état 39
     '('         décalage et aller à l'état 44
@@ -1248,14 +1254,14 @@ function_definition (74)
 
 État 82
 
-   80 jump_statement: RETURN ';' .
+   81 jump_statement: RETURN ';' .
 
-    $défaut  réduction par utilisation de la règle 80 (jump_statement)
+    $défaut  réduction par utilisation de la règle 81 (jump_statement)
 
 
 État 83
 
-   81 jump_statement: RETURN expression . ';'
+   82 jump_statement: RETURN expression . ';'
 
     ';'  décalage et aller à l'état 117
 
@@ -1577,9 +1583,9 @@ function_definition (74)
 
 État 101
 
-   75 expression_statement: expression ';' .
+   76 expression_statement: expression ';' .
 
-    $défaut  réduction par utilisation de la règle 75 (expression_statement)
+    $défaut  réduction par utilisation de la règle 76 (expression_statement)
 
 
 État 102
@@ -1591,22 +1597,22 @@ function_definition (74)
 
 État 103
 
-   68 compound_statement: '{' declaration_list '}' .
+   69 compound_statement: '{' declaration_list '}' .
 
-    $défaut  réduction par utilisation de la règle 68 (compound_statement)
+    $défaut  réduction par utilisation de la règle 69 (compound_statement)
 
 
 État 104
 
-   71 declaration_list: declaration_list declaration .
+   72 declaration_list: declaration_list declaration .
 
-    $défaut  réduction par utilisation de la règle 71 (declaration_list)
+    $défaut  réduction par utilisation de la règle 72 (declaration_list)
 
 
 État 105
 
-   69 compound_statement: '{' declaration_list statement_list . '}'
-   73 statement_list: statement_list . statement
+   70 compound_statement: '{' declaration_list statement_list . '}'
+   74 statement_list: statement_list . statement
 
     SIZEOF      décalage et aller à l'état 39
     IF          décalage et aller à l'état 40
@@ -1644,85 +1650,85 @@ function_definition (74)
 
 État 106
 
-   67 compound_statement: '{' statement_list '}' .
+   68 compound_statement: '{' statement_list '}' .
 
-    $défaut  réduction par utilisation de la règle 67 (compound_statement)
+    $défaut  réduction par utilisation de la règle 68 (compound_statement)
 
 
 État 107
 
-   73 statement_list: statement_list statement .
+   74 statement_list: statement_list statement .
 
-    $défaut  réduction par utilisation de la règle 73 (statement_list)
+    $défaut  réduction par utilisation de la règle 74 (statement_list)
 
 
 État 108
 
-   54 direct_declarator: '(' declarator ')' .
+   55 direct_declarator: '(' @3 declarator . ')'
 
-    $défaut  réduction par utilisation de la règle 54 (direct_declarator)
+    ')'  décalage et aller à l'état 138
 
 
 État 109
 
-   57 direct_declarator: direct_declarator '(' ')' .
+   58 direct_declarator: direct_declarator '(' ')' .
 
-    $défaut  réduction par utilisation de la règle 57 (direct_declarator)
+    $défaut  réduction par utilisation de la règle 58 (direct_declarator)
 
 
 État 110
 
-   60 parameter_declaration: declaration_specifiers . declarator
+   61 parameter_declaration: declaration_specifiers . declarator
 
     '*'  décalage et aller à l'état 17
 
     $défaut  réduction par utilisation de la règle 52 (@2)
 
-    declarator  aller à l'état 138
+    declarator  aller à l'état 139
     @2          aller à l'état 19
 
 
 État 111
 
-   56 direct_declarator: direct_declarator '(' parameter_list . ')'
-   59 parameter_list: parameter_list . ',' parameter_declaration
+   57 direct_declarator: direct_declarator '(' parameter_list . ')'
+   60 parameter_list: parameter_list . ',' parameter_declaration
 
-    ')'  décalage et aller à l'état 139
-    ','  décalage et aller à l'état 140
+    ')'  décalage et aller à l'état 140
+    ','  décalage et aller à l'état 141
 
 
 État 112
 
-   58 parameter_list: parameter_declaration .
+   59 parameter_list: parameter_declaration .
 
-    $défaut  réduction par utilisation de la règle 58 (parameter_list)
+    $défaut  réduction par utilisation de la règle 59 (parameter_list)
 
 
 État 113
 
    12 unary_expression: SIZEOF '(' type_specifier . ')'
 
-    ')'  décalage et aller à l'état 141
+    ')'  décalage et aller à l'état 142
 
 
 État 114
 
-   76 selection_statement: IF '(' expression . ')' statement
-   77                    | IF '(' expression . ')' statement ELSE statement
-
-    ')'  décalage et aller à l'état 142
-
-
-État 115
-
-   78 iteration_statement: WHILE '(' expression . ')' statement
+   77 selection_statement: IF '(' expression . ')' statement
+   78                    | IF '(' expression . ')' statement ELSE statement
 
     ')'  décalage et aller à l'état 143
 
 
+État 115
+
+   79 iteration_statement: WHILE '(' expression . ')' statement
+
+    ')'  décalage et aller à l'état 144
+
+
 État 116
 
-   79 iteration_statement: FOR '(' expression_statement . expression_statement expression ')' statement
+   80 iteration_statement: FOR '(' expression_statement . expression_statement expression ')' statement
 
     SIZEOF      décalage et aller à l'état 39
     '('         décalage et aller à l'état 44
@@ -1744,14 +1750,14 @@ function_definition (74)
     logical_and_expression     aller à l'état 60
     logical_or_expression      aller à l'état 61
     expression                 aller à l'état 62
-    expression_statement       aller à l'état 144
+    expression_statement       aller à l'état 145
 
 
 État 117
 
-   81 jump_statement: RETURN expression ';' .
+   82 jump_statement: RETURN expression ';' .
 
-    $défaut  réduction par utilisation de la règle 81 (jump_statement)
+    $défaut  réduction par utilisation de la règle 82 (jump_statement)
 
 
 État 118
@@ -1780,8 +1786,8 @@ function_definition (74)
     6 postfix_expression: postfix_expression '(' argument_expression_list . ')'
     9 argument_expression_list: argument_expression_list . ',' expression
 
-    ')'  décalage et aller à l'état 145
-    ','  décalage et aller à l'état 146
+    ')'  décalage et aller à l'état 146
+    ','  décalage et aller à l'état 147
 
 
 État 122
@@ -1947,28 +1953,35 @@ function_definition (74)
 
 État 137
 
-   69 compound_statement: '{' declaration_list statement_list '}' .
+   70 compound_statement: '{' declaration_list statement_list '}' .
 
-    $défaut  réduction par utilisation de la règle 69 (compound_statement)
+    $défaut  réduction par utilisation de la règle 70 (compound_statement)
 
 
 État 138
 
-   60 parameter_declaration: declaration_specifiers declarator .
+   55 direct_declarator: '(' @3 declarator ')' .
 
-    $défaut  réduction par utilisation de la règle 60 (parameter_declaration)
+    $défaut  réduction par utilisation de la règle 55 (direct_declarator)
 
 
 État 139
 
-   56 direct_declarator: direct_declarator '(' parameter_list ')' .
+   61 parameter_declaration: declaration_specifiers declarator .
 
-    $défaut  réduction par utilisation de la règle 56 (direct_declarator)
+    $défaut  réduction par utilisation de la règle 61 (parameter_declaration)
 
 
 État 140
 
-   59 parameter_list: parameter_list ',' . parameter_declaration
+   57 direct_declarator: direct_declarator '(' parameter_list ')' .
+
+    $défaut  réduction par utilisation de la règle 57 (direct_declarator)
+
+
+État 141
+
+   60 parameter_list: parameter_list ',' . parameter_declaration
 
     EXTERN  décalage et aller à l'état 1
     INT     décalage et aller à l'état 2
@@ -1978,57 +1991,20 @@ function_definition (74)
     declaration_specifiers  aller à l'état 110
     type_specifier          aller à l'état 7
     struct_specifier        aller à l'état 14
-    parameter_declaration   aller à l'état 147
+    parameter_declaration   aller à l'état 148
 
 
-État 141
+État 142
 
    12 unary_expression: SIZEOF '(' type_specifier ')' .
 
     $défaut  réduction par utilisation de la règle 12 (unary_expression)
 
 
-État 142
-
-   76 selection_statement: IF '(' expression ')' . statement
-   77                    | IF '(' expression ')' . statement ELSE statement
-
-    SIZEOF      décalage et aller à l'état 39
-    IF          décalage et aller à l'état 40
-    WHILE       décalage et aller à l'état 41
-    FOR         décalage et aller à l'état 42
-    RETURN      décalage et aller à l'état 43
-    '('         décalage et aller à l'état 44
-    '{'         décalage et aller à l'état 28
-    ';'         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 47
-    '*'         décalage et aller à l'état 48
-    '-'         décalage et aller à l'état 49
-    IDENTIFIER  décalage et aller à l'état 50
-    CONSTANT    décalage et aller à l'état 51
-
-    primary_expression         aller à l'état 52
-    postfix_expression         aller à l'état 53
-    unary_expression           aller à l'état 54
-    unary_operator             aller à l'état 55
-    multiplicative_expression  aller à l'état 56
-    additive_expression        aller à l'état 57
-    relational_expression      aller à l'état 58
-    equality_expression        aller à l'état 59
-    logical_and_expression     aller à l'état 60
-    logical_or_expression      aller à l'état 61
-    expression                 aller à l'état 62
-    statement                  aller à l'état 148
-    compound_statement         aller à l'état 66
-    expression_statement       aller à l'état 69
-    selection_statement        aller à l'état 70
-    iteration_statement        aller à l'état 71
-    jump_statement             aller à l'état 72
-
-
 État 143
 
-   78 iteration_statement: WHILE '(' expression ')' . statement
+   77 selection_statement: IF '(' expression ')' . statement
+   78                    | IF '(' expression ')' . statement ELSE statement
 
     SIZEOF      décalage et aller à l'état 39
     IF          décalage et aller à l'état 40
@@ -2065,102 +2041,7 @@ function_definition (74)
 
 État 144
 
-   79 iteration_statement: FOR '(' expression_statement expression_statement . expression ')' statement
-
-    SIZEOF      décalage et aller à l'état 39
-    '('         décalage et aller à l'état 44
-    '&'         décalage et aller à l'état 47
-    '*'         décalage et aller à l'état 48
-    '-'         décalage et aller à l'état 49
-    IDENTIFIER  décalage et aller à l'état 50
-    CONSTANT    décalage et aller à l'état 51
-
-    primary_expression         aller à l'état 52
-    postfix_expression         aller à l'état 53
-    unary_expression           aller à l'état 54
-    unary_operator             aller à l'état 55
-    multiplicative_expression  aller à l'état 56
-    additive_expression        aller à l'état 57
-    relational_expression      aller à l'état 58
-    equality_expression        aller à l'état 59
-    logical_and_expression     aller à l'état 60
-    logical_or_expression      aller à l'état 61
-    expression                 aller à l'état 150
-
-
-État 145
-
-    6 postfix_expression: postfix_expression '(' argument_expression_list ')' .
-
-    $défaut  réduction par utilisation de la règle 6 (postfix_expression)
-
-
-État 146
-
-    9 argument_expression_list: argument_expression_list ',' . expression
-
-    SIZEOF      décalage et aller à l'état 39
-    '('         décalage et aller à l'état 44
-    '&'         décalage et aller à l'état 47
-    '*'         décalage et aller à l'état 48
-    '-'         décalage et aller à l'état 49
-    IDENTIFIER  décalage et aller à l'état 50
-    CONSTANT    décalage et aller à l'état 51
-
-    primary_expression         aller à l'état 52
-    postfix_expression         aller à l'état 53
-    unary_expression           aller à l'état 54
-    unary_operator             aller à l'état 55
-    multiplicative_expression  aller à l'état 56
-    additive_expression        aller à l'état 57
-    relational_expression      aller à l'état 58
-    equality_expression        aller à l'état 59
-    logical_and_expression     aller à l'état 60
-    logical_or_expression      aller à l'état 61
-    expression                 aller à l'état 151
-
-
-État 147
-
-   59 parameter_list: parameter_list ',' parameter_declaration .
-
-    $défaut  réduction par utilisation de la règle 59 (parameter_list)
-
-
-État 148
-
-   76 selection_statement: IF '(' expression ')' statement .
-   77                    | IF '(' expression ')' statement . ELSE statement
-
-    ELSE  décalage et aller à l'état 152
-
-    $défaut  réduction par utilisation de la règle 76 (selection_statement)
-
-
-État 149
-
-   78 iteration_statement: WHILE '(' expression ')' statement .
-
-    $défaut  réduction par utilisation de la règle 78 (iteration_statement)
-
-
-État 150
-
-   79 iteration_statement: FOR '(' expression_statement expression_statement expression . ')' statement
-
-    ')'  décalage et aller à l'état 153
-
-
-État 151
-
-    9 argument_expression_list: argument_expression_list ',' expression .
-
-    $défaut  réduction par utilisation de la règle 9 (argument_expression_list)
-
-
-État 152
-
-   77 selection_statement: IF '(' expression ')' statement ELSE . statement
+   79 iteration_statement: WHILE '(' expression ')' . statement
 
     SIZEOF      décalage et aller à l'état 39
     IF          décalage et aller à l'état 40
@@ -2187,7 +2068,7 @@ function_definition (74)
     logical_and_expression     aller à l'état 60
     logical_or_expression      aller à l'état 61
     expression                 aller à l'état 62
-    statement                  aller à l'état 154
+    statement                  aller à l'état 150
     compound_statement         aller à l'état 66
     expression_statement       aller à l'état 69
     selection_statement        aller à l'état 70
@@ -2195,9 +2076,104 @@ function_definition (74)
     jump_statement             aller à l'état 72
 
 
+État 145
+
+   80 iteration_statement: FOR '(' expression_statement expression_statement . expression ')' statement
+
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
+
+    primary_expression         aller à l'état 52
+    postfix_expression         aller à l'état 53
+    unary_expression           aller à l'état 54
+    unary_operator             aller à l'état 55
+    multiplicative_expression  aller à l'état 56
+    additive_expression        aller à l'état 57
+    relational_expression      aller à l'état 58
+    equality_expression        aller à l'état 59
+    logical_and_expression     aller à l'état 60
+    logical_or_expression      aller à l'état 61
+    expression                 aller à l'état 151
+
+
+État 146
+
+    6 postfix_expression: postfix_expression '(' argument_expression_list ')' .
+
+    $défaut  réduction par utilisation de la règle 6 (postfix_expression)
+
+
+État 147
+
+    9 argument_expression_list: argument_expression_list ',' . expression
+
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
+
+    primary_expression         aller à l'état 52
+    postfix_expression         aller à l'état 53
+    unary_expression           aller à l'état 54
+    unary_operator             aller à l'état 55
+    multiplicative_expression  aller à l'état 56
+    additive_expression        aller à l'état 57
+    relational_expression      aller à l'état 58
+    equality_expression        aller à l'état 59
+    logical_and_expression     aller à l'état 60
+    logical_or_expression      aller à l'état 61
+    expression                 aller à l'état 152
+
+
+État 148
+
+   60 parameter_list: parameter_list ',' parameter_declaration .
+
+    $défaut  réduction par utilisation de la règle 60 (parameter_list)
+
+
+État 149
+
+   77 selection_statement: IF '(' expression ')' statement .
+   78                    | IF '(' expression ')' statement . ELSE statement
+
+    ELSE  décalage et aller à l'état 153
+
+    $défaut  réduction par utilisation de la règle 77 (selection_statement)
+
+
+État 150
+
+   79 iteration_statement: WHILE '(' expression ')' statement .
+
+    $défaut  réduction par utilisation de la règle 79 (iteration_statement)
+
+
+État 151
+
+   80 iteration_statement: FOR '(' expression_statement expression_statement expression . ')' statement
+
+    ')'  décalage et aller à l'état 154
+
+
+État 152
+
+    9 argument_expression_list: argument_expression_list ',' expression .
+
+    $défaut  réduction par utilisation de la règle 9 (argument_expression_list)
+
+
 État 153
 
-   79 iteration_statement: FOR '(' expression_statement expression_statement expression ')' . statement
+   78 selection_statement: IF '(' expression ')' statement ELSE . statement
 
     SIZEOF      décalage et aller à l'état 39
     IF          décalage et aller à l'état 40
@@ -2234,13 +2210,50 @@ function_definition (74)
 
 État 154
 
-   77 selection_statement: IF '(' expression ')' statement ELSE statement .
+   80 iteration_statement: FOR '(' expression_statement expression_statement expression ')' . statement
 
-    $défaut  réduction par utilisation de la règle 77 (selection_statement)
+    SIZEOF      décalage et aller à l'état 39
+    IF          décalage et aller à l'état 40
+    WHILE       décalage et aller à l'état 41
+    FOR         décalage et aller à l'état 42
+    RETURN      décalage et aller à l'état 43
+    '('         décalage et aller à l'état 44
+    '{'         décalage et aller à l'état 28
+    ';'         décalage et aller à l'état 46
+    '&'         décalage et aller à l'état 47
+    '*'         décalage et aller à l'état 48
+    '-'         décalage et aller à l'état 49
+    IDENTIFIER  décalage et aller à l'état 50
+    CONSTANT    décalage et aller à l'état 51
+
+    primary_expression         aller à l'état 52
+    postfix_expression         aller à l'état 53
+    unary_expression           aller à l'état 54
+    unary_operator             aller à l'état 55
+    multiplicative_expression  aller à l'état 56
+    additive_expression        aller à l'état 57
+    relational_expression      aller à l'état 58
+    equality_expression        aller à l'état 59
+    logical_and_expression     aller à l'état 60
+    logical_or_expression      aller à l'état 61
+    expression                 aller à l'état 62
+    statement                  aller à l'état 156
+    compound_statement         aller à l'état 66
+    expression_statement       aller à l'état 69
+    selection_statement        aller à l'état 70
+    iteration_statement        aller à l'état 71
+    jump_statement             aller à l'état 72
 
 
 État 155
 
-   79 iteration_statement: FOR '(' expression_statement expression_statement expression ')' statement .
+   78 selection_statement: IF '(' expression ')' statement ELSE statement .
 
-    $défaut  réduction par utilisation de la règle 79 (iteration_statement)
+    $défaut  réduction par utilisation de la règle 78 (selection_statement)
+
+
+État 156
+
+   80 iteration_statement: FOR '(' expression_statement expression_statement expression ')' statement .
+
+    $défaut  réduction par utilisation de la règle 80 (iteration_statement)
