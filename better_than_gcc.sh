@@ -29,7 +29,12 @@ test_compilation()
 	touch compil_log
 	name=${file%%.*}
 	name_output="./outputs/$name$output"
-	(./sources/frontend/structfe < ./Tests/$file) > $name_output 2>compil_log
+	if [ $answer == 'y' ]
+	then
+	    (./sources/frontend/structfe < ./Tests/$file) > $name_output
+	else
+	    (./sources/frontend/structfe < ./Tests/$file) > $name_output 2>compil_log
+	fi
 	compil="$?"
 	
 	if [ $compil == 0 ]
@@ -83,7 +88,9 @@ then
     rm log
     cd ../..
 fi
-echo
+echo -e "Voulez-vous lire la sortie erreur sur le terminal? [y ou n]: \c"
+read answer
+
 if [ $# == 0 ]
 then
     list_file=`ls ./Tests`

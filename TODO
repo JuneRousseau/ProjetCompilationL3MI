@@ -9,6 +9,7 @@ TODO:
 -entree sortie de bloc => faire productions pour push et pop les TS de la pile
 -changer la fonction du sizeof (pour calculer directement)
 -gestion du void*, qui permet d'accepter simplement n'importe quel type de pointeur !
+-garder le type du return d'une fonction??
 
 
 

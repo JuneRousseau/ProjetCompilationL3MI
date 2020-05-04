@@ -794,7 +794,7 @@ compound_statement
 {
     $$.code = init_code($$.code); $$.code= ajouter_code($$.code, "{ }\n");
     $$.type= basic_type(VOID_T, "");
-    $$.declarations= strdup("");
+    $$.declarations= strdup("\n");
 }
 
 
@@ -803,7 +803,8 @@ compound_statement
     $$.code = init_code($$.code);
     $$.code = concatener($$.code, "{\n", $2.declarations, $2.code ,"}\n", NULL);
     $$.type = $2.type;
-    $$.declarations= strdup($2.declarations);
+    $$.declarations= strdup("\n");
+//    $$.declarations= strdup($2.declarations);
 }
 
 
@@ -812,16 +813,18 @@ compound_statement
     $$.code = init_code($$.code);
     $$.code = concatener($$.code, "{\n", $2.code ,"}\n", NULL);
     $$.type = $2.type;
-    $$.declarations= strdup("");
+    $$.declarations= strdup("\n");
 }
 
 
 | '{' declaration_list statement_list '}'
 {
     $$.code = init_code($$.code);
-    $$.code = concatener($$.code, "{\n", $2.code, $3.declarations, $3.code ,"}\n", NULL);
+    $$.code = concatener($$.code, "{\n", $3.declarations,  $2.code, $3.code ,"}\n", NULL);
     $$.type = $3.type;
-    $$.declarations= strdup($3.declarations);
+    $$.declarations= strdup("\n");
+    //$$.declarations= strdup($3.declarations);
+    fprintf(stderr, "DECLAAAAA [ %s ]\n", $3.declarations);
 }
 ;
 
@@ -866,7 +869,7 @@ expression_statement
     $$.code = init_code($$.code);
     $$.code=ajouter_code($$.code, ";\n"); $$.res= NULL;
     $$.type= basic_type(VOID_T, "");
-    $$.declarations= strdup("");
+    $$.declarations= strdup("\n");
 }
 
 | expression ';'
@@ -931,7 +934,8 @@ iteration_statement
     $$.code= concatener($$.code, "if (", $3.res , ") goto ", label_loop, ";\n", NULL);
     $$.code= concatener($$.code, "goto ", label_end, ";\n",label_end,":\n", NULL);
     $$.res= NULL;
-    $$.declarations= strdup($3.declarations);
+    $$.declarations=init_code($$.declarations);
+    $$.declarations=concatener($$.declarations, $3.declarations, $5.declarations);
 
     $$.type= basic_type(VOID_T, "");
 }
@@ -953,8 +957,10 @@ iteration_statement
     $$.code= concatener($$.code, "if (", $4.res , ") goto ", label_loop, ";\n", NULL);
     $$.code= concatener($$.code, "goto ", label_end, ";\n",label_end,":\n", NULL);
     $$.res= NULL;
-
-    $$.declarations=strdup("faut ptete mettre des declarations ici\n");
+    
+    $$.declarations=init_code($$.declarations);
+    $$.declarations=concatener($$.declarations, $3.declarations, $4.declarations, $5.declarations, $7.declarations);
+fprintf(stderr, "declarations du corps du for: %s", $7.declarations);
 
     $$.type= basic_type(VOID_T, "");
 }
@@ -966,7 +972,7 @@ jump_statement
     $$.code= init_code($$.code);
     $$.code= ajouter_code($$.code, "return ;\n");
     $$.type= basic_type(VOID_T, "");
-    $$.declarations= strdup("");
+    $$.declarations= strdup("\n");
 }
 
 | RETURN expression ';'
