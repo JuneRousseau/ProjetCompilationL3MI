@@ -5,14 +5,17 @@ output="_3.c"
 print_line()
 {
     cpt=1
-    for line in `cat $2`
+    num=$1
+    realnum=$((num-1))
+    
+    while read line
     do
-	if [ $cpt == $1 ]
+	if [ $cpt == $realnum ]
 	then
-	    echo $line
+	    echo -e "$line "
 	fi
-	cpt=$cpt+1
-    done
+	cpt=$((cpt+1))
+    done < $2
 }
 	
 
@@ -41,7 +44,7 @@ test_compilation()
 	    else
 		echo $name_output: Refused
 		cat test_log
-		#print_line $parse $name_output
+		print_line $parse $name_output
 	    fi
 	    rm test_log
 	else
