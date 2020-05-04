@@ -74,9 +74,9 @@ union YYSTYPE
 {
 #line 26 "structfe.y" /* yacc.c:1909  */
 
-  char *number;
-  attributs_t attributs;
-  symbole_t *symbol;
+    char *number;
+    attributs_t attributs;
+    symbole_t *symbol;
 
 #line 82 "structfe.tab.h" /* yacc.c:1909  */
 };

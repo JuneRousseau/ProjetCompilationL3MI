@@ -2374,25 +2374,22 @@ char *draw_type_expr(arbre_t *type_expr)
 	    switch(root)
 		{
 		case 0: //INT_T
-		    return strdup("int");
+		    return strdup("INT_T");
 		    break;
 		case 1: //VOID_T
-		    return strdup("void");
+		    return strdup("VOID_T");
 		    break;
 		case 2: //ERROR_T
-		    return strdup("error");
+		    return strdup("ERROR_T");
 		    break;
 		case 3: //FCT_T		    
 		    return concatener(s, strdup("("), draw_type_expr(type_expr->fils_gauche), strdup(") -> "), draw_type_expr(type_expr->fils_droit), NULL);
-		    //return strdup("FCT_T");
 		    break;
 		case 4: //PTR_T
 		    return concatener(s, strdup("PTR("), draw_type_expr(type_expr->fils_gauche), strdup(")"), NULL);
-		    //return strdup("PTR_T");
 		    break;
 		case 5://PROD_T
 		    return concatener(s, draw_type_expr(type_expr->fils_gauche), strdup(" x "), draw_type_expr(type_expr->fils_droit), NULL);
-		    //return strdup("PROD_T");
 		    break;
 		case 6://STRUCT_T
 		    return strdup("STRUCT_T");

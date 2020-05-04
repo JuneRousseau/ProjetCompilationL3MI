@@ -24,6 +24,8 @@ do
 		if [ $code == 2 ]
 		then
 		    echo $file: Semantic error
+	        else
+		    echo $file: Another error
 		fi
 	    fi
 	fi

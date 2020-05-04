@@ -24,8 +24,10 @@ typedef struct _symbole_t {
 
 typedef struct _attributs_t {
   char *code;
+  char *declaration;
   arbre_t *type;
   char *res;
+  symbole_t *id;
 } attributs_t;
 
 typedef struct _table_t {
