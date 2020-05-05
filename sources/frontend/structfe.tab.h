@@ -72,7 +72,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 26 "structfe.y" /* yacc.c:1909  */
+#line 27 "structfe.y" /* yacc.c:1909  */
 
     char *number;
     attributs_t attributs;

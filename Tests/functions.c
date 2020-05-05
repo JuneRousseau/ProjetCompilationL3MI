@@ -1,7 +1,7 @@
 extern int printd( int i );
 
 int (*fact) (int n);
-int* (test)(int a, int b);
+int *(test)(int a, int b);
 int foo (int n)
 {
   if ( n <= 1 )
@@ -11,7 +11,9 @@ int foo (int n)
 
 
 int main() {
+  int a;
   fact=&foo;
+  a=test;
   printd((*fact)(10));
   return 0;
 }

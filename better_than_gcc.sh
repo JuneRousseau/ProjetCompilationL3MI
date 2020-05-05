@@ -88,18 +88,21 @@ then
     rm log
     cd ../..
 fi
-echo -e "Voulez-vous lire la sortie erreur sur le terminal? [y ou n]: \c"
-read answer
 
-if [ $# == 0 ]
-then
-    list_file=`ls ./Tests`
-else
-    list_file=$@
-fi
+if [ $compilation == 0 ]
+   then
+       echo -e "Voulez-vous lire la sortie erreur sur le terminal? [y ou n]: \c"
+       read answer
+       
+       if [ $# == 0 ]
+       then
+	   list_file=`ls ./Tests`
+       else
+	   list_file=$@
+       fi
     for f in $list_file
     do
 	test_compilation $f
     done
-
+fi
        
