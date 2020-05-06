@@ -32,7 +32,7 @@ int error;
 "while"                 { return WHILE; }
 
 {L}({L}|{D})*           { yylval.name=strdup(yytext); return IDENTIFIER; } /*identificateurs de variable*/
-{D}+                    { yylval.number= strdup(yytext); return CONSTANT; } /* constance numérique */
+{D}+                    { yylval.number= strdup(yytext); return CONSTANT; } /* constance numÃ©rique */
 
 "/*"([^*]|(\*+[^*/]))*\*+\/    ; /* Commentaires */
 "//"([^\n\r]*)[\n\r]
@@ -83,7 +83,7 @@ symbole_t *ajouter(table_t *tableSymbole, char *nom)
     while ( s != NULL )
 	{
 	    if ( strcmp( s->nom, nom ) == 0 )
-		return s; /* Si l'identifiant existe déjà, on retourne NULL */
+		return s; /* Si l'identifiant existe dÃ©jÃ , on retourne NULL */
 	    precedent = s;
 	    s = s->suivant;
 	}

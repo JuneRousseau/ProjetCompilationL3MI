@@ -3,13 +3,13 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 TODO:
 -gestions des STRUCTURES !
--garder le type du return d'une fonction et verifier que la definition est correcte (type return = type attendue) dans le function_definition
 
 
 
 
 ERREURS GRAVES : 
 TOUJOURS CES TYPAGES AVEC LES POINTEURS SUR FONCTIONS DE MORT
+Quand on compare les arbres de type, on sait pas forcement si il s'agit de types "primitifs" ou de structure (il faudrait etre capable de le detecter)
 
 
 A DEMANDER :
@@ -21,6 +21,7 @@ NOUS SOMMES PERPLEXE:
 sizeof ~~~~~~~~~
 le free pour la concatenation
 Il y a probablement un memory leak sur la suppression de table des symbole -> voir comment liberer la table
+le type de retour de la fonction (le type de return?) lors de la definition de fonction
 
 
 

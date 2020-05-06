@@ -2574,12 +2574,21 @@ yyreduce:
     (yyval.attributs).code = init_code((yyval.attributs).code);
     (yyval.attributs).code = concatener((yyval.attributs).code, (yyvsp[-2].attributs).code, " " ,(yyvsp[-1].attributs).code, (yyvsp[0].attributs).code, NULL);
     (yyval.attributs).type = (yyvsp[-1].attributs).type;
+    if(verif_type((yyvsp[-1].attributs).type, FCT_T))
+	{
+	    arbre_t * arrivee= (yyvsp[-1].attributs).type->fils_droit;
+	    if(!(compare_arbre_t(arrivee, (yyvsp[0].attributs).type)))
+		{
+		    type_error_function_definition(arrivee, (yyvsp[0].attributs).type, yylineno, &(yyval.attributs));
+		}
+	}
+    else {type_error(FCT_T, (yyvsp[0].attributs).type, yylineno, &(yyval.attributs));}
 }
-#line 2579 "structfe.tab.c" /* yacc.c:1646  */
+#line 2588 "structfe.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2583 "structfe.tab.c" /* yacc.c:1646  */
+#line 2592 "structfe.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2807,7 +2816,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 1067 "structfe.y" /* yacc.c:1906  */
+#line 1076 "structfe.y" /* yacc.c:1906  */
 
 	 
 int main()

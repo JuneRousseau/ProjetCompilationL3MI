@@ -1061,8 +1061,17 @@ function_definition
     $$.code = init_code($$.code);
     $$.code = concatener($$.code, $1.code, " " ,$2.code, $3.code, NULL);
     $$.type = $2.type;
+    if(verif_type($2.type, FCT_T))
+	{
+	    arbre_t * arrivee= $2.type->fils_droit;
+	    if(!(compare_arbre_t(arrivee, $3.type)))
+		{
+		    type_error_function_definition(arrivee, $3.type, yylineno, &$$);
+		}
+	}
+    else {type_error(FCT_T, $3.type, yylineno, &$$);}
 }
-;
+    ;
 
 %%
 	 

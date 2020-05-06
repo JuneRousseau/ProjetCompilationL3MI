@@ -2237,7 +2237,7 @@ int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2, int cmp_strct)
 				    arbre_t *fils2= arbre2->fils_gauche;
 			    
 				    if( fils1 != NULL && fils2 != NULL)
-					{ if(fils1->root == VOID_T || fils2->root == VOID_T) {return 0;}}
+					{ if(fils1->root == VOID_T || fils2->root == VOID_T) {return 1;}} /* si un des pointeurs est un void *, alors c'est bon*/
 				}
 				
 			    int g= cmp_arbre_t(arbre1->fils_gauche, arbre2->fils_gauche, cmp_strct);
@@ -2354,6 +2354,24 @@ int compare_arbre_t(arbre_t *arbre1, arbre_t *arbre2)
 		if(found_depart->root != ERROR_T)
 		    {
 			fprintf(stderr, "Type error line %d > Expected arguments type: %s, Found arguments type: %s \n", line, draw_type_expr(expected_depart), draw_type_expr(found_depart));
+		    }
+	    }
+	attribut->type= basic_type(ERROR_T, "");
+	error=SEMANTICERROR;
+	return ;
+    }
+
+    void type_error_function_definition(arbre_t *expected_arrivee, arbre_t *found_arrivee, int line, attributs_t *attribut)
+        {
+	if(expected_arrivee==NULL)
+	    {fprintf(stderr, "Type error line %d > Expected return type: NULL, Found return type: %s \n", line, draw_type_expr(found_arrivee)); }
+	else if (found_arrivee == NULL)
+	    {fprintf(stderr, "Type error line %d > Expected return type: %s, Found return type: NULL \n", line, draw_type_expr(expected_arrivee)); }
+	else
+	    {
+		if(found_arrivee->root != ERROR_T)
+		    {
+			fprintf(stderr, "Type error line %d > Expected return type: %s, Found return type: %s \n", line, draw_type_expr(expected_arrivee), draw_type_expr(found_arrivee));
 		    }
 	    }
 	attribut->type= basic_type(ERROR_T, "");
