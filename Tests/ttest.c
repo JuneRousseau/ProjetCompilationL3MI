@@ -9,13 +9,14 @@ int f(int a)
 		int b;
 		b=a;
 		c=a+b;
+		return f(a-1);
 	}
 	else
 	{
 		int c;
 		c=a;
 	}
-	return f(a-1);
+		return f(a-1);
 }
 				
 

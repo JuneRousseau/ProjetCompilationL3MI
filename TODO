@@ -3,8 +3,8 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 TODO:
 -gestions des STRUCTURES !
--gestion du void*, qui permet d'accepter simplement n'importe quel type de pointeur !
--garder le type du return d'une fonction??
+-garder le type du return d'une fonction et verifier que la definition est correcte (type return = type attendue) dans le function_definition
+
 
 
 

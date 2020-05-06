@@ -1956,7 +1956,7 @@ void yyfree (void * ptr )
 #line 53 "ANSI-frontend.l"
 
 
-/* Gestion tables des symboles */
+			/* Gestion tables des symboles */
 
 symbole_t *rechercher(table_t *tableSymbole, char *nom)
 {
@@ -2224,30 +2224,41 @@ int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2, int cmp_strct)
 		    if (is_leaf(arbre1) && is_leaf(arbre2))
 			{
 			    if(cmp_strct && !strcmp(arbre1->name, arbre2->name))
-				{return 0;} /*verifier nom d'une feuille ou de tout les noeud intermediaire?*/
+				{
+				    return 0;
+				} /*verifier nom d'une feuille ou de tout les noeud intermediaire?*/
 			    return 1;
 			}
 		    else
 			{
+			    if(arbre1->root == PTR_T)
+				{
+				    arbre_t *fils1= arbre1->fils_gauche;
+				    arbre_t *fils2= arbre2->fils_gauche;
+			    
+				    if( fils1 != NULL && fils2 != NULL)
+					{ if(fils1->root == VOID_T || fils2->root == VOID_T) {return 0;}}
+				}
+				
 			    int g= cmp_arbre_t(arbre1->fils_gauche, arbre2->fils_gauche, cmp_strct);
 			    if(g)
 				{return cmp_arbre_t(arbre1->fils_droit, arbre2->fils_droit, cmp_strct);}
 			    else {return 0;}
 			}
-		}
-	    else {
-		return 0;}
-	}
-}
+			
+			}
+	    else {return 0;}
+			}
+			}
 
-    int compare_arbre_struct(arbre_t *arbre1, arbre_t *arbre2)
-    {return cmp_arbre_t(arbre1, arbre2, 1);}
-
-    int compare_arbre_t(arbre_t *arbre1, arbre_t *arbre2)
-    {return cmp_arbre_t(arbre1, arbre2, 0);}
-
-    arbre_t *basic_type(type_t t, char* name) /* creer type de base (int_t ou void_t) */
-    {
+int compare_arbre_struct(arbre_t *arbre1, arbre_t *arbre2)
+{return cmp_arbre_t(arbre1, arbre2, 1);}
+ 
+int compare_arbre_t(arbre_t *arbre1, arbre_t *arbre2)
+ {return cmp_arbre_t(arbre1, arbre2, 0);}
+ 
+ arbre_t *basic_type(type_t t, char* name) /* creer type de base (int_t ou void_t) */
+ {
 	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
 
 	
