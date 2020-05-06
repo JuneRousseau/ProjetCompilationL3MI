@@ -29,14 +29,8 @@ test_compilation()
 	touch compil_log
 	name=${file%%.*}
 	name_output="./outputs/$name$output"
-	if [ $answer == 'y' ]
-	then
-	    (./sources/frontend/structfe < ./Tests/$file) > $name_output
-	else
-	    (./sources/frontend/structfe < ./Tests/$file) > $name_output 2>compil_log
-	fi
-	compil="$?"
-	
+	(./sources/frontend/structfe < ./Tests/$file) > $name_output 2>compil_log
+	compil="$?"	
 	if [ $compil == 0 ]
 	then
 	    echo $file: Compilation OK
@@ -64,8 +58,11 @@ test_compilation()
 		    echo $file: Compilation Another error
 		fi
 	    fi
-	    cat compil_log
 	fi
+	if [ $answer == 'y' ]
+	    then
+		cat compil_log
+	    fi
 	echo
 	rm compil_log
     fi
@@ -74,12 +71,14 @@ test_compilation()
 
 echo -e "Voulez vous compiler le structfe ? [y ou n]: \c"
 read answer
+compilation=0
 if [ $answer == 'y' ]
 then
     cd ./sources/frontend
     touch log
-    ./compil.sh ANSI-frontend.l structfe 2>log
+    ./compil.sh ANSI-frontend.l structfe >log 2>log
     compilation=$?
+    cat log
     if [ $compilation != 0 ]
     then
 	echo "Compilateur non recompile (fail):"

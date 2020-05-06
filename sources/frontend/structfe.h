@@ -28,6 +28,7 @@ typedef struct _attributs_t {
   arbre_t *type;
   char *res;
   symbole_t *id;
+  int is_ptr_fct;
 } attributs_t;
 
 typedef struct _table_t {
@@ -78,6 +79,9 @@ arbre_t *fct_type(arbre_t *depart, arbre_t *arrivee, char* name);
 arbre_t *ptr_type(arbre_t *t, char* name);
 arbre_t *prod_type(arbre_t *t1, arbre_t *t2, char* name);
 arbre_t *struct_type(arbre_t *champs, char* name);
+
+int sizeof_type(arbre_t *type);
+int sizeof_type_t(arbre_t *type, int ptr);
 
 int verif_type(arbre_t *expr_type, type_t expected_type);
 void type_error(type_t expected_type, arbre_t *found_type, int line, attributs_t *attribut);

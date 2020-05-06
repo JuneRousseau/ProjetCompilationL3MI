@@ -2429,6 +2429,54 @@ char *new_label(char *label){
 	    }
     }
 
+int sizeof_type(arbre_t *type)
+    {
+	return sizeof_type_t(type, 0);
+    }
+
+int sizeof_type_t(arbre_t *type, int ptr)
+    {
+	if (type == NULL) {return 0;}
+	else
+	    {
+		switch(type->root)
+		    {
+		    case 0: //INT_T
+			return sizeof(int);
+			break;
+		    case 1: //VOID_T
+			return sizeof(void);
+			break;
+		    case 2: //ERROR_T
+			return sizeof(void);
+			break;
+		    case 3: //FCT_T		    
+			return sizeof(int);
+			break;
+		    case 4: //PTR_T
+			if (ptr)
+			    {
+				int *p;
+				return sizeof(p);
+			    }
+			else
+			    {
+				return (sizeof_type_t(type->fils_gauche, 1));
+			    }
+			break;
+		    case 5://PROD_T
+			return (sizeof_type_t(type->fils_gauche, ptr) + sizeof_type_t(type->fils_droit, ptr));
+			break;
+		    case 6://STRUCT_T
+			return sizeof_type_t(type->fils_gauche, ptr);
+			break;
+		    default:
+			return 0;
+			break;
+		    }
+	    }
+    }
+
     void init_error() {error=0;}
     int get_error_code() {return error;}
 

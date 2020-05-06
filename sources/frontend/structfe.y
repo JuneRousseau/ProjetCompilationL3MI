@@ -4,7 +4,6 @@
 #define SYNTAXERROR 1
 
 extern int yylineno;
-int cpt;
     %}
 
 %token <attributs> SIZEOF
@@ -198,19 +197,25 @@ unary_expression
 | SIZEOF '(' type_specifier ')'
 {
     $$.code = init_code($$.code);
-    $$.res = strdup(new_var($$.res));
-    $$.code = concatener($$.code, $$.res, " = sizeof(", $3.code , ");\n", NULL);
+    //$$.res = strdup(new_var($$.res));
+    //$$.code = concatener($$.code, $$.res, " = (", $3.code , ");\n", NULL);
+    $$.res=init_code($$.res);
+    sprintf($$.res, "%d", sizeof_type($3.type));
     $$.type= basic_type(INT_T, "");
-    $$.declarations= add_declaration($$.res, $$.type, strdup(""));
+    $$.declarations = strdup("");
+    //$$.declarations= add_declaration($$.res, $$.type, strdup(""));
 }
 
 | SIZEOF unary_expression
 {
     $$.code = init_code($$.code);
-    $$.res = strdup(new_var($$.res));
-    $$.code = concatener($$.code, $$.res, " = sizeof(",$2.res , ");\n", NULL);
+    //$$.res = strdup(new_var($$.res));
+    //$$.code = concatener($$.code, $$.res, " = sizeof(",$2.res , ");\n", NULL);
+    $$.res=init_code($$.res);
+    sprintf($$.res, "%d", sizeof_type($2.type));
     $$.type= basic_type(INT_T, "");
-    $$.declarations= add_declaration($$.res, $$.type, $2.declarations);
+    $$.declarations = strdup("");
+    //$$.declarations= add_declaration($$.res, $$.type, $2.declarations);
 }       
 ; 
 
@@ -591,7 +596,7 @@ declaration
     $$.code=init_code($$.code);
     $$.code=concatener($$.code, $1.code, " ", $2.code, ";\n", NULL);
     $$.type= $2.type;
-    fprintf(stderr, "%d: DECLARATION: %s %s\n\n", cpt++, draw_type_expr($$.type), $2.id->nom);
+    $2.id->type= $2.type;
     $$.declarations=strdup("");
 }
 
@@ -662,17 +667,15 @@ struct_declaration
 ;
 
 declarator
-: '*' {$<attributs>$.type= ptr_type($<attributs>0.type, ""); fprintf(stderr, "* %s\n", draw_type_expr($<attributs>$.type));} direct_declarator
+: '*' {$<attributs>$.type= ptr_type($<attributs>0.type, "");} direct_declarator
 //: '*' {$<attributs>$.type= $<attributs>0.type; fprintf(stderr, "%d: * %s\n", cpt++, draw_type_expr($<attributs>$.type));} direct_declarator 
 {
     $$.code= init_code($$.code);
     $$.code= concatener($$.code, "*", $3.code, NULL);
     //$$.type= ptr_type($3.type, "");
     $$.id = $3.id;
-    $$.id->type= $3.type;
-$$.type= $$.id->type;
-    fprintf(stderr, "type de l'id??? %s\n", (draw_type_expr($$.id->type)));
-    fprintf(stderr, "%d: ****%s %s\n",cpt++, ($$.id->nom), draw_type_expr($$.type));
+    //$$.id->type= $3.type;
+    $$.type= $3.type;
     $$.declarations=strdup("");
 }
 
@@ -681,50 +684,42 @@ $$.type= $$.id->type;
     $$.code= strdup($2.code);
     $$.type= $2.type;
     $$.id = $2.id;
-    fprintf(stderr, "%d: %s %s\n",cpt++, ($$.id->nom), draw_type_expr($$.type));
     $$.declarations=strdup("");
 }
 ;
 
 direct_declarator
-:  '(' {$<attributs>$.type= $<attributs>0.type; fprintf(stderr, "%d: (dans decla)  %s\n", cpt++, draw_type_expr($<attributs>$.type));} declarator ')'
+:  '(' {$<attributs>$.type= $<attributs>0.type;} declarator ')'
 {
     $$.code = init_code($$.code); $$.code = concatener($$.code, "(", $3.code, ")", NULL);
     $$.type= $<attributs>0.type;
     $$.type= $3.type;
-    //$$.type=basic_type(VOID_T, "");
     $$.id= $3.id;
-    fprintf(stderr, "%d: (decla)  %s\n", cpt++, draw_type_expr($$.type));
-$$.declarations=strdup("");
+    $$.declarations=strdup("");
 }
 
 | IDENTIFIER
 {
     $$.code = strdup($1->nom);
-    $1->type= $<attributs>0.type;
-    $$.type= $1->type;
+    $$.type= $<attributs>0.type;
     $$.id= $1;
-    fprintf(stderr, "%d: IDENT:%s %s\n",cpt++, $1->nom,  draw_type_expr($$.type));
-$$.declarations=strdup("");
+    $$.declarations=strdup("");
 }
 
 
-|  direct_declarator '(' parameter_list ')'
+| direct_declarator '(' parameter_list ')'
 {
     $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "(",$3.code,")", NULL);
-    //if($1.type != NULL) {fprintf(stderr, "TYPE DE DIRECT DECLA: %s\n", get_type_readable( ($1.type)->root) );}
     $$.type= fct_type($3.type, $1.type, "");
-    ($1.id)->type= $$.type;
-    fprintf(stderr, "%d: direct(...) %s\n", cpt++, draw_type_expr($$.type));
-$$.declarations=strdup("");
+    $$.id= $1.id;
+    $$.declarations=strdup("");
 }	      
 
-| direct_declarator '(' ')'
+|   direct_declarator '(' ')'
 {
     $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "()", NULL);
     $$.type= fct_type(basic_type(VOID_T, ""), $1.type, "");
-    ($1.id)->type= $$.type;
-    //fprintf(stderr, "%s\n", draw_type_expr($$.type));
+    $$.id= $1.id;
     $$.declarations=strdup("");
 }
 ;
@@ -734,7 +729,7 @@ parameter_list
 {
     $$.code = strdup($1.code);
     $$.type = $1.type;
-$$.declarations=strdup("");
+    $$.declarations=strdup("");
 }
 
 | parameter_list ',' parameter_declaration
@@ -797,7 +792,7 @@ compound_statement
 {
     $$.code = init_code($$.code); $$.code= ajouter_code($$.code, "{ }\n");
     $$.type= basic_type(VOID_T, "");
-    $$.declarations= strdup("\n");
+    $$.declarations= strdup("");
 }
 
 
@@ -806,7 +801,7 @@ compound_statement
     $$.code = init_code($$.code);
     $$.code = concatener($$.code, "{\n", $2.declarations, $2.code ,"}\n", NULL);
     $$.type = $2.type;
-    $$.declarations= strdup("\n");
+    $$.declarations= strdup("");
 //    $$.declarations= strdup($2.declarations);
 }
 
@@ -816,18 +811,18 @@ compound_statement
     $$.code = init_code($$.code);
     $$.code = concatener($$.code, "{\n", $2.code ,"}\n", NULL);
     $$.type = $2.type;
-    $$.declarations= strdup("\n");
+    $$.declarations= strdup("");
 }
 
 
 | '{' declaration_list statement_list '}'
 {
     $$.code = init_code($$.code);
-    $$.code = concatener($$.code, "{\n", $3.declarations,  $2.code, $3.code ,"}\n", NULL);
+    $$.code = concatener($$.code, "{\n", $2.code, $3.declarations, $3.code ,"}\n", NULL);
     $$.type = $3.type;
-    $$.declarations= strdup("\n");
+    $$.declarations= strdup("");
     //$$.declarations= strdup($3.declarations);
-    //fprintf(stderr, "DECLAAAAA [ %s ]\n", $3.declarations);
+    fprintf(stderr, "DECLAAAAA: [ %s ] \n",$3.declarations);
 }
 ;
 
@@ -1029,7 +1024,7 @@ function_definition
 	 
 int main()
 {
-    cpt=0;
+
     init_pile();
     init_cpt_var();
     init_cpt_label();
