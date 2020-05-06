@@ -1,16 +1,31 @@
 extern int printd(int i);
 
+int f(int a)
+{
+	int c;
+	if(a==1)
+	{ 
+		int a;
+		int b;
+		b=a;
+		c=a+b;
+	}
+	else
+	{
+		int c;
+		c=a;
+	}
+	return f(a-1);
+}
+				
+
+int a;
+
 int main() {
 
 int a;
-int b;
-int c;
-
-a=0;
-b= 0;
-c=0;
-
-if ( a && (b+1)) printd(a); else printd(b);
+a=10;
+a= f(a);
 
 return 0;
 }

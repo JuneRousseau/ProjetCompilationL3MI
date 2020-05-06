@@ -19,6 +19,7 @@ typedef struct _arbre_t {
 typedef struct _symbole_t {
   char *nom;
   arbre_t *type;
+  int is_arg;
   struct _symbole_t *suivant;
 } symbole_t;
 

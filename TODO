@@ -6,7 +6,6 @@ TODO:
 
 
 -finir declarations variables temporaires pour les blocs (boucle, if ...)
--entree sortie de bloc => /!\ gestion table symbole pour les arguments de fonctions !
 -gestion du void*, qui permet d'accepter simplement n'importe quel type de pointeur !
 -garder le type du return d'une fonction??
 
@@ -14,6 +13,7 @@ TODO:
 
 ERREURS GRAVES : 
 TOUJOURS CES PUTAINS DE TYPAGES AVEC LES POINTEURS SUR FONCTIONS DE MORT
+
 
 A DEMANDER :
 
@@ -23,8 +23,7 @@ A DEMANDER :
 NOUS SOMMES PERPLEXE:
 sizeof ~~~~~~~~~
 le free pour la concatenation
-
-
+Il y a probablement un memory leak sur la suppression de table des symbole -> voir comment liberer la table
 
 
 

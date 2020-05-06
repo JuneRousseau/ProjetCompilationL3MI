@@ -600,6 +600,11 @@ declaration
     $$.type= $2.type;
     //$2.id->type= $2.type;
     $$.declarations=strdup("");
+//fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE APRES AVOIR DEFINI(avant pop) %s:\n", $2.id->nom);
+//afficher_pile();
+    if($$.type->root == FCT_T){pop();}
+//fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE APRES AVOIR DEFINI(apres pop)  %s:\n", $2.id->nom);
+//afficher_pile();
 }
 
 | struct_specifier ';'
@@ -670,7 +675,6 @@ struct_declaration
 
 declarator
 : '*' {$<attributs>$.type= ptr_type($<attributs>0.type, "");} direct_declarator
-//: '*' {$<attributs>$.type= $<attributs>0.type; fprintf(stderr, "%d: * %s\n", cpt++, draw_type_expr($<attributs>$.type));} direct_declarator 
 {
     $$.code= init_code($$.code);
     $$.code= concatener($$.code, "*", $3.code, NULL);
@@ -712,30 +716,55 @@ direct_declarator
 	}
     else
 	{
-	    $$.type= $<attributs>0.type;
-	    s= ajouter(top(), $1);
+	    if(top()->suivant)
+		{
+		    s= rechercher(top()->suivant, $1);
+		    if(s)
+			{ if(s->is_arg)
+				{
+				    fprintf(stderr, "L'identifiant %s est un argument de fonction du type %s", $1, draw_type_expr(s->type));  
+				    $$.type=basic_type(ERROR_T, "");
+				}
+			    else
+				{$$.type= $<attributs>0.type;
+				    s= ajouter(top(), $1);}
+
+			}
+		    else
+			{
+			    $$.type= $<attributs>0.type;
+			    s= ajouter(top(), $1);
+			}
+		    
+		}
+	    else
+		{
+		    $$.type= $<attributs>0.type;
+		    s= ajouter(top(), $1);
+		}
 	}
     $$.id=s;
+    $$.id->is_arg=0;
     $$.code = strdup($1);
     $$.declarations=strdup("");
 }
 
 
-    | direct_declarator '(' parameter_list ')'
-	  {
-	      $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "(",$3.code,")", NULL);
-	      $$.type= fct_type($3.type, $1.type, "");
-	      $$.id= $1.id;
-	      $$.declarations=strdup("");
-	  }	      
+| direct_declarator '(' {push(nouvelle_table());}  parameter_list ')'
+{
+    $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "(",$4.code,")", NULL);
+    $$.type= fct_type($4.type, $1.type, "");
+    $$.id= $1.id;
+    $$.declarations=strdup("");
+}	      
 
-    |   direct_declarator '(' ')'
-	    {
-		$$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "()", NULL);
-		$$.type= fct_type(basic_type(VOID_T, ""), $1.type, "");
-		$$.id= $1.id;
-		$$.declarations=strdup("");
-	    }
+|   direct_declarator '(' {push(nouvelle_table());}  ')'
+{
+    $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "()", NULL);
+    $$.type= fct_type(basic_type(VOID_T, ""), $1.type, "");
+    $$.id= $1.id;
+    $$.declarations=strdup("");
+}
     ;
 
  parameter_list
@@ -761,6 +790,7 @@ direct_declarator
 	$$.code=init_code($$.code); $$.code=concatener($$.code, $1.code, " ", $2.code," ", NULL);
 	$$.type= $1.type;
 	$$.declarations=strdup("");
+	$2.id->is_arg=1;
     }
     ;
 
@@ -842,7 +872,6 @@ direct_declarator
 	$$.type = $3.type;
 	$$.declarations= strdup("");
 	//$$.declarations= strdup($3.declarations);
-	fprintf(stderr, "DECLAAAAA: [ %s ] \n",$3.declarations);
     }
     ;
 
@@ -978,7 +1007,6 @@ direct_declarator
     
 	      $$.declarations=init_code($$.declarations);
 	      $$.declarations=concatener($$.declarations, $3.declarations, $4.declarations, $5.declarations, $7.declarations);
-	      fprintf(stderr, "declarations du corps du for: %s", $7.declarations);
 
 	      $$.type= basic_type(VOID_T, "");
 	  }
@@ -1031,21 +1059,35 @@ direct_declarator
 	  }
     ;
 
- function_definition
-     : declaration_specifiers declarator compound_statement
-    {
-	$$.code = init_code($$.code);
-	$$.code = concatener($$.code, $1.code, " " ,$2.code, $3.code, NULL);
-	$$.type = $2.type;
-    }
+
+function_definition
+: declaration_specifiers declarator compound_statement
+{
+    pop(); /*on pop la table des symboles des parametres*/
+    $$.code = init_code($$.code);
+    $$.code = concatener($$.code, $1.code, " " ,$2.code, $3.code, NULL);
+    $$.type = $2.type;
+}
     ;
 
 %%
 	 
 int main()
 {
-    fprintf(stderr, "%d", f(1));
+    
     init_pile();
+
+    /*push(nouvelle_table());
+    ajouter(top(), strdup("x"));
+    fprintf(stderr, "On ajoute x: \n");
+    afficher_pile();
+    pop();
+    fprintf(stderr, " \nOn pop la table: \n");
+    afficher_pile();
+    push( nouvelle_table() );
+    fprintf(stderr, "\nOn creer nouvelle table: \n");
+    afficher_pile();*/
+    
     init_cpt_var();
     init_cpt_label();
     init_error();

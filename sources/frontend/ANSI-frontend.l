@@ -54,18 +54,6 @@ int error;
 
 /* Gestion tables des symboles */
 
-table_t *nouvelle_table(){
-    table_t *p = (table_t *) malloc(sizeof(table_t));
-    p->suivant = NULL;
-    p->precedent = NULL;
-    return p;
-    }
-
-void supprimer_table(table_t *table)
-{
-    free(table);
-}
-
 symbole_t *rechercher(table_t *tableSymbole, char *nom)
 {
     int h;
@@ -111,6 +99,7 @@ symbole_t *ajouter(table_t *tableSymbole, char *nom)
 	}
     s->nom = strdup(nom);
     s->suivant = NULL;
+    s->type= NULL;
     return s;
 }
 
@@ -122,6 +111,26 @@ int hash( char *nom ) {
  for ( i = 0; i < taille; i++ )
  r = ((r << 8) + nom[i]) % TAILLE;
  return r;
+}
+
+table_t *nouvelle_table(){
+    table_t *p = (table_t *) malloc(sizeof(table_t));
+    //fprintf(stderr, "le pointeur vers la nouvelle table est %p\n", p);
+    p->suivant = NULL;
+    p->precedent = NULL;
+    return p;
+    }
+
+void supprimer_table(table_t *t)
+{
+    //fprintf(stderr, "on libere le pointeur %p\n", t);
+    for(int i=0; i<TAILLE; i++)
+	{
+	    free(t->table[i]);
+	    t->table[i]=NULL;
+	}
+    free(t->table);
+    //afficher_table(t);
 }
 
 pile_t *push(table_t *table)
@@ -136,11 +145,11 @@ pile_t *push(table_t *table)
 
 pile_t *pop()
     {
-	table_t *last_top= top(pile);
+	table_t *last_top= top();
 	table_t *new_top = last_top->suivant;
 	new_top->precedent = NULL;
 	pile->premier= new_top;
-	supprimer_table(last_top);
+	//free(last_top);
 	return pile;
     }
 
@@ -193,7 +202,7 @@ void afficher_table(table_t *t)
 		    fprintf(stderr, "%d: ", i);
 		    while(s != NULL)
 			{
-			    fprintf(stderr, "(%s, %s) -> ", s->nom, draw_type_expr(s->type));
+			    fprintf(stderr, "(%s, %s, %d) -> ", s->nom, draw_type_expr(s->type), s->is_arg);
 			    s= s->suivant;
 			}
 		    fprintf(stderr, "NULL\n");
@@ -291,41 +300,41 @@ char *new_label(char *label){
 }
 
 
-    int is_leaf(arbre_t *arbre)
-    {
-	int g = (arbre->fils_gauche == NULL);
-        int d = (arbre->fils_droit == NULL);
+int is_leaf(arbre_t *arbre)
+{
+    int g = (arbre->fils_gauche == NULL);
+    int d = (arbre->fils_droit == NULL);
 
-	return d && g;
-    }
+    return d && g;
+}
 
 
-    int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2, int cmp_strct)
-    {
-	if(arbre1 == NULL && arbre2 == NULL) {return 1;}
-	else if(arbre1 == NULL || arbre2 == NULL) {return 0;}
-	else
-	    {
-		if(arbre1->root == arbre2->root)
-		    {
-			if (is_leaf(arbre1) && is_leaf(arbre2))
-			    {
-				if(cmp_strct && !strcmp(arbre1->name, arbre2->name))
-				    {return 0;} /*verifier nom d'une feuille ou de tout les noeud intermediaire?*/
-				return 1;
-			    }
-			else
-			    {
-				int g= cmp_arbre_t(arbre1->fils_gauche, arbre2->fils_gauche, cmp_strct);
-				if(g)
-				    {return cmp_arbre_t(arbre1->fils_droit, arbre2->fils_droit, cmp_strct);}
-				else {return 0;}
-			    }
-		    }
-		else {
-		    return 0;}
-	    }
-    }
+int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2, int cmp_strct)
+{
+    if(arbre1 == NULL && arbre2 == NULL) {return 1;}
+    else if(arbre1 == NULL || arbre2 == NULL) {return 0;}
+    else
+	{
+	    if(arbre1->root == arbre2->root)
+		{
+		    if (is_leaf(arbre1) && is_leaf(arbre2))
+			{
+			    if(cmp_strct && !strcmp(arbre1->name, arbre2->name))
+				{return 0;} /*verifier nom d'une feuille ou de tout les noeud intermediaire?*/
+			    return 1;
+			}
+		    else
+			{
+			    int g= cmp_arbre_t(arbre1->fils_gauche, arbre2->fils_gauche, cmp_strct);
+			    if(g)
+				{return cmp_arbre_t(arbre1->fils_droit, arbre2->fils_droit, cmp_strct);}
+			    else {return 0;}
+			}
+		}
+	    else {
+		return 0;}
+	}
+}
 
     int compare_arbre_struct(arbre_t *arbre1, arbre_t *arbre2)
     {return cmp_arbre_t(arbre1, arbre2, 1);}
