@@ -421,7 +421,7 @@ int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2, int cmp_strct)
 	    }
 	else
 	    {
-		fprintf(stderr, "Type error line %d > Expected type: %s , Found_type: %s \n", line, expected_type_readable, draw_type_expr(found_type));
+		if(found_type->root != ERROR_T){fprintf(stderr, "Type error line %d > Expected type: %s , Found_type: %s \n", line, expected_type_readable, draw_type_expr(found_type));}
 	    }
 	attribut->type= basic_type(ERROR_T, "");
 	error=SEMANTICERROR;
@@ -435,7 +435,12 @@ int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2, int cmp_strct)
 	else if (found_depart == NULL)
 	    {fprintf(stderr, "Type error line %d > Expected arguments type: %s, Found arguments type: NULL \n", line, draw_type_expr(expected_depart)); }
 	else
-	    {fprintf(stderr, "Type error line %d > Expected arguments type: %s, Found arguments type: %s \n", line, draw_type_expr(expected_depart), draw_type_expr(found_depart) ); }
+	    {
+		if(found_depart->root != ERROR_T)
+		    {
+			fprintf(stderr, "Type error line %d > Expected arguments type: %s, Found arguments type: %s \n", line, draw_type_expr(expected_depart), draw_type_expr(found_depart));
+		    }
+	    }
 	attribut->type= basic_type(ERROR_T, "");
 	error=SEMANTICERROR;
 	return ;

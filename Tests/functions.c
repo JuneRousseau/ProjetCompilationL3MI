@@ -11,9 +11,7 @@ int foo (int n)
 
 
 int main() {
-  int a;
   fact=&foo;
-  a=test;
   printd((*fact)(10));
   return 0;
 }
