@@ -14,7 +14,7 @@ extern int yylineno;
 %token <attributs> STRUCT 
 %token <attributs> IF ELSE WHILE FOR RETURN
 %token <attributs> '(' ')' '{' '}' ';' '&' '*' '-' ',' '.' '+' '>' '<' '='
-%token <symbol> IDENTIFIER
+%token <name> IDENTIFIER
 %token <number> CONSTANT
 
 %type <attributs> primary_expression postfix_expression argument_expression_list unary_expression unary_operator multiplicative_expression additive_expression relational_expression equality_expression logical_and_expression logical_or_expression expression declaration declaration_specifiers type_specifier struct_specifier struct_declaration_list struct_declaration declarator direct_declarator parameter_list parameter_declaration statement compound_statement  declaration_list statement_list expression_statement selection_statement iteration_statement jump_statement program external_declaration function_definition
@@ -26,7 +26,7 @@ extern int yylineno;
 %union {
     char *number;
     attributs_t attributs;
-    symbole_t *symbol;
+    char *name;
 }
 
 %start program_start
@@ -55,10 +55,12 @@ primary_expression
 
 | IDENTIFIER
 {
+    fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE AU MOMENT OU ON VEUT IDENTIFIER %s:\n", $1);
+    afficher_pile();
     $$.code = init_code($$.code);
-    $$.res = strdup($1->nom);
+    $$.res = strdup($1);
     
-    $$.type = $1->type;
+    $$.type = find($1)->type;
     $$.declarations=strdup("");
 } ;
 
@@ -126,7 +128,7 @@ postfix_expression
 {
     $$.code = strdup($1.code);
     $$.res = strdup(new_var($$.res));
-    $$.code = concatener($$.code, $1.code, $$.res, " = ", $1.res, "->", strdup($3->nom), ";\n", NULL);
+    $$.code = concatener($$.code, $1.code, $$.res, " = ", $1.res, "->", strdup($3), ";\n", NULL);
     $$.type= basic_type(VOID_T, ""); /*type du champs de structure....*/
     $$.declarations=strdup("");
 }
@@ -596,7 +598,7 @@ declaration
     $$.code=init_code($$.code);
     $$.code=concatener($$.code, $1.code, " ", $2.code, ";\n", NULL);
     $$.type= $2.type;
-    $2.id->type= $2.type;
+    //$2.id->type= $2.type;
     $$.declarations=strdup("");
 }
 
@@ -674,7 +676,7 @@ declarator
     $$.code= concatener($$.code, "*", $3.code, NULL);
     //$$.type= ptr_type($3.type, "");
     $$.id = $3.id;
-    //$$.id->type= $3.type;
+    $$.id->type= $3.type;
     $$.type= $3.type;
     $$.declarations=strdup("");
 }
@@ -684,6 +686,7 @@ declarator
     $$.code= strdup($2.code);
     $$.type= $2.type;
     $$.id = $2.id;
+    $$.id->type= $$.type;
     $$.declarations=strdup("");
 }
 ;
@@ -700,331 +703,348 @@ direct_declarator
 
 | IDENTIFIER
 {
-    $$.code = strdup($1->nom);
-    $$.type= $<attributs>0.type;
-    $$.id= $1;
+    symbole_t *s;
+    s= rechercher(top(), $1);
+    if(s)
+	{
+	    fprintf(stderr, "Identifiant \"%s\" deja declare et du type %s", $1, draw_type_expr(s->type));
+	    $$.type=basic_type(ERROR_T, "");
+	}
+    else
+	{
+	    $$.type= $<attributs>0.type;
+	    s= ajouter(top(), $1);
+	}
+    $$.id=s;
+    $$.code = strdup($1);
     $$.declarations=strdup("");
 }
 
 
-| direct_declarator '(' parameter_list ')'
-{
-    $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "(",$3.code,")", NULL);
-    $$.type= fct_type($3.type, $1.type, "");
-    $$.id= $1.id;
-    $$.declarations=strdup("");
-}	      
+    | direct_declarator '(' parameter_list ')'
+	  {
+	      $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "(",$3.code,")", NULL);
+	      $$.type= fct_type($3.type, $1.type, "");
+	      $$.id= $1.id;
+	      $$.declarations=strdup("");
+	  }	      
 
-|   direct_declarator '(' ')'
-{
-    $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "()", NULL);
-    $$.type= fct_type(basic_type(VOID_T, ""), $1.type, "");
-    $$.id= $1.id;
-    $$.declarations=strdup("");
-}
-;
+    |   direct_declarator '(' ')'
+	    {
+		$$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "()", NULL);
+		$$.type= fct_type(basic_type(VOID_T, ""), $1.type, "");
+		$$.id= $1.id;
+		$$.declarations=strdup("");
+	    }
+    ;
 
-parameter_list
-: parameter_declaration
-{
-    $$.code = strdup($1.code);
-    $$.type = $1.type;
-    $$.declarations=strdup("");
-}
+ parameter_list
+     : parameter_declaration
+	{
+	    $$.code = strdup($1.code);
+	    $$.type = $1.type;
+	    $$.declarations=strdup("");
+	}
 
-| parameter_list ',' parameter_declaration
-{
-    $$.code = init_code($$.code);
-    $$.code = concatener($$.code, $1.code, "," , $3.code, NULL);
-    $$.type= prod_type($1.type, $3.type, ""); /*c'est un arbre "recursif a gauche"*/
-    $$.declarations=strdup("");
-}
-;
+    | parameter_list ',' parameter_declaration
+	  {
+	      $$.code = init_code($$.code);
+	      $$.code = concatener($$.code, $1.code, "," , $3.code, NULL);
+	      $$.type= prod_type($1.type, $3.type, ""); /*c'est un arbre "recursif a gauche"*/
+	      $$.declarations=strdup("");
+	  }
+    ;
 
-parameter_declaration
-: declaration_specifiers declarator
-{
-    $$.code=init_code($$.code); $$.code=concatener($$.code, $1.code, " ", $2.code," ", NULL);
-    $$.type= $1.type;
-    $$.declarations=strdup("");
-}
-;
+ parameter_declaration
+     : declaration_specifiers declarator
+    {
+	$$.code=init_code($$.code); $$.code=concatener($$.code, $1.code, " ", $2.code," ", NULL);
+	$$.type= $1.type;
+	$$.declarations=strdup("");
+    }
+    ;
 
-statement
-: compound_statement
-{
-$$.code = strdup($1.code);
-$$.type= $1.type;
-$$.declarations= strdup($1.declarations);
-}
+ statement
+     : compound_statement
+	{
+	    $$.code = strdup($1.code);
+	    $$.type= $1.type;
+	    $$.declarations= strdup($1.declarations);
+	}
 
-| expression_statement
-{
-$$.code = strdup($1.code);
-$$.type= $1.type;
-$$.declarations= strdup($1.declarations);
-}
+    | expression_statement
+	  {
+	      $$.code = strdup($1.code);
+	      $$.type= $1.type;
+	      $$.declarations= strdup($1.declarations);
+	  }
 
-| selection_statement
-{
-$$.code = strdup($1.code);
-$$.type= $1.type;
-$$.declarations= strdup($1.declarations);
-}
+    | selection_statement
+	  {
+	      $$.code = strdup($1.code);
+	      $$.type= $1.type;
+	      $$.declarations= strdup($1.declarations);
+	  }
 
-| iteration_statement
-{
-$$.code = strdup($1.code);
-$$.type= $1.type;
-$$.declarations= strdup($1.declarations);
-}
+    | iteration_statement
+	  {
+	      $$.code = strdup($1.code);
+	      $$.type= $1.type;
+	      $$.declarations= strdup($1.declarations);
+	  }
 
-| jump_statement
-{
-$$.code = strdup($1.code);
-$$.type= $1.type;
-$$.declarations= strdup($1.declarations);
-}
-;
+    | jump_statement
+	  {
+	      $$.code = strdup($1.code);
+	      $$.type= $1.type;
+	      $$.declarations= strdup($1.declarations);
+	  }
+    ;
 
-compound_statement
-: '{' '}'
-{
-    $$.code = init_code($$.code); $$.code= ajouter_code($$.code, "{ }\n");
-    $$.type= basic_type(VOID_T, "");
-    $$.declarations= strdup("");
-}
+ entree
+     : '{' {push(nouvelle_table());} ;
 
+ sortie
+     : '}' {pop();} ;
 
-| '{' statement_list '}'
-{
-    $$.code = init_code($$.code);
-    $$.code = concatener($$.code, "{\n", $2.declarations, $2.code ,"}\n", NULL);
-    $$.type = $2.type;
-    $$.declarations= strdup("");
-//    $$.declarations= strdup($2.declarations);
-}
+ compound_statement
+     : '{' '}'
+	{
+	    $$.code = init_code($$.code); $$.code= ajouter_code($$.code, "{ }\n");
+	    $$.type= basic_type(VOID_T, "");
+	    $$.declarations= strdup("");
+	}
 
 
-| '{' declaration_list '}'
-{
-    $$.code = init_code($$.code);
-    $$.code = concatener($$.code, "{\n", $2.code ,"}\n", NULL);
-    $$.type = $2.type;
-    $$.declarations= strdup("");
-}
+    | entree statement_list sortie
+    {
+	$$.code = init_code($$.code);
+	$$.code = concatener($$.code, "{\n", $2.declarations, $2.code ,"}\n", NULL);
+	$$.type = $2.type;
+	$$.declarations= strdup("");
+	//    $$.declarations= strdup($2.declarations);
+    }
 
 
-| '{' declaration_list statement_list '}'
-{
-    $$.code = init_code($$.code);
-    $$.code = concatener($$.code, "{\n", $2.code, $3.declarations, $3.code ,"}\n", NULL);
-    $$.type = $3.type;
-    $$.declarations= strdup("");
-    //$$.declarations= strdup($3.declarations);
-    fprintf(stderr, "DECLAAAAA: [ %s ] \n",$3.declarations);
-}
-;
-
-declaration_list
-: declaration
-{
-    $$.code= strdup($1.code); /*verifier qu'on a pas une erreur de type*/
-    $$.type= $1.type;
-    $$.declarations=strdup("");
-}
-
-| declaration_list declaration
-{
-    $$.code= init_code($$.code);
-    $$.code= concatener($$.code, $1.code, $2.code, NULL);
-    $$.type= $2.type;
-    $$.declarations=strdup("");
-}
-;
-
-statement_list
-: statement
-{
-    $$.code=strdup($1.code);
-    $$.type=$1.type;
-    $$.declarations= strdup($1.declarations);
-}
-
-| statement_list statement
-{
-    $$.code=init_code($$.code);
-    $$.code=concatener($$.code, $1.code, $2.code, NULL);
-    $$.type= $2.type;
-    $$.declarations= init_code($$.declarations);
-    $$.declarations= concatener($$.declarations, $1.declarations, $2.declarations, NULL);
-}
-;
-
-expression_statement
-: ';'
-{
-    $$.code = init_code($$.code);
-    $$.code=ajouter_code($$.code, ";\n"); $$.res= NULL;
-    $$.type= basic_type(VOID_T, "");
-    $$.declarations= strdup("\n");
-}
-
-| expression ';'
-{
-    $$.code= strdup($1.code);
-    $$.res= strdup($1.res);
-    $$.type= $1.type;
-    $$.declarations= strdup($1.declarations);
-}
-;
-
-selection_statement
-: IF '(' expression ')' statement %prec "then"
-{
-    char* label_falsee;
-    char* label_truee;
-    label_falsee= strdup(new_label(label_falsee));
-    label_truee= strdup(new_label(label_truee));
-    $$.code= init_code($$.code);
-    $$.code= concatener($$.code, $3.code, NULL);
-    $$.code= concatener($$.code, "if (", $3.res, ") goto ", label_truee, ";\n", NULL);
-    $$.code= concatener($$.code, "goto ", label_falsee, ";\n", NULL);
-    $$.code = concatener($$.code, label_truee, ":\n", $5.code, label_falsee, ":\n", NULL);
-    $$.res = NULL;
-
-    $$.type= basic_type(VOID_T, "");
-    $$.declarations= strdup($3.declarations);
-}
-
-| IF '(' expression ')' statement ELSE statement
-{
-    char* label_falsee;
-    char* label_truee;
-    label_falsee= strdup(new_label(label_falsee));
-    label_truee= strdup(new_label(label_truee));
-    $$.code= init_code($$.code);
-    $$.code= concatener($$.code, $3.code,"\n", NULL);
-    $$.code= concatener($$.code, "if (", $3.res, ") goto ", label_truee, ";\n", NULL);
-    $$.code= concatener($$.code, "goto ", label_falsee, ";\n", NULL);
-    $$.code = concatener($$.code, label_truee, ":\n", $5.code, NULL);
-    $$.code = concatener($$.code, label_falsee, ":\n", $7.code,  NULL);
-    $$.res= NULL;
-
-    $$.type= basic_type(VOID_T, "");
-    $$.declarations= strdup($3.declarations);
-}
-;
-
-iteration_statement
-: WHILE '(' expression ')' statement
-{
-    char* label_loop;
-    char* label_end;
-    label_loop  = strdup(new_label(label_loop));
-    label_end= strdup(new_label(label_end));
-
-    $$.code=init_code($$.code);
-    $$.code= concatener($$.code, $3.code, "\n", NULL);
-    $$.code= concatener($$.code, "if (", $3.res , ") goto ", label_loop, ";\n", NULL);
-    $$.code= concatener($$.code, "goto ", label_end, ";\n", NULL);
-    $$.code= concatener($$.code, label_loop, ":\n", $5.code, "\n", $3.code, "\n", NULL);
-    $$.code= concatener($$.code, "if (", $3.res , ") goto ", label_loop, ";\n", NULL);
-    $$.code= concatener($$.code, "goto ", label_end, ";\n",label_end,":\n", NULL);
-    $$.res= NULL;
-    $$.declarations=init_code($$.declarations);
-    $$.declarations=concatener($$.declarations, $3.declarations, $5.declarations);
-
-    $$.type= basic_type(VOID_T, "");
-}
+    | entree declaration_list sortie
+    {
+	$$.code = init_code($$.code);
+	$$.code = concatener($$.code, "{\n", $2.code ,"}\n", NULL);
+	$$.type = $2.type;
+	$$.declarations= strdup("");
+    }
 
 
-| FOR '(' expression_statement expression_statement expression ')' statement
-{
-    char* label_loop;
-    char* label_end;
-    label_loop  = strdup(new_label(label_loop));
-    label_end= strdup(new_label(label_end));
+    | entree declaration_list statement_list sortie
+    {
+	$$.code = init_code($$.code);
+	$$.code = concatener($$.code, "{\n", $2.code, $3.declarations, $3.code ,"}\n", NULL);
+	$$.type = $3.type;
+	$$.declarations= strdup("");
+	//$$.declarations= strdup($3.declarations);
+	fprintf(stderr, "DECLAAAAA: [ %s ] \n",$3.declarations);
+    }
+    ;
 
-    $$.code= init_code($$.code);
-    $$.code= concatener($$.code, $3.code, NULL);
-    $$.code= concatener($$.code, $4.code, NULL);
-    $$.code= concatener($$.code, "if (", $4.res , ") goto ", label_loop, ";\n", NULL);
-    $$.code= concatener($$.code, "goto ", label_end, ";\n", NULL);
-    $$.code= concatener($$.code, label_loop, ":\n", $7.code, "\n", $5.code, "\n", $4.code, NULL);
-    $$.code= concatener($$.code, "if (", $4.res , ") goto ", label_loop, ";\n", NULL);
-    $$.code= concatener($$.code, "goto ", label_end, ";\n",label_end,":\n", NULL);
-    $$.res= NULL;
+ declaration_list
+     : declaration
+	{
+	    $$.code= strdup($1.code); /*verifier qu'on a pas une erreur de type*/
+	    $$.type= $1.type;
+	    $$.declarations=strdup("");
+	}
+
+    | declaration_list declaration
+    {
+	$$.code= init_code($$.code);
+	$$.code= concatener($$.code, $1.code, $2.code, NULL);
+	$$.type= $2.type;
+	$$.declarations=strdup("");
+    }
+    ;
+
+ statement_list
+     : statement
+	{
+	    $$.code=strdup($1.code);
+	    $$.type=$1.type;
+	    $$.declarations= strdup($1.declarations);
+	}
+
+    | statement_list statement
+    {
+	$$.code=init_code($$.code);
+	$$.code=concatener($$.code, $1.code, $2.code, NULL);
+	$$.type= $2.type;
+	$$.declarations= init_code($$.declarations);
+	$$.declarations= concatener($$.declarations, $1.declarations, $2.declarations, NULL);
+    }
+    ;
+
+ expression_statement
+     : ';'
+	{
+	    $$.code = init_code($$.code);
+	    $$.code=ajouter_code($$.code, ";\n"); $$.res= NULL;
+	    $$.type= basic_type(VOID_T, "");
+	    $$.declarations= strdup("\n");
+	}
+
+    | expression ';'
+	  {
+	      $$.code= strdup($1.code);
+	      $$.res= strdup($1.res);
+	      $$.type= $1.type;
+	      $$.declarations= strdup($1.declarations);
+	  }
+    ;
+
+ selection_statement
+     : IF '(' expression ')' statement %prec "then"
+	{
+	    char* label_falsee;
+	    char* label_truee;
+	    label_falsee= strdup(new_label(label_falsee));
+	    label_truee= strdup(new_label(label_truee));
+	    $$.code= init_code($$.code);
+	    $$.code= concatener($$.code, $3.code, NULL);
+	    $$.code= concatener($$.code, "if (", $3.res, ") goto ", label_truee, ";\n", NULL);
+	    $$.code= concatener($$.code, "goto ", label_falsee, ";\n", NULL);
+	    $$.code = concatener($$.code, label_truee, ":\n", $5.code, label_falsee, ":\n", NULL);
+	    $$.res = NULL;
+
+	    $$.type= basic_type(VOID_T, "");
+	    $$.declarations= strdup($3.declarations);
+	}
+
+    | IF '(' expression ')' statement ELSE statement
+	  {
+	      char* label_falsee;
+	      char* label_truee;
+	      label_falsee= strdup(new_label(label_falsee));
+	      label_truee= strdup(new_label(label_truee));
+	      $$.code= init_code($$.code);
+	      $$.code= concatener($$.code, $3.code,"\n", NULL);
+	      $$.code= concatener($$.code, "if (", $3.res, ") goto ", label_truee, ";\n", NULL);
+	      $$.code= concatener($$.code, "goto ", label_falsee, ";\n", NULL);
+	      $$.code = concatener($$.code, label_truee, ":\n", $5.code, NULL);
+	      $$.code = concatener($$.code, label_falsee, ":\n", $7.code,  NULL);
+	      $$.res= NULL;
+
+	      $$.type= basic_type(VOID_T, "");
+	      $$.declarations= strdup($3.declarations);
+	  }
+    ;
+
+ iteration_statement
+     : WHILE '(' expression ')' statement
+	{
+	    char* label_loop;
+	    char* label_end;
+	    label_loop  = strdup(new_label(label_loop));
+	    label_end= strdup(new_label(label_end));
+
+	    $$.code=init_code($$.code);
+	    $$.code= concatener($$.code, $3.code, "\n", NULL);
+	    $$.code= concatener($$.code, "if (", $3.res , ") goto ", label_loop, ";\n", NULL);
+	    $$.code= concatener($$.code, "goto ", label_end, ";\n", NULL);
+	    $$.code= concatener($$.code, label_loop, ":\n", $5.code, "\n", $3.code, "\n", NULL);
+	    $$.code= concatener($$.code, "if (", $3.res , ") goto ", label_loop, ";\n", NULL);
+	    $$.code= concatener($$.code, "goto ", label_end, ";\n",label_end,":\n", NULL);
+	    $$.res= NULL;
+	    $$.declarations=init_code($$.declarations);
+	    $$.declarations=concatener($$.declarations, $3.declarations, $5.declarations);
+
+	    $$.type= basic_type(VOID_T, "");
+	}
+
+
+    | FOR '(' expression_statement expression_statement expression ')' statement
+	  {
+	      char* label_loop;
+	      char* label_end;
+	      label_loop  = strdup(new_label(label_loop));
+	      label_end= strdup(new_label(label_end));
+
+	      $$.code= init_code($$.code);
+	      $$.code= concatener($$.code, $3.code, NULL);
+	      $$.code= concatener($$.code, $4.code, NULL);
+	      $$.code= concatener($$.code, "if (", $4.res , ") goto ", label_loop, ";\n", NULL);
+	      $$.code= concatener($$.code, "goto ", label_end, ";\n", NULL);
+	      $$.code= concatener($$.code, label_loop, ":\n", $7.code, "\n", $5.code, "\n", $4.code, NULL);
+	      $$.code= concatener($$.code, "if (", $4.res , ") goto ", label_loop, ";\n", NULL);
+	      $$.code= concatener($$.code, "goto ", label_end, ";\n",label_end,":\n", NULL);
+	      $$.res= NULL;
     
-    $$.declarations=init_code($$.declarations);
-    $$.declarations=concatener($$.declarations, $3.declarations, $4.declarations, $5.declarations, $7.declarations);
-fprintf(stderr, "declarations du corps du for: %s", $7.declarations);
+	      $$.declarations=init_code($$.declarations);
+	      $$.declarations=concatener($$.declarations, $3.declarations, $4.declarations, $5.declarations, $7.declarations);
+	      fprintf(stderr, "declarations du corps du for: %s", $7.declarations);
 
-    $$.type= basic_type(VOID_T, "");
-}
-;
+	      $$.type= basic_type(VOID_T, "");
+	  }
+    ;
 
-jump_statement
-: RETURN ';'
-{
-    $$.code= init_code($$.code);
-    $$.code= ajouter_code($$.code, "return ;\n");
-    $$.type= basic_type(VOID_T, "");
-    $$.declarations= strdup("\n");
-}
+ jump_statement
+     : RETURN ';'
+	{
+	    $$.code= init_code($$.code);
+	    $$.code= ajouter_code($$.code, "return ;\n");
+	    $$.type= basic_type(VOID_T, "");
+	    $$.declarations= strdup("\n");
+	}
 
-| RETURN expression ';'
-{
-    $$.code= strdup($2.code);
-    $$.code= concatener($$.code, "return ", $2.res," ;\n", NULL);
-    $$.type= $2.type;
-    $$.declarations= strdup($2.declarations);
-}
-;
+    | RETURN expression ';'
+    {
+	$$.code= strdup($2.code);
+	$$.code= concatener($$.code, "return ", $2.res," ;\n", NULL);
+	$$.type= $2.type;
+	$$.declarations= strdup($2.declarations);
+    }
+    ;
 
-program_start
-: program {printf("%s",$1.code);}
+ program_start
+     : program {printf("%s",$1.code);}
 
-program
-: external_declaration
-{
-    $$.code= strdup($1.code);
-}
+ program
+     : external_declaration
+	{
+	    $$.code= strdup($1.code);
+	}
 
-| program external_declaration
-{
-    $$.code = init_code($$.code);
-    $$.code = concatener($$.code, $1.code, $2.code, NULL);
-}
-;
+    | program external_declaration
+    {
+	$$.code = init_code($$.code);
+	$$.code = concatener($$.code, $1.code, $2.code, NULL);
+    }
+    ;
 
-external_declaration
-: function_definition
-{
-    $$.code = strdup($1.code);
-    $$.type = $1.type;
-}
-| declaration
-{
-    $$.code = strdup($1.code);
-    $$.type = $1.type;
-}
-;
+ external_declaration
+     : function_definition
+	{
+	    $$.code = strdup($1.code);
+	    $$.type = $1.type;
+	}
+    | declaration
+	  {
+	      $$.code = strdup($1.code);
+	      $$.type = $1.type;
+	  }
+    ;
 
-function_definition
-: declaration_specifiers declarator compound_statement
-{
-    $$.code = init_code($$.code);
-    $$.code = concatener($$.code, $1.code, " " ,$2.code, $3.code, NULL);
-    $$.type = $2.type;
-}
-;
+ function_definition
+     : declaration_specifiers declarator compound_statement
+    {
+	$$.code = init_code($$.code);
+	$$.code = concatener($$.code, $1.code, " " ,$2.code, $3.code, NULL);
+	$$.type = $2.type;
+    }
+    ;
 
 %%
 	 
 int main()
 {
-
+    fprintf(stderr, "%d", f(1));
     init_pile();
     init_cpt_var();
     init_cpt_label();

@@ -6,8 +6,7 @@ TODO:
 
 
 -finir declarations variables temporaires pour les blocs (boucle, if ...)
--entree sortie de bloc => faire productions pour push et pop les TS de la pile
--changer la fonction du sizeof (pour calculer directement)
+-entree sortie de bloc => /!\ gestion table symbole pour les arguments de fonctions !
 -gestion du void*, qui permet d'accepter simplement n'importe quel type de pointeur !
 -garder le type du return d'une fonction??
 

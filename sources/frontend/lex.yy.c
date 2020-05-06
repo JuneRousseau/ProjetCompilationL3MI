@@ -866,7 +866,7 @@ YY_RULE_SETUP
 case 11:
 YY_RULE_SETUP
 #line 34 "ANSI-frontend.l"
-{ yylval.symbol= ajouter(top(), yytext); return IDENTIFIER; } /*identificateurs de variable*/
+{ yylval.name=strdup(yytext); return IDENTIFIER; } /*identificateurs de variable*/
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
@@ -2080,7 +2080,7 @@ void afficher_pile()
 	int i=0;
 	while(table_courante)
 	    {
-		printf("---- Table %i : ----\n", i);
+		fprintf(stderr, "---- Table %i : ----\n", i);
 		afficher_table(table_courante);
 		table_courante= table_courante->suivant;
 		i++;
@@ -2094,13 +2094,13 @@ void afficher_table(table_t *t)
 	    {
 	        symbole_t *s = t->table[i];
 		if(s != NULL) {
-		    printf("%d: ", i);
+		    fprintf(stderr, "%d: ", i);
 		    while(s != NULL)
 			{
-			    printf("%s -> ", s->nom);
+			    fprintf(stderr, "(%s, %s) -> ", s->nom, draw_type_expr(s->type));
 			    s= s->suivant;
 			}
-		    printf("NULL\n");
+		    fprintf(stderr, "NULL\n");
 		    }
 	    }
     }
