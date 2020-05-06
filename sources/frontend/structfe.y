@@ -367,9 +367,9 @@ relational_expression
 
 | relational_expression '<' additive_expression
 {
-    if(verif_type($1.type, INT_T))
+    if(verif_type($1.type, INT_T) || verif_type($1.type, PTR_T))
 	{
-	    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
+	    if(verif_type($3.type, INT_T)  || verif_type($3.type, PTR_T)) {$$.type= basic_type(INT_T, "");}
 	    else {type_error(INT_T, $3.type, yylineno, &$$);}
 	}
     else {type_error(INT_T, $1.type, yylineno, &$$);}
@@ -385,9 +385,9 @@ relational_expression
 
 | relational_expression '>' additive_expression
 {
-    if(verif_type($1.type, INT_T))
+    if(verif_type($1.type, INT_T) || verif_type($1.type, PTR_T))
 	{
-	    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
+	    if(verif_type($3.type, INT_T)  || verif_type($3.type, PTR_T)) {$$.type= basic_type(INT_T, "");}
 	    else {type_error(INT_T, $3.type, yylineno, &$$);}
 	}
     else {type_error(INT_T, $1.type, yylineno, &$$);}
@@ -404,9 +404,9 @@ relational_expression
 
 | relational_expression LE_OP additive_expression
 {
-    if(verif_type($1.type, INT_T))
+    if(verif_type($1.type, INT_T) || verif_type($1.type, PTR_T))
 	{
-	    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
+	    if(verif_type($3.type, INT_T)  || verif_type($3.type, PTR_T)) {$$.type= basic_type(INT_T, "");}
 	    else {type_error(INT_T, $3.type, yylineno, &$$);}
 	}
     else {type_error(INT_T, $1.type, yylineno, &$$);}
@@ -422,9 +422,9 @@ relational_expression
 
 | relational_expression GE_OP additive_expression
 {
-    if(verif_type($1.type, INT_T))
+    if(verif_type($1.type, INT_T) || verif_type($1.type, PTR_T))
 	{
-	    if(verif_type($3.type, INT_T)) {$$.type= basic_type(INT_T, "");}
+	    if(verif_type($3.type, INT_T) || verif_type($3.type, PTR_T)) {$$.type= basic_type(INT_T, "");}
 	    else {type_error(INT_T, $3.type, yylineno, &$$);}
 	}
     else {type_error(INT_T, $1.type, yylineno, &$$);}
@@ -454,7 +454,15 @@ equality_expression
     //$$.res = concatener($$.res, $$.res, " = ", $1.res, "==", $3.res);
 
     if(compare_arbre_t($1.type, $3.type)) {$$.type= basic_type(INT_T, "");}
-    else { type_error_relational($1.type, $3.type, yylineno, &$$);}
+    else
+	{
+	    if(verif_type($1.type, INT_T) || verif_type($1.type, PTR_T))
+		{
+		    if(verif_type($3.type, INT_T)  || verif_type($3.type, PTR_T)) {$$.type= basic_type(INT_T, "");}
+		    else {type_error_relational($1.type, $3.type, yylineno, &$$);}
+		}
+	    else {type_error_relational($1.type, $3.type, yylineno, &$$);}
+	}
 
     $$.code = init_code($$.code);
     $$.code = concatener($$.code, $1.code, $3.code, NULL);
@@ -468,7 +476,15 @@ equality_expression
 | equality_expression NE_OP relational_expression
 {
     if(compare_arbre_t($1.type, $3.type)) {$$.type= basic_type(INT_T, "");}
-    else { type_error_relational($1.type, $3.type, yylineno, &$$); }
+    else
+	{
+	    if(verif_type($1.type, INT_T) || verif_type($1.type, PTR_T))
+		{
+		    if(verif_type($3.type, INT_T)  || verif_type($3.type, PTR_T)) {$$.type= basic_type(INT_T, "");}
+		    else {type_error_relational($1.type, $3.type, yylineno, &$$);}
+		}
+	    else {type_error_relational($1.type, $3.type, yylineno, &$$);}
+	}
 
     $$.code = init_code($$.code);
     $$.code = concatener($$.code, $1.code, $3.code, NULL);
