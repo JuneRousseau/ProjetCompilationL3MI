@@ -2022,18 +2022,28 @@ table_t *nouvelle_table(){
     //fprintf(stderr, "le pointeur vers la nouvelle table est %p\n", p);
     p->suivant = NULL;
     p->precedent = NULL;
+    for(int i=0; i<TAILLE; i++)
+	{
+	    p->table[i]=NULL;
+	    //fprintf(stderr, "Table[%d]: %p\n",i , p->table[i]);
+	    
+	}
     return p;
-    }
+}
 
 void supprimer_table(table_t *t)
 {
     //fprintf(stderr, "on libere le pointeur %p\n", t);
     for(int i=0; i<TAILLE; i++)
 	{
+	    //fprintf(stderr, "Avant: %p\n", t->table[i]);
 	    free(t->table[i]);
 	    t->table[i]=NULL;
+	    //fprintf(stderr, "Apres: %p\n", t->table[i]);
+	    
 	}
     free(t->table);
+    //fprintf(stderr, "on a libere le pointeur %p\n", t);
     //afficher_table(t);
 }
 
@@ -2053,7 +2063,7 @@ pile_t *pop()
 	table_t *new_top = last_top->suivant;
 	new_top->precedent = NULL;
 	pile->premier= new_top;
-	//free(last_top);
+	supprimer_table(last_top);
 	return pile;
     }
 
@@ -2103,7 +2113,7 @@ void afficher_table(table_t *t)
 	    {
 	        symbole_t *s = t->table[i];
 		if(s != NULL) {
-		    fprintf(stderr, "%d: ", i);
+		    fprintf(stderr, "%d (%p): ", i, s);
 		    while(s != NULL)
 			{
 			    fprintf(stderr, "(%s, %s, %d) -> ", s->nom, draw_type_expr(s->type), s->is_arg);
@@ -2112,6 +2122,7 @@ void afficher_table(table_t *t)
 		    fprintf(stderr, "NULL\n");
 		    }
 	    }
+	fprintf(stderr, "\n");
     }
 
 char *ajouter_code(char *code_genere, char *str){

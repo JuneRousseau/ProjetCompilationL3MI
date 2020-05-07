@@ -55,8 +55,8 @@ primary_expression
 
 | IDENTIFIER
 {
-    //fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE AU MOMENT OU ON VEUT IDENTIFIER %s:\n", $1);
-    //afficher_pile();
+    fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE AU MOMENT OU ON VEUT IDENTIFIER %s:\n", $1);
+    afficher_pile();
     $$.code = init_code($$.code);
     $$.res = strdup($1);
     
@@ -690,8 +690,8 @@ declarator
     $$.code= concatener($$.code, "*", $3.code, NULL);
     //$$.type= ptr_type($3.type, "");
     $$.id = $3.id;
-    $$.id->type= $3.type;
     $$.type= $3.type;
+    $$.id->type= $$.type;
     $$.declarations=strdup("");
 }
 
@@ -798,7 +798,7 @@ parameter_declaration
 : declaration_specifiers declarator
 {
     $$.code=init_code($$.code); $$.code=concatener($$.code, $1.code, " ", $2.code," ", NULL);
-    $$.type= $1.type;
+    $$.type= $2.type;
     $$.declarations=strdup("");
     $2.id->is_arg=1;
 }
@@ -1093,8 +1093,32 @@ function_definition
 	 
 int main()
 {
-    
-    init_pile();
+    /* init_pile();
+       push(nouvelle_table());
+       symbole_t *x=ajouter(top(), "x");
+       x->type=basic_type(INT_T, "");
+       fprintf(stderr, "Ajout du symbole x: \n");
+       afficher_pile();
+       push(nouvelle_table());
+       symbole_t *y=ajouter(top(), "y");
+       y->type=basic_type(INT_T, "");
+       fprintf(stderr, "Ajout du symbole y: \n");
+       afficher_pile();
+       pop();
+       fprintf(stderr, "On pop la table: \n");
+       afficher_pile();
+       pop();
+       fprintf(stderr, "On pop la table: \n");
+       afficher_pile();
+       push(nouvelle_table());
+       fprintf(stderr, "On ajoute une nouvelle table: \n");
+       afficher_pile();
+       push(nouvelle_table());
+       fprintf(stderr, "On ajoute une nouvelle table: \n");
+       afficher_pile();*/
+
+
+init_pile();
     init_cpt_var();
     init_cpt_label();
     init_error();

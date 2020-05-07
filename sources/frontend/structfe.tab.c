@@ -1400,8 +1400,8 @@ yyreduce:
   case 4:
 #line 57 "structfe.y" /* yacc.c:1646  */
     {
-    //fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE AU MOMENT OU ON VEUT IDENTIFIER %s:\n", $1);
-    //afficher_pile();
+    fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE AU MOMENT OU ON VEUT IDENTIFIER %s:\n", (yyvsp[0].name));
+    afficher_pile();
     (yyval.attributs).code = init_code((yyval.attributs).code);
     (yyval.attributs).res = strdup((yyvsp[0].name));
     
@@ -2101,8 +2101,8 @@ yyreduce:
     (yyval.attributs).code= concatener((yyval.attributs).code, "*", (yyvsp[0].attributs).code, NULL);
     //$$.type= ptr_type($3.type, "");
     (yyval.attributs).id = (yyvsp[0].attributs).id;
-    (yyval.attributs).id->type= (yyvsp[0].attributs).type;
     (yyval.attributs).type= (yyvsp[0].attributs).type;
+    (yyval.attributs).id->type= (yyval.attributs).type;
     (yyval.attributs).declarations=strdup("");
 }
 #line 2109 "structfe.tab.c" /* yacc.c:1646  */
@@ -2250,7 +2250,7 @@ yyreduce:
 #line 799 "structfe.y" /* yacc.c:1646  */
     {
     (yyval.attributs).code=init_code((yyval.attributs).code); (yyval.attributs).code=concatener((yyval.attributs).code, (yyvsp[-1].attributs).code, " ", (yyvsp[0].attributs).code," ", NULL);
-    (yyval.attributs).type= (yyvsp[-1].attributs).type;
+    (yyval.attributs).type= (yyvsp[0].attributs).type;
     (yyval.attributs).declarations=strdup("");
     (yyvsp[0].attributs).id->is_arg=1;
 }
@@ -2837,8 +2837,32 @@ yyreturn:
 	 
 int main()
 {
-    
-    init_pile();
+    /* init_pile();
+       push(nouvelle_table());
+       symbole_t *x=ajouter(top(), "x");
+       x->type=basic_type(INT_T, "");
+       fprintf(stderr, "Ajout du symbole x: \n");
+       afficher_pile();
+       push(nouvelle_table());
+       symbole_t *y=ajouter(top(), "y");
+       y->type=basic_type(INT_T, "");
+       fprintf(stderr, "Ajout du symbole y: \n");
+       afficher_pile();
+       pop();
+       fprintf(stderr, "On pop la table: \n");
+       afficher_pile();
+       pop();
+       fprintf(stderr, "On pop la table: \n");
+       afficher_pile();
+       push(nouvelle_table());
+       fprintf(stderr, "On ajoute une nouvelle table: \n");
+       afficher_pile();
+       push(nouvelle_table());
+       fprintf(stderr, "On ajoute une nouvelle table: \n");
+       afficher_pile();*/
+
+
+init_pile();
     init_cpt_var();
     init_cpt_label();
     init_error();
