@@ -3,6 +3,7 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 TODO:
 -gestions des STRUCTURES !
+-grammaire backend reconnaissance x y==z
 
 
 ERREURS GRAVES : 

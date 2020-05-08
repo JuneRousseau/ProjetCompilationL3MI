@@ -2043,6 +2043,7 @@ void supprimer_table(table_t *t)
 	    
 	}
     free(t->table);
+    //free(t);
     //fprintf(stderr, "on a libere le pointeur %p\n", t);
     //afficher_table(t);
 }

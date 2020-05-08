@@ -55,8 +55,8 @@ primary_expression
 
 | IDENTIFIER
 {
-    fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE AU MOMENT OU ON VEUT IDENTIFIER %s:\n", $1);
-    afficher_pile();
+    //fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE AU MOMENT OU ON VEUT IDENTIFIER %s:\n", $1);
+    //afficher_pile();
     $$.code = init_code($$.code);
     $$.res = strdup($1);
     
@@ -612,7 +612,7 @@ declaration
     $$.declarations=strdup("");
 //fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE APRES AVOIR DEFINI(avant pop) %s:\n", $2.id->nom);
 //afficher_pile();
-    if($$.type->root == FCT_T){pop();}
+    if($$.type->root == FCT_T){pop();} /*il faudra verifier si on a un pointeur sur fonction*/
 //fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE APRES AVOIR DEFINI(apres pop)  %s:\n", $2.id->nom);
 //afficher_pile();
 }
@@ -760,15 +760,16 @@ direct_declarator
 }
 
 
-| direct_declarator '(' {push(nouvelle_table());}  parameter_list ')'
+| direct_declarator '(' { table_t *t= nouvelle_table(); afficher_table(t); push(t);}  parameter_list ')'
 {
     $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "(",$4.code,")", NULL);
     $$.type= fct_type($4.type, $1.type, "");
     $$.id= $1.id;
     $$.declarations=strdup("");
+    //afficher_pile();
 }	      
 
-|   direct_declarator '(' {push(nouvelle_table());}  ')'
+|   direct_declarator '(' ')'
 {
     $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "()", NULL);
     $$.type= fct_type(basic_type(VOID_T, ""), $1.type, "");
@@ -801,6 +802,7 @@ parameter_declaration
     $$.type= $2.type;
     $$.declarations=strdup("");
     $2.id->is_arg=1;
+    if($$.type->root == FCT_T){pop();} /*il faudra verifier si on a un pointeur sur fonction*/
 }
 ;
 
