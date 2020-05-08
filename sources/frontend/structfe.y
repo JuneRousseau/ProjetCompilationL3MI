@@ -136,12 +136,7 @@ postfix_expression
     if(verif_type($1.type, PTR_T))
 	{
 	    if(verif_type($1.type->fils_gauche, STRUCT_T)) {offset= get_offset_member($1.type->fils_gauche, $3);}
-	    else
-		{
-		    fprintf(stderr, "Type error line %d: expected_type: PTR_T( STRUCT_T ) found_type: %s\n", yylineno, draw_type_expr($1.type));
-		    offset= -2;
-		    
-		}
+	    else{offset= -2;}
 	}
     else
 	{
@@ -151,8 +146,10 @@ postfix_expression
 
     if(offset < 0) /*il y a une erreur*/
 	{
-	    if (offset == -1) {fprintf(stderr, "Type error line %d: The structure %s doesn't have the following member %s\n", yylineno, draw_type_expr($1.type), $3);}
-	    $$.type= basic_type(ERROR_T, "");
+	    char* error_msg= malloc(0);
+	    if (offset == -1) {sprintf(error_msg, "Type error line %d: The structure %s doesn't have the following member %s\n", yylineno, draw_type_expr($1.type), $3);}
+	    else { sprintf(error_msg, "Type error line %d: expected_type: PTR_T( STRUCT_T ) found_type: %s\n", yylineno, draw_type_expr($1.type));}
+	    type_error_custom(error_msg, &$$);
 	}
     else
 	{
@@ -767,7 +764,7 @@ struct_specifier
 
 | STRUCT IDENTIFIER
 {
-//afficher_pile();
+    //afficher_pile();
     $$.code= strdup("void");
     symbole_t *s_id= find($2);
     if(s_id)
@@ -1184,8 +1181,9 @@ jump_statement
 program_start
 : program
 {
-    if(!(verif_type($1.type, ERROR_T))){printf("%s",$1.code);}
-    else{printf(" ");}
+    if(!(verif_type($1.type, ERROR_T)) || get_error_code()!=0)
+	{printf("%s", $1.code);}
+    else{printf("%s", strdup(""));}
 }
 
 program

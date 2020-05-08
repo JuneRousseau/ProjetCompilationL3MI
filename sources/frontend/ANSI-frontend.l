@@ -456,7 +456,7 @@ int get_offset_member(arbre_t *structure, char* member_name)
     int offset= size_of_struc;
     arbre_t *prod_member= structure->fils_gauche;
     if (prod_member == NULL) {return -1;}
-    if (!(verif_type(prod_member, PROD_T))) {return 0;}
+    if (!(verif_type(prod_member, PROD_T))) {if(!(strcmp(prod_member->name, member_name))) {return 0;} else {return -1;}}
     //fprintf(stderr, "prod_member_type: %s\n", get_type_readable(prod_member->root));
     while(prod_member && strcmp(prod_member->fils_droit->name, member_name) )
 	{
