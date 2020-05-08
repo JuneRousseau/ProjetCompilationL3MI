@@ -126,11 +126,33 @@ postfix_expression
 
 | postfix_expression PTR_OP IDENTIFIER /* ATTENTION, les structures n'existent pas dans le backend, il faudra modifier cet routine sémantique */
 {
+    int offset;
+    if(verif_type($1.type, PTR_T))
+	{
+	    if(verif_type($1.type->fils_gauche, STRUCT_T)) {offset= get_offset_member($1.type->fils_gauche, $3);}
+	    else
+		{
+		    fprintf(stderr, "Type error line %d: expected_type: PTR_T( STRUCT_T ) found_type: %s\n", yylineno, draw_type_expr($1.type));
+		    offset= -2;
+		    
+		}
+	}
+    else
+	{
+	    fprintf(stderr, "Type error line %d: expected_type: PTR_T( STRUCT_T ) found_type: %s\n", yylineno, draw_type_expr($1.type));
+	    offset= -2;
+	}
+
+    if(offset < 0)
+	{
+	    if (offset == -1) {fprintf(stderr, "Type error line %d: The structure %s doesn't have the following member %s\n", yylineno, draw_type_expr($1.type), $3);}
+	}
+    $$.type= get_type_member($1.type->fils_gauche, $3);    
     $$.code = strdup($1.code);
     $$.res = strdup(new_var($$.res));
-    $$.code = concatener($$.code, $1.code, $$.res, " = ", $1.res, "->", strdup($3), ";\n", NULL);
-    $$.type= basic_type(ERROR_T, ""); /*type du champs de structure....*/
-    $$.declarations=strdup("");
+    $$.code = concatener($$.code, $1.code, $$.res, " = *(",$1.res, "+", offset, ");\n", NULL);
+    //$$.declarations=strdup("");
+    $$.declarations= add_declaration($$.res, $$.type, $1.declarations);
 }
 ;
 
@@ -606,21 +628,24 @@ declaration
 : declaration_specifiers declarator ';'
 {
     $$.code=init_code($$.code);
-    $$.code=concatener($$.code, $1.code, " ", $2.code, ";\n", NULL);
+    if(verif_type($2.type, INT_T))
+	{$$.code=concatener($$.code, $1.code, " ", $2.code, ";\n", NULL);}
+    else {$$.code=concatener($$.code, "void ", $2.code, ";\n", NULL);}
+    
     $$.type= $2.type;
     //$2.id->type= $2.type;
     $$.declarations=strdup("");
-//fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE APRES AVOIR DEFINI(avant pop) %s:\n", $2.id->nom);
-//afficher_pile();
+    //fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE APRES AVOIR DEFINI(avant pop) %s:\n", $2.id->nom);
+    //afficher_pile();
     if($$.type->root == FCT_T){pop();} /*il faudra verifier si on a un pointeur sur fonction*/
-//fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE APRES AVOIR DEFINI(apres pop)  %s:\n", $2.id->nom);
-//afficher_pile();
+    //fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE APRES AVOIR DEFINI(apres pop)  %s:\n", $2.id->nom);
+    //afficher_pile();
 }
 
 | struct_specifier ';'
 {
-    $$.code= strdup("not yet implemented: struct specifier");
-    $$.type= basic_type(VOID_T, ""); /*type structure*/
+    $$.code= strdup("");
+    $$.type= $1.type; /*type structure*/
     $$.declarations=strdup("");
 }
 ;
@@ -632,7 +657,7 @@ declaration_specifiers
     $$.code=init_code($$.code);
     $$.code= concatener($$.code, "extern ", $2.code, NULL);
     $$.type = $2.type;
-$$.declarations=strdup("");
+    $$.declarations=strdup("");
 }
 
 | type_specifier
@@ -649,38 +674,112 @@ type_specifier
 {
     $$.code= strdup("void");
     $$.type= basic_type(VOID_T, "");
-$$.declarations=strdup("");
+    $$.declarations=strdup("");
 }
 
 | INT
 {
     $$.code= strdup("int");
     $$.type= basic_type(INT_T, "");
-$$.declarations=strdup("");
+    $$.declarations=strdup("");
 }
 
 | struct_specifier
 {
-    $$.code= strdup("not yet implemented: struct_specifier");
-    $$.type= basic_type(ERROR_T, ""); /* type structure*/
+    $$.code= strdup("");
+    $$.type= $1.type;
     $$.declarations=strdup("");
 }
 ;
 
 
 struct_specifier
-: STRUCT IDENTIFIER '{' struct_declaration_list '}'
-| STRUCT '{' struct_declaration_list '}'
+: STRUCT IDENTIFIER '{'
+{
+    char *id=$<name>2;
+    symbole_t *s=rechercher(top(), id);
+    if(s)
+	{
+	    fprintf(stderr, "La structure %s est deja definie\n", id);
+	    s->type=basic_type(ERROR_T, "");
+	}
+    else
+	{ symbole_t *n= ajouter(top(), strdup(id)); n->type= struc_type(NULL, id); }
+    push(nouvelle_table());
+//afficher_pile();
+} struct_declaration_list '}'
+{
+    pop();
+    symbole_t *s=rechercher(top(), $2);
+    if(s)
+	{
+	    if(verif_type(s->type, STRUCT_T))
+		{
+		    (s->type)= struc_type($5.type, "");
+		    //afficher_pile();
+		}
+	    $$.type= s->type;
+	}
+    else {$$.type= basic_type(ERROR_T, "");}
+
+    $$.code=strdup("");
+    $$.declarations=strdup("");
+}
+
+
+| STRUCT '{' {push(nouvelle_table());} struct_declaration_list '}'
+{
+    pop();
+    $$.code=strdup("");
+    $$.type=struc_type($4.type, "");
+    $$.declarations=strdup("");
+}
+
+
 | STRUCT IDENTIFIER
+{
+//afficher_pile();
+    $$.code= strdup("");
+    symbole_t *s_id= find($2);
+    if(s_id)
+	{
+	    $$.type=s_id->type;
+	}
+    else
+	{
+	    fprintf(stderr, "La structure %s n'a jamais ete definie\n", $2);
+	    $$.type=basic_type(ERROR_T, "");
+	}
+}
 ;
 
 struct_declaration_list
 : struct_declaration
+{
+    $$.code = strdup("");
+    $$.type = $1.type;
+    $$.declarations=strdup("");
+}
+
+
 | struct_declaration_list struct_declaration
+{
+    $$.code = strdup("");
+    $$.type= prod_type($1.type, $2.type, ""); /*c'est un arbre "recursif a gauche"*/
+    $$.declarations=strdup("");
+}
 ;
 
 struct_declaration
 : type_specifier declarator ';'
+{
+    $$.code=strdup("");
+    $2.type->name= strdup($2.id->nom); //modif ici
+    $$.type= $2.type;
+    //$2.id->type= $2.type;
+    $$.declarations=strdup("");
+    if($$.type->root == FCT_T){pop();} /*il faudra verifier si on a un pointeur sur fonction*/
+}
 ;
 
 declarator
@@ -722,7 +821,7 @@ direct_declarator
     if(s)
 	{
 	    fprintf(stderr, "Identifiant \"%s\" deja declare et du type %s", $1, draw_type_expr(s->type));
-	    $$.type=basic_type(ERROR_T, "");
+	    $$.type=basic_type(ERROR_T, strdup($1));
 	}
     else
 	{
@@ -733,7 +832,7 @@ direct_declarator
 			{ if(s->is_arg)
 				{
 				    fprintf(stderr, "L'identifiant %s est un argument de fonction du type %s", $1, draw_type_expr(s->type));  
-				    $$.type=basic_type(ERROR_T, "");
+				    $$.type=basic_type(ERROR_T, strdup($1));
 				}
 			    else
 				{$$.type= $<attributs>0.type;
@@ -760,7 +859,7 @@ direct_declarator
 }
 
 
-| direct_declarator '(' { table_t *t= nouvelle_table(); afficher_table(t); push(t);}  parameter_list ')'
+| direct_declarator '(' {push(nouvelle_table());}  parameter_list ')'
 {
     $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "(",$4.code,")", NULL);
     $$.type= fct_type($4.type, $1.type, "");
@@ -769,7 +868,7 @@ direct_declarator
     //afficher_pile();
 }	      
 
-|   direct_declarator '(' ')'
+|   direct_declarator '(' {push(nouvelle_table());} ')'
 {
     $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "()", NULL);
     $$.type= fct_type(basic_type(VOID_T, ""), $1.type, "");
@@ -1119,8 +1218,8 @@ int main()
        fprintf(stderr, "On ajoute une nouvelle table: \n");
        afficher_pile();*/
 
-
-init_pile();
+    
+    init_pile();
     init_cpt_var();
     init_cpt_label();
     init_error();

@@ -281,10 +281,7 @@ char *add_declaration(char* var, arbre_t *type, char* declarations)
 		{new_declarations=concatener(new_declarations, "int ", var, ";\n", NULL);}
 	    else if(type->root == PTR_T)
 		{
-		    if(verif_type(type->fils_gauche, INT_T))
-			{new_declarations=concatener(new_declarations, "int *", var, ";\n", NULL);}
-		    else
-			{new_declarations=concatener(new_declarations, "void *", var, ";\n", NULL);}
+		    {new_declarations=concatener(new_declarations, "void *", var, ";\n", NULL);}
 		}
 	}
     else
@@ -382,203 +379,231 @@ int compare_arbre_t(arbre_t *arbre1, arbre_t *arbre2)
 	else {return NULL;}
     }
 
-    arbre_t *fct_type(arbre_t *depart, arbre_t *arrivee, char* name)
-    {
-	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
-	arbre->root= FCT_T;
-	arbre->fils_gauche= depart;
-	arbre->fils_droit= arrivee;
-	arbre->name= strdup(name);
+arbre_t *fct_type(arbre_t *depart, arbre_t *arrivee, char* name)
+{
+    arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
+    arbre->root= FCT_T;
+    arbre->fils_gauche= depart;
+    arbre->fils_droit= arrivee;
+    arbre->name= strdup(name);
 
-	return arbre;
-    }
+    return arbre;
+}
 
-    arbre_t *ptr_type(arbre_t *t, char* name)
-    {
-	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
-	arbre->root= PTR_T;	
-	arbre->fils_gauche= t;
-	arbre->fils_droit= NULL;
-	arbre->name= strdup(name);
+arbre_t *ptr_type(arbre_t *t, char* name)
+{
+    arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
+    arbre->root= PTR_T;	
+    arbre->fils_gauche= t;
+    arbre->fils_droit= NULL;
+    arbre->name= strdup(name);
 
-	return arbre;
-    }
+    return arbre;
+}
 
-    arbre_t *prod_type(arbre_t *t1, arbre_t *t2, char* name)
-    {
-	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
-	arbre->root= PROD_T;
-	arbre->fils_gauche= t1;
-	arbre->fils_droit= t2;
-	arbre->name= strdup(name);
+arbre_t *prod_type(arbre_t *t1, arbre_t *t2, char* name)
+{
+    arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
+    arbre->root= PROD_T;
+    arbre->fils_gauche= t1;
+    arbre->fils_droit= t2;
+    arbre->name= strdup(name);
 
-	return arbre;
-    }
+    return arbre;
+}
 
-    arbre_t *struct_type(arbre_t *champs, char* name)
-    {
-	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
-	arbre->root= STRUCT_T;	
-	arbre->fils_gauche= champs;
-	arbre->fils_droit= NULL;
-	arbre->name= strdup(name);
+arbre_t *struc_type(arbre_t *champs, char* name)
+{
+    arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
+    arbre->root= STRUCT_T;	
+    arbre->fils_gauche= champs;
+    arbre->fils_droit= NULL;
+    arbre->name= strdup(name);
 
-	return arbre;
-    }
+    return arbre;
+}
+
+/* il est requis que l'argument structure soit un arbre_t dont root est STRUCT_T*/
+int get_offset_member(arbre_t *structure, char* member_name)
+{
+    int offset=0;
+    arbre_t *prod_member= structure->fils_gauche;
+    if (prod_member == NULL) {return -1;}
+    while(prod_member && !strcmp(prod_member->fils_gauche->name, member_name) )
+	{
+	    offset+= sizeof_type(prod_member->fils_gauche);
+	    prod_member=prod_member->fils_droit; 
+	}
+    if(prod_member == NULL){return -1;} //on a pas trouvé le champs demandé
+    else {return offset;}
+}
+
+/* il est requis que l'argument structure soit un arbre_t dont root est STRUCT_T*/
+arbre_t *get_type_member(arbre_t *structure, char* member_name)
+{
+    arbre_t *prod_member= structure->fils_gauche;
+    if (prod_member == NULL) {return basic_type(ERROR_T, "");}
+    while(prod_member && !strcmp(prod_member->fils_gauche->name, member_name) )
+	{
+	    prod_member=prod_member->fils_droit; 
+	}
+    if(prod_member == NULL){return basic_type(ERROR_T, "");} //on a pas trouvé le champs demandé
+    else {return prod_member->fils_gauche;}
+}
 
 
-    int verif_type(arbre_t *expr_type, type_t expected_type)
-    {
-	if(expr_type == NULL){return 0;}
-	else
-	    { return expr_type->root == expected_type; }
-    }
+int verif_type(arbre_t *expr_type, type_t expected_type)
+{
+    if(expr_type == NULL){return 0;}
+    else
+	{ return expr_type->root == expected_type; }
+}
 
-    void type_error(type_t expected_type, arbre_t *found_type, int line, attributs_t *attribut)
-    {
-	char *expected_type_readable= get_type_readable(expected_type);
+void type_error(type_t expected_type, arbre_t *found_type, int line, attributs_t *attribut)
+{
+    char *expected_type_readable= get_type_readable(expected_type);
        
-	if(found_type==NULL)
-	    {
-		fprintf(stderr, "Type error line %d > Expected type: %s , Found_type: NULL \n", line, expected_type_readable);
-	    }
-	else
-	    {
-		if(found_type->root != ERROR_T){fprintf(stderr, "Type error line %d > Expected type: %s , Found_type: %s \n", line, expected_type_readable, draw_type_expr(found_type));}
-	    }
-	attribut->type= basic_type(ERROR_T, "");
-	error=SEMANTICERROR;
-	return ;
-    }
+    if(found_type==NULL)
+	{
+	    fprintf(stderr, "Type error line %d > Expected type: %s , Found_type: NULL \n", line, expected_type_readable);
+	}
+    else
+	{
+	    if(found_type->root != ERROR_T){fprintf(stderr, "Type error line %d > Expected type: %s , Found_type: %s \n", line, expected_type_readable, draw_type_expr(found_type));}
+	}
+    attribut->type= basic_type(ERROR_T, "");
+    error=SEMANTICERROR;
+    return ;
+}
 
-    void type_error_function_arguments(arbre_t *expected_depart, arbre_t *found_depart, int line, attributs_t *attribut)
-    {
-	if(expected_depart==NULL)
-	    {fprintf(stderr, "Type error line %d > Expected arguments type: NULL, Found arguments type: %s \n", line, draw_type_expr(found_depart)); }
-	else if (found_depart == NULL)
-	    {fprintf(stderr, "Type error line %d > Expected arguments type: %s, Found arguments type: NULL \n", line, draw_type_expr(expected_depart)); }
-	else
-	    {
-		if(found_depart->root != ERROR_T)
-		    {
-			fprintf(stderr, "Type error line %d > Expected arguments type: %s, Found arguments type: %s \n", line, draw_type_expr(expected_depart), draw_type_expr(found_depart));
-		    }
-	    }
-	attribut->type= basic_type(ERROR_T, "");
-	error=SEMANTICERROR;
-	return ;
-    }
+void type_error_function_arguments(arbre_t *expected_depart, arbre_t *found_depart, int line, attributs_t *attribut)
+{
+    if(expected_depart==NULL)
+	{fprintf(stderr, "Type error line %d > Expected arguments type: NULL, Found arguments type: %s \n", line, draw_type_expr(found_depart)); }
+    else if (found_depart == NULL)
+	{fprintf(stderr, "Type error line %d > Expected arguments type: %s, Found arguments type: NULL \n", line, draw_type_expr(expected_depart)); }
+    else
+	{
+	    if(found_depart->root != ERROR_T)
+		{
+		    fprintf(stderr, "Type error line %d > Expected arguments type: %s, Found arguments type: %s \n", line, draw_type_expr(expected_depart), draw_type_expr(found_depart));
+		}
+	}
+    attribut->type= basic_type(ERROR_T, "");
+    error=SEMANTICERROR;
+    return ;
+}
 
-    void type_error_function_definition(arbre_t *expected_arrivee, arbre_t *found_arrivee, int line, attributs_t *attribut)
-        {
-	if(expected_arrivee==NULL)
-	    {fprintf(stderr, "Type error line %d > Expected return type: NULL, Found return type: %s \n", line, draw_type_expr(found_arrivee)); }
-	else if (found_arrivee == NULL)
-	    {fprintf(stderr, "Type error line %d > Expected return type: %s, Found return type: NULL \n", line, draw_type_expr(expected_arrivee)); }
-	else
-	    {
-		if(found_arrivee->root != ERROR_T)
-		    {
-			fprintf(stderr, "Type error line %d > Expected return type: %s, Found return type: %s \n", line, draw_type_expr(expected_arrivee), draw_type_expr(found_arrivee));
-		    }
-	    }
-	attribut->type= basic_type(ERROR_T, "");
-	error=SEMANTICERROR;
-	return ;
-    }
+void type_error_function_definition(arbre_t *expected_arrivee, arbre_t *found_arrivee, int line, attributs_t *attribut)
+{
+    if(expected_arrivee==NULL)
+	{fprintf(stderr, "Type error line %d > Expected return type: NULL, Found return type: %s \n", line, draw_type_expr(found_arrivee)); }
+    else if (found_arrivee == NULL)
+	{fprintf(stderr, "Type error line %d > Expected return type: %s, Found return type: NULL \n", line, draw_type_expr(expected_arrivee)); }
+    else
+	{
+	    if(found_arrivee->root != ERROR_T)
+		{
+		    fprintf(stderr, "Type error line %d > Expected return type: %s, Found return type: %s \n", line, draw_type_expr(expected_arrivee), draw_type_expr(found_arrivee));
+		}
+	}
+    attribut->type= basic_type(ERROR_T, "");
+    error=SEMANTICERROR;
+    return ;
+}
 
-    void type_error_affect(arbre_t *expected_type, arbre_t *found_type, int line, attributs_t *attribut)
-    {
-	if(expected_type==NULL)
-	    {fprintf(stderr, "Type error line %d > Expected type: NULL, Found type: %s \n", line, draw_type_expr(found_type)); }
-	else if (found_type == NULL)
-	    {fprintf(stderr, "Type error line %d > Expected type: %s, Found type: NULL \n", line, draw_type_expr(expected_type)); }
-	else
-	    {fprintf(stderr, "Type error line %d > Expected type: %s, Found type: %s \n", line, draw_type_expr(expected_type), draw_type_expr(found_type) ); }
-	attribut->type= basic_type(ERROR_T, "");
-	error=SEMANTICERROR;
-	return ;
-    }
+void type_error_affect(arbre_t *expected_type, arbre_t *found_type, int line, attributs_t *attribut)
+{
+    if(expected_type==NULL)
+	{fprintf(stderr, "Type error line %d > Expected type: NULL, Found type: %s \n", line, draw_type_expr(found_type)); }
+    else if (found_type == NULL)
+	{fprintf(stderr, "Type error line %d > Expected type: %s, Found type: NULL \n", line, draw_type_expr(expected_type)); }
+    else
+	{fprintf(stderr, "Type error line %d > Expected type: %s, Found type: %s \n", line, draw_type_expr(expected_type), draw_type_expr(found_type) ); }
+    attribut->type= basic_type(ERROR_T, "");
+    error=SEMANTICERROR;
+    return ;
+}
 	
-    void type_error_relational(arbre_t *found_left_type, arbre_t *found_right_type, int line, attributs_t *attribut)
-    {
-	fprintf(stderr, "Type error line %d Relationnal expression > left type: %s, right type: %s \n", line, draw_type_expr(found_left_type), draw_type_expr(found_right_type) );
-	attribut->type= basic_type(ERROR_T, "");
-	error=SEMANTICERROR;
-	return;
-    }
+void type_error_relational(arbre_t *found_left_type, arbre_t *found_right_type, int line, attributs_t *attribut)
+{
+    fprintf(stderr, "Type error line %d Relationnal expression > left type: %s, right type: %s \n", line, draw_type_expr(found_left_type), draw_type_expr(found_right_type) );
+    attribut->type= basic_type(ERROR_T, "");
+    error=SEMANTICERROR;
+    return;
+}
 
-    char* get_type_readable(type_t type)
-    {
-        switch(type)
-	    {
-	    case 0: 
-	        return strdup("INT_T");
-	        break;
-	    case 1:
-	        return strdup("VOID_T");
-	        break;
-	    case 2:
-	        return strdup("ERROR_T");
-	        break;
-	    case 3:
-	        return strdup("FCT_T");
-	        break;
-	    case 4:
-	        return strdup("PTR_T");
-	        break;
-	    case 5:
-	        return strdup("PROD_T");
-	        break;
-	    case 6:
-	        return strdup("STRUCT_T");
-	        break;
-	    default:
-		printf("ERREUUUUUUUUUUUUUR TYPE_ERROR\n");
-		return NULL;
-		break;
-	    }
-    }
+char* get_type_readable(type_t type)
+{
+    switch(type)
+	{
+	case 0: 
+	    return strdup("INT_T");
+	    break;
+	case 1:
+	    return strdup("VOID_T");
+	    break;
+	case 2:
+	    return strdup("ERROR_T");
+	    break;
+	case 3:
+	    return strdup("FCT_T");
+	    break;
+	case 4:
+	    return strdup("PTR_T");
+	    break;
+	case 5:
+	    return strdup("PROD_T");
+	    break;
+	case 6:
+	    return strdup("STRUCT_T");
+	    break;
+	default:
+	    printf("ERREUUUUUUUUUUUUUR TYPE_ERROR\n");
+	    return NULL;
+	    break;
+	}
+}
 
 
-    char *draw_type_expr(arbre_t *type_expr)
-    {
+char *draw_type_expr(arbre_t *type_expr)
+{
 
-	if(type_expr== NULL){return strdup("NULL");}
-	else
-	    {
-		char *s;
-		s= init_code(s);
-		type_t root= type_expr->root;
-		switch(root)
-		    {
-		    case 0: //INT_T
-			return strdup("INT_T");
-			break;
-		    case 1: //VOID_T
-			return strdup("VOID_T");
-			break;
-		    case 2: //ERROR_T
-			return strdup("ERROR_T");
-			break;
-		    case 3: //FCT_T		    
-			return concatener(s, strdup("("), draw_type_expr(type_expr->fils_gauche), strdup(") -> "), draw_type_expr(type_expr->fils_droit), NULL);
-			break;
-		    case 4: //PTR_T
-			return concatener(s, strdup("PTR("), draw_type_expr(type_expr->fils_gauche), strdup(")"), NULL);
-			break;
-		    case 5://PROD_T
-			return concatener(s, draw_type_expr(type_expr->fils_gauche), strdup(" x "), draw_type_expr(type_expr->fils_droit), NULL);
-			break;
-		    case 6://STRUCT_T
-			return strdup("STRUCT_T");
-			break;
-		    default:
-			return NULL;
-			break;
-		    }
-	    }
-    }
+    if(type_expr== NULL){return strdup("NULL");}
+    else
+	{
+	    char *s;
+	    s= init_code(s);
+	    type_t root= type_expr->root;
+	    switch(root)
+		{
+		case 0: //INT_T
+		    return strdup("INT_T");
+		    break;
+		case 1: //VOID_T
+		    return strdup("VOID_T");
+		    break;
+		case 2: //ERROR_T
+		    return strdup("ERROR_T");
+		    break;
+		case 3: //FCT_T		    
+		    return concatener(s, strdup("("), draw_type_expr(type_expr->fils_gauche), strdup(") -> "), draw_type_expr(type_expr->fils_droit), NULL);
+		    break;
+		case 4: //PTR_T
+		    return concatener(s, strdup("PTR("), draw_type_expr(type_expr->fils_gauche), strdup(")"), NULL);
+		    break;
+		case 5://PROD_T
+		    return concatener(s, draw_type_expr(type_expr->fils_gauche), strdup(" x "), draw_type_expr(type_expr->fils_droit), NULL);
+		    break;
+		case 6://STRUCT_T
+		    return concatener(s, strdup("STRUCT_T ("), draw_type_expr(type_expr->fils_gauche), strdup(")"), NULL);
+		    break;
+		default:
+		    return strdup("");
+		    break;
+		}
+	}
+}
 
 int sizeof_type(arbre_t *type)
     {

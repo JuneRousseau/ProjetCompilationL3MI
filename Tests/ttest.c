@@ -1,4 +1,4 @@
-extern int printd(int (*i)(int n));
+extern int printd(int i);
 
 int f(int a)
 {
@@ -18,7 +18,10 @@ int f(int a)
 	}
 		return f(a-1);
 }
-				
+
+struct liste {
+int valeur;
+};				
 
 int a;
 

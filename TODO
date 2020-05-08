@@ -4,6 +4,9 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 TODO:
 -gestions des STRUCTURES !
 -grammaire backend reconnaissance x y==z
+-garder la taille d'une variable dans la table des symbole
+-des qu'on a un pointeur, le transformer en void* (les pointeurs sont forcement des void)
+-uand on fait un type produit, si on a un error_t, il faut que le type renvoyé soit un error_t (idem pour struct, fonction....)
 
 
 ERREURS GRAVES : 
@@ -20,6 +23,7 @@ NOUS SOMMES PERPLEXE:
 sizeof ~~~~~~~~~
 le free pour la concatenation
 le type de retour de la fonction (le type de return?) lors de la definition de fonction
+definitions de structures dans differents niveau de portee
 
 
 
@@ -145,17 +149,30 @@ return 0;
 
 
 
+struct my_struct
+
+struct{int *p; int y;}
+struct{int y; int *p} s= malloc(8);
+s->y= ...
+s->p= ...
 
 
 
 
+int x;
+
+struct liste {
+int x;
+struct liste *suivant;
+}
+
+struct liste *l;
 
 
 
-
-
-
-
+l->x  	======>	*(l+0)
+l->suivant ===>	*(l+sizeof(int))
+		
 
 
 

@@ -1,7 +1,7 @@
 extern int printd( int i );
 extern int f(int *x);
 
-int main(int *a) {
+int main() {
   int i;
   int j;	
   i = 45000;

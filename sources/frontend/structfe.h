@@ -79,10 +79,12 @@ arbre_t *basic_type(type_t t, char* name); /* creer type de base (int_t ou void_
 arbre_t *fct_type(arbre_t *depart, arbre_t *arrivee, char* name);
 arbre_t *ptr_type(arbre_t *t, char* name);
 arbre_t *prod_type(arbre_t *t1, arbre_t *t2, char* name);
-arbre_t *struct_type(arbre_t *champs, char* name);
+arbre_t *struc_type(arbre_t *champs, char* name);
 
 int sizeof_type(arbre_t *type);
 int sizeof_type_t(arbre_t *type, int ptr);
+int get_offset_member(arbre_t *structure, char* member_name);
+arbre_t *get_type_member(arbre_t *structure, char* member_name);
 
 int verif_type(arbre_t *expr_type, type_t expected_type);
 void type_error(type_t expected_type, arbre_t *found_type, int line, attributs_t *attribut);

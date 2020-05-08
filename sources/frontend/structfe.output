@@ -65,100 +65,108 @@ Grammaire
    42               | INT
    43               | struct_specifier
 
-   44 struct_specifier: STRUCT IDENTIFIER '{' struct_declaration_list '}'
-   45                 | STRUCT '{' struct_declaration_list '}'
-   46                 | STRUCT IDENTIFIER
+   44 $@1: %empty
 
-   47 struct_declaration_list: struct_declaration
-   48                        | struct_declaration_list struct_declaration
+   45 struct_specifier: STRUCT IDENTIFIER '{' $@1 struct_declaration_list '}'
 
-   49 struct_declaration: type_specifier declarator ';'
+   46 $@2: %empty
 
-   50 @1: %empty
+   47 struct_specifier: STRUCT '{' $@2 struct_declaration_list '}'
+   48                 | STRUCT IDENTIFIER
 
-   51 declarator: '*' @1 direct_declarator
+   49 struct_declaration_list: struct_declaration
+   50                        | struct_declaration_list struct_declaration
 
-   52 @2: %empty
+   51 struct_declaration: type_specifier declarator ';'
 
-   53 declarator: @2 direct_declarator
+   52 @3: %empty
 
-   54 @3: %empty
+   53 declarator: '*' @3 direct_declarator
 
-   55 direct_declarator: '(' @3 declarator ')'
-   56                  | IDENTIFIER
+   54 @4: %empty
 
-   57 $@4: %empty
+   55 declarator: @4 direct_declarator
 
-   58 direct_declarator: direct_declarator '(' $@4 parameter_list ')'
-   59                  | direct_declarator '(' ')'
+   56 @5: %empty
 
-   60 parameter_list: parameter_declaration
-   61               | parameter_list ',' parameter_declaration
+   57 direct_declarator: '(' @5 declarator ')'
+   58                  | IDENTIFIER
 
-   62 parameter_declaration: declaration_specifiers declarator
+   59 $@6: %empty
 
-   63 statement: compound_statement
-   64          | expression_statement
-   65          | selection_statement
-   66          | iteration_statement
-   67          | jump_statement
+   60 direct_declarator: direct_declarator '(' $@6 parameter_list ')'
 
-   68 entree: '{'
+   61 $@7: %empty
 
-   69 sortie: '}'
+   62 direct_declarator: direct_declarator '(' $@7 ')'
 
-   70 compound_statement: '{' '}'
-   71                   | entree statement_list sortie
-   72                   | entree declaration_list sortie
-   73                   | entree declaration_list statement_list sortie
+   63 parameter_list: parameter_declaration
+   64               | parameter_list ',' parameter_declaration
 
-   74 declaration_list: declaration
-   75                 | declaration_list declaration
+   65 parameter_declaration: declaration_specifiers declarator
 
-   76 statement_list: statement
-   77               | statement_list statement
+   66 statement: compound_statement
+   67          | expression_statement
+   68          | selection_statement
+   69          | iteration_statement
+   70          | jump_statement
 
-   78 expression_statement: ';'
-   79                     | expression ';'
+   71 entree: '{'
 
-   80 selection_statement: IF '(' expression ')' statement
-   81                    | IF '(' expression ')' statement ELSE statement
+   72 sortie: '}'
 
-   82 iteration_statement: WHILE '(' expression ')' statement
-   83                    | FOR '(' expression_statement expression_statement expression ')' statement
+   73 compound_statement: '{' '}'
+   74                   | entree statement_list sortie
+   75                   | entree declaration_list sortie
+   76                   | entree declaration_list statement_list sortie
 
-   84 jump_statement: RETURN ';'
-   85               | RETURN expression ';'
+   77 declaration_list: declaration
+   78                 | declaration_list declaration
 
-   86 program_start: program
+   79 statement_list: statement
+   80               | statement_list statement
 
-   87 program: external_declaration
-   88        | program external_declaration
+   81 expression_statement: ';'
+   82                     | expression ';'
 
-   89 external_declaration: function_definition
-   90                     | declaration
+   83 selection_statement: IF '(' expression ')' statement
+   84                    | IF '(' expression ')' statement ELSE statement
 
-   91 function_definition: declaration_specifiers declarator compound_statement
+   85 iteration_statement: WHILE '(' expression ')' statement
+   86                    | FOR '(' expression_statement expression_statement expression ')' statement
+
+   87 jump_statement: RETURN ';'
+   88               | RETURN expression ';'
+
+   89 program_start: program
+
+   90 program: external_declaration
+   91        | program external_declaration
+
+   92 external_declaration: function_definition
+   93                     | declaration
+
+   94 function_definition: declaration_specifiers declarator compound_statement
 
 
 Terminaux, suivis des règles où ils apparaissent
 
 $end (0) 0
 '&' (38) 14
-'(' (40) 1 5 6 12 55 58 59 80 81 82 83
-')' (41) 1 5 6 12 55 58 59 80 81 82 83
-'*' (42) 15 18 51
+'(' (40) 1 5 6 12 57 60 62 83 84 85 86
+')' (41) 1 5 6 12 57 60 62 83 84 85 86
+'*' (42) 15 18 53
 '+' (43) 21
-',' (44) 9 61
+',' (44) 9 64
 '-' (45) 16 22
 '.' (46)
 '/' (47) 19
-';' (59) 37 38 49 78 79 84 85
+';' (59) 37 38 51 81 82 87 88
 '<' (60) 24
 '=' (61) 36
 '>' (62) 25
-'{' (123) 44 45 68 70
-'}' (125) 44 45 69 70
+'{' (123) 45 47 71 73
+'}' (125) 45 47 72 73
 error (256)
 SIZEOF (258) 12 13
 PTR_OP (259) 7
@@ -171,13 +179,13 @@ OR_OP (265) 34
 EXTERN (266) 39
 INT (267) 42
 VOID (268) 41
-STRUCT (269) 44 45 46
-IF (270) 80 81
-ELSE (271) 81
-WHILE (272) 82
-FOR (273) 83
-RETURN (274) 84 85
-IDENTIFIER (275) 3 7 44 46 56
+STRUCT (269) 45 47 48
+IF (270) 83 84
+ELSE (271) 84
+WHILE (272) 85
+FOR (273) 86
+RETURN (274) 87 88
+IDENTIFIER (275) 3 7 45 48 58
 CONSTANT (276) 2
 "then" (277)
 
@@ -209,63 +217,69 @@ logical_and_expression (48)
 logical_or_expression (49)
     à gauche: 33 34, à droite: 34 35
 expression (50)
-    à gauche: 35 36, à droite: 1 8 9 36 79 80 81 82 83 85
+    à gauche: 35 36, à droite: 1 8 9 36 82 83 84 85 86 88
 declaration (51)
-    à gauche: 37 38, à droite: 74 75 90
+    à gauche: 37 38, à droite: 77 78 93
 declaration_specifiers (52)
-    à gauche: 39 40, à droite: 37 62 91
+    à gauche: 39 40, à droite: 37 65 94
 type_specifier (53)
-    à gauche: 41 42 43, à droite: 12 39 40 49
+    à gauche: 41 42 43, à droite: 12 39 40 51
 struct_specifier (54)
-    à gauche: 44 45 46, à droite: 38 43
-struct_declaration_list (55)
-    à gauche: 47 48, à droite: 44 45 48
-struct_declaration (56)
-    à gauche: 49, à droite: 47 48
-declarator (57)
-    à gauche: 51 53, à droite: 37 49 55 62 91
-@1 (58)
-    à gauche: 50, à droite: 51
-@2 (59)
+    à gauche: 45 47 48, à droite: 38 43
+$@1 (55)
+    à gauche: 44, à droite: 45
+$@2 (56)
+    à gauche: 46, à droite: 47
+struct_declaration_list (57)
+    à gauche: 49 50, à droite: 45 47 50
+struct_declaration (58)
+    à gauche: 51, à droite: 49 50
+declarator (59)
+    à gauche: 53 55, à droite: 37 51 57 65 94
+@3 (60)
     à gauche: 52, à droite: 53
-direct_declarator (60)
-    à gauche: 55 56 58 59, à droite: 51 53 58 59
-@3 (61)
+@4 (61)
     à gauche: 54, à droite: 55
-$@4 (62)
-    à gauche: 57, à droite: 58
-parameter_list (63)
-    à gauche: 60 61, à droite: 58 61
-parameter_declaration (64)
-    à gauche: 62, à droite: 60 61
-statement (65)
-    à gauche: 63 64 65 66 67, à droite: 76 77 80 81 82 83
-entree (66)
-    à gauche: 68, à droite: 71 72 73
-sortie (67)
-    à gauche: 69, à droite: 71 72 73
-compound_statement (68)
-    à gauche: 70 71 72 73, à droite: 63 91
-declaration_list (69)
-    à gauche: 74 75, à droite: 72 73 75
-statement_list (70)
-    à gauche: 76 77, à droite: 71 73 77
-expression_statement (71)
-    à gauche: 78 79, à droite: 64 83
-selection_statement (72)
-    à gauche: 80 81, à droite: 65
-iteration_statement (73)
-    à gauche: 82 83, à droite: 66
-jump_statement (74)
-    à gauche: 84 85, à droite: 67
-program_start (75)
-    à gauche: 86, à droite: 0
-program (76)
-    à gauche: 87 88, à droite: 86 88
-external_declaration (77)
-    à gauche: 89 90, à droite: 87 88
-function_definition (78)
-    à gauche: 91, à droite: 89
+direct_declarator (62)
+    à gauche: 57 58 60 62, à droite: 53 55 60 62
+@5 (63)
+    à gauche: 56, à droite: 57
+$@6 (64)
+    à gauche: 59, à droite: 60
+$@7 (65)
+    à gauche: 61, à droite: 62
+parameter_list (66)
+    à gauche: 63 64, à droite: 60 64
+parameter_declaration (67)
+    à gauche: 65, à droite: 63 64
+statement (68)
+    à gauche: 66 67 68 69 70, à droite: 79 80 83 84 85 86
+entree (69)
+    à gauche: 71, à droite: 74 75 76
+sortie (70)
+    à gauche: 72, à droite: 74 75 76
+compound_statement (71)
+    à gauche: 73 74 75 76, à droite: 66 94
+declaration_list (72)
+    à gauche: 77 78, à droite: 75 76 78
+statement_list (73)
+    à gauche: 79 80, à droite: 74 76 80
+expression_statement (74)
+    à gauche: 81 82, à droite: 67 86
+selection_statement (75)
+    à gauche: 83 84, à droite: 68
+iteration_statement (76)
+    à gauche: 85 86, à droite: 69
+jump_statement (77)
+    à gauche: 87 88, à droite: 70
+program_start (78)
+    à gauche: 89, à droite: 0
+program (79)
+    à gauche: 90 91, à droite: 89 91
+external_declaration (80)
+    à gauche: 92 93, à droite: 90 91
+function_definition (81)
+    à gauche: 94, à droite: 92
 
 
 État 0
@@ -315,9 +329,9 @@ function_definition (78)
 
 État 4
 
-   44 struct_specifier: STRUCT . IDENTIFIER '{' struct_declaration_list '}'
-   45                 | STRUCT . '{' struct_declaration_list '}'
-   46                 | STRUCT . IDENTIFIER
+   45 struct_specifier: STRUCT . IDENTIFIER '{' $@1 struct_declaration_list '}'
+   47                 | STRUCT . '{' $@2 struct_declaration_list '}'
+   48                 | STRUCT . IDENTIFIER
 
     '{'         décalage et aller à l'état 15
     IDENTIFIER  décalage et aller à l'état 16
@@ -325,22 +339,22 @@ function_definition (78)
 
 État 5
 
-   90 external_declaration: declaration .
+   93 external_declaration: declaration .
 
-    $défaut  réduction par utilisation de la règle 90 (external_declaration)
+    $défaut  réduction par utilisation de la règle 93 (external_declaration)
 
 
 État 6
 
    37 declaration: declaration_specifiers . declarator ';'
-   91 function_definition: declaration_specifiers . declarator compound_statement
+   94 function_definition: declaration_specifiers . declarator compound_statement
 
     '*'  décalage et aller à l'état 17
 
-    $défaut  réduction par utilisation de la règle 52 (@2)
+    $défaut  réduction par utilisation de la règle 54 (@4)
 
     declarator  aller à l'état 18
-    @2          aller à l'état 19
+    @4          aller à l'état 19
 
 
 État 7
@@ -369,15 +383,15 @@ function_definition (78)
 
 État 10
 
-   86 program_start: program .
-   88 program: program . external_declaration
+   89 program_start: program .
+   91 program: program . external_declaration
 
     EXTERN  décalage et aller à l'état 1
     INT     décalage et aller à l'état 2
     VOID    décalage et aller à l'état 3
     STRUCT  décalage et aller à l'état 4
 
-    $défaut  réduction par utilisation de la règle 86 (program_start)
+    $défaut  réduction par utilisation de la règle 89 (program_start)
 
     declaration             aller à l'état 5
     declaration_specifiers  aller à l'état 6
@@ -389,16 +403,16 @@ function_definition (78)
 
 État 11
 
-   87 program: external_declaration .
+   90 program: external_declaration .
 
-    $défaut  réduction par utilisation de la règle 87 (program)
+    $défaut  réduction par utilisation de la règle 90 (program)
 
 
 État 12
 
-   89 external_declaration: function_definition .
+   92 external_declaration: function_definition .
 
-    $défaut  réduction par utilisation de la règle 89 (external_declaration)
+    $défaut  réduction par utilisation de la règle 92 (external_declaration)
 
 
 État 13
@@ -417,57 +431,52 @@ function_definition (78)
 
 État 15
 
-   45 struct_specifier: STRUCT '{' . struct_declaration_list '}'
+   47 struct_specifier: STRUCT '{' . $@2 struct_declaration_list '}'
 
-    INT     décalage et aller à l'état 2
-    VOID    décalage et aller à l'état 3
-    STRUCT  décalage et aller à l'état 4
+    $défaut  réduction par utilisation de la règle 46 ($@2)
 
-    type_specifier           aller à l'état 23
-    struct_specifier         aller à l'état 14
-    struct_declaration_list  aller à l'état 24
-    struct_declaration       aller à l'état 25
+    $@2  aller à l'état 23
 
 
 État 16
 
-   44 struct_specifier: STRUCT IDENTIFIER . '{' struct_declaration_list '}'
-   46                 | STRUCT IDENTIFIER .
+   45 struct_specifier: STRUCT IDENTIFIER . '{' $@1 struct_declaration_list '}'
+   48                 | STRUCT IDENTIFIER .
 
-    '{'  décalage et aller à l'état 26
+    '{'  décalage et aller à l'état 24
 
-    $défaut  réduction par utilisation de la règle 46 (struct_specifier)
+    $défaut  réduction par utilisation de la règle 48 (struct_specifier)
 
 
 État 17
 
-   51 declarator: '*' . @1 direct_declarator
+   53 declarator: '*' . @3 direct_declarator
 
-    $défaut  réduction par utilisation de la règle 50 (@1)
+    $défaut  réduction par utilisation de la règle 52 (@3)
 
-    @1  aller à l'état 27
+    @3  aller à l'état 25
 
 
 État 18
 
    37 declaration: declaration_specifiers declarator . ';'
-   91 function_definition: declaration_specifiers declarator . compound_statement
+   94 function_definition: declaration_specifiers declarator . compound_statement
 
-    '{'  décalage et aller à l'état 28
-    ';'  décalage et aller à l'état 29
+    '{'  décalage et aller à l'état 26
+    ';'  décalage et aller à l'état 27
 
-    entree              aller à l'état 30
-    compound_statement  aller à l'état 31
+    entree              aller à l'état 28
+    compound_statement  aller à l'état 29
 
 
 État 19
 
-   53 declarator: @2 . direct_declarator
+   55 declarator: @4 . direct_declarator
 
-    '('         décalage et aller à l'état 32
-    IDENTIFIER  décalage et aller à l'état 33
+    '('         décalage et aller à l'état 30
+    IDENTIFIER  décalage et aller à l'état 31
 
-    direct_declarator  aller à l'état 34
+    direct_declarator  aller à l'état 32
 
 
 État 20
@@ -486,367 +495,354 @@ function_definition (78)
 
 État 22
 
-   88 program: program external_declaration .
+   91 program: program external_declaration .
 
-    $défaut  réduction par utilisation de la règle 88 (program)
+    $défaut  réduction par utilisation de la règle 91 (program)
 
 
 État 23
 
-   49 struct_declaration: type_specifier . declarator ';'
+   47 struct_specifier: STRUCT '{' $@2 . struct_declaration_list '}'
 
-    '*'  décalage et aller à l'état 17
+    INT     décalage et aller à l'état 2
+    VOID    décalage et aller à l'état 3
+    STRUCT  décalage et aller à l'état 4
 
-    $défaut  réduction par utilisation de la règle 52 (@2)
-
-    declarator  aller à l'état 35
-    @2          aller à l'état 19
+    type_specifier           aller à l'état 33
+    struct_specifier         aller à l'état 14
+    struct_declaration_list  aller à l'état 34
+    struct_declaration       aller à l'état 35
 
 
 État 24
 
-   45 struct_specifier: STRUCT '{' struct_declaration_list . '}'
-   48 struct_declaration_list: struct_declaration_list . struct_declaration
+   45 struct_specifier: STRUCT IDENTIFIER '{' . $@1 struct_declaration_list '}'
 
-    INT     décalage et aller à l'état 2
-    VOID    décalage et aller à l'état 3
-    STRUCT  décalage et aller à l'état 4
-    '}'     décalage et aller à l'état 36
+    $défaut  réduction par utilisation de la règle 44 ($@1)
 
-    type_specifier      aller à l'état 23
-    struct_specifier    aller à l'état 14
-    struct_declaration  aller à l'état 37
+    $@1  aller à l'état 36
 
 
 État 25
 
-   47 struct_declaration_list: struct_declaration .
+   53 declarator: '*' @3 . direct_declarator
 
-    $défaut  réduction par utilisation de la règle 47 (struct_declaration_list)
+    '('         décalage et aller à l'état 30
+    IDENTIFIER  décalage et aller à l'état 31
+
+    direct_declarator  aller à l'état 37
 
 
 État 26
 
-   44 struct_specifier: STRUCT IDENTIFIER '{' . struct_declaration_list '}'
+   71 entree: '{' .
+   73 compound_statement: '{' . '}'
 
-    INT     décalage et aller à l'état 2
-    VOID    décalage et aller à l'état 3
-    STRUCT  décalage et aller à l'état 4
+    '}'  décalage et aller à l'état 38
 
-    type_specifier           aller à l'état 23
-    struct_specifier         aller à l'état 14
-    struct_declaration_list  aller à l'état 38
-    struct_declaration       aller à l'état 25
+    $défaut  réduction par utilisation de la règle 71 (entree)
 
 
 État 27
-
-   51 declarator: '*' @1 . direct_declarator
-
-    '('         décalage et aller à l'état 32
-    IDENTIFIER  décalage et aller à l'état 33
-
-    direct_declarator  aller à l'état 39
-
-
-État 28
-
-   68 entree: '{' .
-   70 compound_statement: '{' . '}'
-
-    '}'  décalage et aller à l'état 40
-
-    $défaut  réduction par utilisation de la règle 68 (entree)
-
-
-État 29
 
    37 declaration: declaration_specifiers declarator ';' .
 
     $défaut  réduction par utilisation de la règle 37 (declaration)
 
 
-État 30
+État 28
 
-   71 compound_statement: entree . statement_list sortie
-   72                   | entree . declaration_list sortie
-   73                   | entree . declaration_list statement_list sortie
+   74 compound_statement: entree . statement_list sortie
+   75                   | entree . declaration_list sortie
+   76                   | entree . declaration_list statement_list sortie
 
-    SIZEOF      décalage et aller à l'état 41
+    SIZEOF      décalage et aller à l'état 39
     EXTERN      décalage et aller à l'état 1
     INT         décalage et aller à l'état 2
     VOID        décalage et aller à l'état 3
     STRUCT      décalage et aller à l'état 4
-    IF          décalage et aller à l'état 42
-    WHILE       décalage et aller à l'état 43
-    FOR         décalage et aller à l'état 44
-    RETURN      décalage et aller à l'état 45
-    '('         décalage et aller à l'état 46
-    '{'         décalage et aller à l'état 28
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    IF          décalage et aller à l'état 40
+    WHILE       décalage et aller à l'état 41
+    FOR         décalage et aller à l'état 42
+    RETURN      décalage et aller à l'état 43
+    '('         décalage et aller à l'état 44
+    '{'         décalage et aller à l'état 26
+    ';'         décalage et aller à l'état 45
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
-    expression                 aller à l'état 63
-    declaration                aller à l'état 64
-    declaration_specifiers     aller à l'état 65
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
+    expression                 aller à l'état 61
+    declaration                aller à l'état 62
+    declaration_specifiers     aller à l'état 63
     type_specifier             aller à l'état 7
     struct_specifier           aller à l'état 8
-    statement                  aller à l'état 66
-    entree                     aller à l'état 30
-    compound_statement         aller à l'état 67
-    declaration_list           aller à l'état 68
-    statement_list             aller à l'état 69
-    expression_statement       aller à l'état 70
-    selection_statement        aller à l'état 71
-    iteration_statement        aller à l'état 72
-    jump_statement             aller à l'état 73
+    statement                  aller à l'état 64
+    entree                     aller à l'état 28
+    compound_statement         aller à l'état 65
+    declaration_list           aller à l'état 66
+    statement_list             aller à l'état 67
+    expression_statement       aller à l'état 68
+    selection_statement        aller à l'état 69
+    iteration_statement        aller à l'état 70
+    jump_statement             aller à l'état 71
+
+
+État 29
+
+   94 function_definition: declaration_specifiers declarator compound_statement .
+
+    $défaut  réduction par utilisation de la règle 94 (function_definition)
+
+
+État 30
+
+   57 direct_declarator: '(' . @5 declarator ')'
+
+    $défaut  réduction par utilisation de la règle 56 (@5)
+
+    @5  aller à l'état 72
 
 
 État 31
 
-   91 function_definition: declaration_specifiers declarator compound_statement .
+   58 direct_declarator: IDENTIFIER .
 
-    $défaut  réduction par utilisation de la règle 91 (function_definition)
+    $défaut  réduction par utilisation de la règle 58 (direct_declarator)
 
 
 État 32
 
-   55 direct_declarator: '(' . @3 declarator ')'
+   55 declarator: @4 direct_declarator .
+   60 direct_declarator: direct_declarator . '(' $@6 parameter_list ')'
+   62                  | direct_declarator . '(' $@7 ')'
 
-    $défaut  réduction par utilisation de la règle 54 (@3)
+    '('  décalage et aller à l'état 73
 
-    @3  aller à l'état 74
+    $défaut  réduction par utilisation de la règle 55 (declarator)
 
 
 État 33
 
-   56 direct_declarator: IDENTIFIER .
+   51 struct_declaration: type_specifier . declarator ';'
 
-    $défaut  réduction par utilisation de la règle 56 (direct_declarator)
+    '*'  décalage et aller à l'état 17
+
+    $défaut  réduction par utilisation de la règle 54 (@4)
+
+    declarator  aller à l'état 74
+    @4          aller à l'état 19
 
 
 État 34
 
-   53 declarator: @2 direct_declarator .
-   58 direct_declarator: direct_declarator . '(' $@4 parameter_list ')'
-   59                  | direct_declarator . '(' ')'
-
-    '('  décalage et aller à l'état 75
-
-    $défaut  réduction par utilisation de la règle 53 (declarator)
-
-
-État 35
-
-   49 struct_declaration: type_specifier declarator . ';'
-
-    ';'  décalage et aller à l'état 76
-
-
-État 36
-
-   45 struct_specifier: STRUCT '{' struct_declaration_list '}' .
-
-    $défaut  réduction par utilisation de la règle 45 (struct_specifier)
-
-
-État 37
-
-   48 struct_declaration_list: struct_declaration_list struct_declaration .
-
-    $défaut  réduction par utilisation de la règle 48 (struct_declaration_list)
-
-
-État 38
-
-   44 struct_specifier: STRUCT IDENTIFIER '{' struct_declaration_list . '}'
-   48 struct_declaration_list: struct_declaration_list . struct_declaration
+   47 struct_specifier: STRUCT '{' $@2 struct_declaration_list . '}'
+   50 struct_declaration_list: struct_declaration_list . struct_declaration
 
     INT     décalage et aller à l'état 2
     VOID    décalage et aller à l'état 3
     STRUCT  décalage et aller à l'état 4
-    '}'     décalage et aller à l'état 77
+    '}'     décalage et aller à l'état 75
 
-    type_specifier      aller à l'état 23
+    type_specifier      aller à l'état 33
     struct_specifier    aller à l'état 14
-    struct_declaration  aller à l'état 37
+    struct_declaration  aller à l'état 76
+
+
+État 35
+
+   49 struct_declaration_list: struct_declaration .
+
+    $défaut  réduction par utilisation de la règle 49 (struct_declaration_list)
+
+
+État 36
+
+   45 struct_specifier: STRUCT IDENTIFIER '{' $@1 . struct_declaration_list '}'
+
+    INT     décalage et aller à l'état 2
+    VOID    décalage et aller à l'état 3
+    STRUCT  décalage et aller à l'état 4
+
+    type_specifier           aller à l'état 33
+    struct_specifier         aller à l'état 14
+    struct_declaration_list  aller à l'état 77
+    struct_declaration       aller à l'état 35
+
+
+État 37
+
+   53 declarator: '*' @3 direct_declarator .
+   60 direct_declarator: direct_declarator . '(' $@6 parameter_list ')'
+   62                  | direct_declarator . '(' $@7 ')'
+
+    '('  décalage et aller à l'état 73
+
+    $défaut  réduction par utilisation de la règle 53 (declarator)
+
+
+État 38
+
+   73 compound_statement: '{' '}' .
+
+    $défaut  réduction par utilisation de la règle 73 (compound_statement)
 
 
 État 39
 
-   51 declarator: '*' @1 direct_declarator .
-   58 direct_declarator: direct_declarator . '(' $@4 parameter_list ')'
-   59                  | direct_declarator . '(' ')'
+   12 unary_expression: SIZEOF . '(' type_specifier ')'
+   13                 | SIZEOF . unary_expression
 
-    '('  décalage et aller à l'état 75
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 78
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    $défaut  réduction par utilisation de la règle 51 (declarator)
+    primary_expression  aller à l'état 51
+    postfix_expression  aller à l'état 52
+    unary_expression    aller à l'état 79
+    unary_operator      aller à l'état 54
 
 
 État 40
 
-   70 compound_statement: '{' '}' .
-
-    $défaut  réduction par utilisation de la règle 70 (compound_statement)
-
-
-État 41
-
-   12 unary_expression: SIZEOF . '(' type_specifier ')'
-   13                 | SIZEOF . unary_expression
-
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 78
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
-
-    primary_expression  aller à l'état 53
-    postfix_expression  aller à l'état 54
-    unary_expression    aller à l'état 79
-    unary_operator      aller à l'état 56
-
-
-État 42
-
-   80 selection_statement: IF . '(' expression ')' statement
-   81                    | IF . '(' expression ')' statement ELSE statement
+   83 selection_statement: IF . '(' expression ')' statement
+   84                    | IF . '(' expression ')' statement ELSE statement
 
     '('  décalage et aller à l'état 80
 
 
-État 43
+État 41
 
-   82 iteration_statement: WHILE . '(' expression ')' statement
+   85 iteration_statement: WHILE . '(' expression ')' statement
 
     '('  décalage et aller à l'état 81
 
 
-État 44
+État 42
 
-   83 iteration_statement: FOR . '(' expression_statement expression_statement expression ')' statement
+   86 iteration_statement: FOR . '(' expression_statement expression_statement expression ')' statement
 
     '('  décalage et aller à l'état 82
 
 
-État 45
+État 43
 
-   84 jump_statement: RETURN . ';'
-   85               | RETURN . expression ';'
+   87 jump_statement: RETURN . ';'
+   88               | RETURN . expression ';'
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
     ';'         décalage et aller à l'état 83
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
     expression                 aller à l'état 84
 
 
-État 46
+État 44
 
     1 primary_expression: '(' . expression ')'
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
     expression                 aller à l'état 85
 
 
-État 47
+État 45
 
-   78 expression_statement: ';' .
+   81 expression_statement: ';' .
 
-    $défaut  réduction par utilisation de la règle 78 (expression_statement)
+    $défaut  réduction par utilisation de la règle 81 (expression_statement)
 
 
-État 48
+État 46
 
    14 unary_operator: '&' .
 
     $défaut  réduction par utilisation de la règle 14 (unary_operator)
 
 
-État 49
+État 47
 
    15 unary_operator: '*' .
 
     $défaut  réduction par utilisation de la règle 15 (unary_operator)
 
 
-État 50
+État 48
 
    16 unary_operator: '-' .
 
     $défaut  réduction par utilisation de la règle 16 (unary_operator)
 
 
-État 51
+État 49
 
     3 primary_expression: IDENTIFIER .
 
     $défaut  réduction par utilisation de la règle 3 (primary_expression)
 
 
-État 52
+État 50
 
     2 primary_expression: CONSTANT .
 
     $défaut  réduction par utilisation de la règle 2 (primary_expression)
 
 
-État 53
+État 51
 
     4 postfix_expression: primary_expression .
 
     $défaut  réduction par utilisation de la règle 4 (postfix_expression)
 
 
-État 54
+État 52
 
     5 postfix_expression: postfix_expression . '(' ')'
     6                   | postfix_expression . '(' argument_expression_list ')'
@@ -859,7 +855,7 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 10 (unary_expression)
 
 
-État 55
+État 53
 
    17 multiplicative_expression: unary_expression .
    36 expression: unary_expression . '=' expression
@@ -869,25 +865,25 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 17 (multiplicative_expression)
 
 
-État 56
+État 54
 
    11 unary_expression: unary_operator . unary_expression
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression  aller à l'état 53
-    postfix_expression  aller à l'état 54
+    primary_expression  aller à l'état 51
+    postfix_expression  aller à l'état 52
     unary_expression    aller à l'état 89
-    unary_operator      aller à l'état 56
+    unary_operator      aller à l'état 54
 
 
-État 57
+État 55
 
    18 multiplicative_expression: multiplicative_expression . '*' unary_expression
    19                          | multiplicative_expression . '/' unary_expression
@@ -899,7 +895,7 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 20 (additive_expression)
 
 
-État 58
+État 56
 
    21 additive_expression: additive_expression . '+' multiplicative_expression
    22                    | additive_expression . '-' multiplicative_expression
@@ -911,7 +907,7 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 23 (relational_expression)
 
 
-État 59
+État 57
 
    24 relational_expression: relational_expression . '<' additive_expression
    25                      | relational_expression . '>' additive_expression
@@ -927,7 +923,7 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 28 (equality_expression)
 
 
-État 60
+État 58
 
    29 equality_expression: equality_expression . EQ_OP relational_expression
    30                    | equality_expression . NE_OP relational_expression
@@ -939,7 +935,7 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 31 (logical_and_expression)
 
 
-État 61
+État 59
 
    32 logical_and_expression: logical_and_expression . AND_OP equality_expression
    33 logical_or_expression: logical_and_expression .
@@ -949,7 +945,7 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 33 (logical_or_expression)
 
 
-État 62
+État 60
 
    34 logical_or_expression: logical_or_expression . OR_OP logical_and_expression
    35 expression: logical_or_expression .
@@ -959,202 +955,224 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 35 (expression)
 
 
-État 63
+État 61
 
-   79 expression_statement: expression . ';'
+   82 expression_statement: expression . ';'
 
     ';'  décalage et aller à l'état 102
 
 
-État 64
+État 62
 
-   74 declaration_list: declaration .
+   77 declaration_list: declaration .
 
-    $défaut  réduction par utilisation de la règle 74 (declaration_list)
+    $défaut  réduction par utilisation de la règle 77 (declaration_list)
 
 
-État 65
+État 63
 
    37 declaration: declaration_specifiers . declarator ';'
 
     '*'  décalage et aller à l'état 17
 
-    $défaut  réduction par utilisation de la règle 52 (@2)
+    $défaut  réduction par utilisation de la règle 54 (@4)
 
     declarator  aller à l'état 103
-    @2          aller à l'état 19
+    @4          aller à l'état 19
 
 
-État 66
+État 64
 
-   76 statement_list: statement .
+   79 statement_list: statement .
 
-    $défaut  réduction par utilisation de la règle 76 (statement_list)
-
-
-État 67
-
-   63 statement: compound_statement .
-
-    $défaut  réduction par utilisation de la règle 63 (statement)
+    $défaut  réduction par utilisation de la règle 79 (statement_list)
 
 
-État 68
+État 65
 
-   72 compound_statement: entree declaration_list . sortie
-   73                   | entree declaration_list . statement_list sortie
-   75 declaration_list: declaration_list . declaration
-
-    SIZEOF      décalage et aller à l'état 41
-    EXTERN      décalage et aller à l'état 1
-    INT         décalage et aller à l'état 2
-    VOID        décalage et aller à l'état 3
-    STRUCT      décalage et aller à l'état 4
-    IF          décalage et aller à l'état 42
-    WHILE       décalage et aller à l'état 43
-    FOR         décalage et aller à l'état 44
-    RETURN      décalage et aller à l'état 45
-    '('         décalage et aller à l'état 46
-    '{'         décalage et aller à l'état 28
-    '}'         décalage et aller à l'état 104
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
-
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
-    expression                 aller à l'état 63
-    declaration                aller à l'état 105
-    declaration_specifiers     aller à l'état 65
-    type_specifier             aller à l'état 7
-    struct_specifier           aller à l'état 8
-    statement                  aller à l'état 66
-    entree                     aller à l'état 30
-    sortie                     aller à l'état 106
-    compound_statement         aller à l'état 67
-    statement_list             aller à l'état 107
-    expression_statement       aller à l'état 70
-    selection_statement        aller à l'état 71
-    iteration_statement        aller à l'état 72
-    jump_statement             aller à l'état 73
-
-
-État 69
-
-   71 compound_statement: entree statement_list . sortie
-   77 statement_list: statement_list . statement
-
-    SIZEOF      décalage et aller à l'état 41
-    IF          décalage et aller à l'état 42
-    WHILE       décalage et aller à l'état 43
-    FOR         décalage et aller à l'état 44
-    RETURN      décalage et aller à l'état 45
-    '('         décalage et aller à l'état 46
-    '{'         décalage et aller à l'état 28
-    '}'         décalage et aller à l'état 104
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
-
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
-    expression                 aller à l'état 63
-    statement                  aller à l'état 108
-    entree                     aller à l'état 30
-    sortie                     aller à l'état 109
-    compound_statement         aller à l'état 67
-    expression_statement       aller à l'état 70
-    selection_statement        aller à l'état 71
-    iteration_statement        aller à l'état 72
-    jump_statement             aller à l'état 73
-
-
-État 70
-
-   64 statement: expression_statement .
-
-    $défaut  réduction par utilisation de la règle 64 (statement)
-
-
-État 71
-
-   65 statement: selection_statement .
-
-    $défaut  réduction par utilisation de la règle 65 (statement)
-
-
-État 72
-
-   66 statement: iteration_statement .
+   66 statement: compound_statement .
 
     $défaut  réduction par utilisation de la règle 66 (statement)
 
 
-État 73
+État 66
 
-   67 statement: jump_statement .
+   75 compound_statement: entree declaration_list . sortie
+   76                   | entree declaration_list . statement_list sortie
+   78 declaration_list: declaration_list . declaration
+
+    SIZEOF      décalage et aller à l'état 39
+    EXTERN      décalage et aller à l'état 1
+    INT         décalage et aller à l'état 2
+    VOID        décalage et aller à l'état 3
+    STRUCT      décalage et aller à l'état 4
+    IF          décalage et aller à l'état 40
+    WHILE       décalage et aller à l'état 41
+    FOR         décalage et aller à l'état 42
+    RETURN      décalage et aller à l'état 43
+    '('         décalage et aller à l'état 44
+    '{'         décalage et aller à l'état 26
+    '}'         décalage et aller à l'état 104
+    ';'         décalage et aller à l'état 45
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
+
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
+    expression                 aller à l'état 61
+    declaration                aller à l'état 105
+    declaration_specifiers     aller à l'état 63
+    type_specifier             aller à l'état 7
+    struct_specifier           aller à l'état 8
+    statement                  aller à l'état 64
+    entree                     aller à l'état 28
+    sortie                     aller à l'état 106
+    compound_statement         aller à l'état 65
+    statement_list             aller à l'état 107
+    expression_statement       aller à l'état 68
+    selection_statement        aller à l'état 69
+    iteration_statement        aller à l'état 70
+    jump_statement             aller à l'état 71
+
+
+État 67
+
+   74 compound_statement: entree statement_list . sortie
+   80 statement_list: statement_list . statement
+
+    SIZEOF      décalage et aller à l'état 39
+    IF          décalage et aller à l'état 40
+    WHILE       décalage et aller à l'état 41
+    FOR         décalage et aller à l'état 42
+    RETURN      décalage et aller à l'état 43
+    '('         décalage et aller à l'état 44
+    '{'         décalage et aller à l'état 26
+    '}'         décalage et aller à l'état 104
+    ';'         décalage et aller à l'état 45
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
+
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
+    expression                 aller à l'état 61
+    statement                  aller à l'état 108
+    entree                     aller à l'état 28
+    sortie                     aller à l'état 109
+    compound_statement         aller à l'état 65
+    expression_statement       aller à l'état 68
+    selection_statement        aller à l'état 69
+    iteration_statement        aller à l'état 70
+    jump_statement             aller à l'état 71
+
+
+État 68
+
+   67 statement: expression_statement .
 
     $défaut  réduction par utilisation de la règle 67 (statement)
 
 
-État 74
+État 69
 
-   55 direct_declarator: '(' @3 . declarator ')'
+   68 statement: selection_statement .
+
+    $défaut  réduction par utilisation de la règle 68 (statement)
+
+
+État 70
+
+   69 statement: iteration_statement .
+
+    $défaut  réduction par utilisation de la règle 69 (statement)
+
+
+État 71
+
+   70 statement: jump_statement .
+
+    $défaut  réduction par utilisation de la règle 70 (statement)
+
+
+État 72
+
+   57 direct_declarator: '(' @5 . declarator ')'
 
     '*'  décalage et aller à l'état 17
 
-    $défaut  réduction par utilisation de la règle 52 (@2)
+    $défaut  réduction par utilisation de la règle 54 (@4)
 
     declarator  aller à l'état 110
-    @2          aller à l'état 19
+    @4          aller à l'état 19
+
+
+État 73
+
+   60 direct_declarator: direct_declarator '(' . $@6 parameter_list ')'
+   62                  | direct_declarator '(' . $@7 ')'
+
+    ')'       réduction par utilisation de la règle 61 ($@7)
+    $défaut  réduction par utilisation de la règle 59 ($@6)
+
+    $@6  aller à l'état 111
+    $@7  aller à l'état 112
+
+
+État 74
+
+   51 struct_declaration: type_specifier declarator . ';'
+
+    ';'  décalage et aller à l'état 113
 
 
 État 75
 
-   58 direct_declarator: direct_declarator '(' . $@4 parameter_list ')'
-   59                  | direct_declarator '(' . ')'
+   47 struct_specifier: STRUCT '{' $@2 struct_declaration_list '}' .
 
-    ')'  décalage et aller à l'état 111
-
-    $défaut  réduction par utilisation de la règle 57 ($@4)
-
-    $@4  aller à l'état 112
+    $défaut  réduction par utilisation de la règle 47 (struct_specifier)
 
 
 État 76
 
-   49 struct_declaration: type_specifier declarator ';' .
+   50 struct_declaration_list: struct_declaration_list struct_declaration .
 
-    $défaut  réduction par utilisation de la règle 49 (struct_declaration)
+    $défaut  réduction par utilisation de la règle 50 (struct_declaration_list)
 
 
 État 77
 
-   44 struct_specifier: STRUCT IDENTIFIER '{' struct_declaration_list '}' .
+   45 struct_specifier: STRUCT IDENTIFIER '{' $@1 struct_declaration_list . '}'
+   50 struct_declaration_list: struct_declaration_list . struct_declaration
 
-    $défaut  réduction par utilisation de la règle 44 (struct_specifier)
+    INT     décalage et aller à l'état 2
+    VOID    décalage et aller à l'état 3
+    STRUCT  décalage et aller à l'état 4
+    '}'     décalage et aller à l'état 114
+
+    type_specifier      aller à l'état 33
+    struct_specifier    aller à l'état 14
+    struct_declaration  aller à l'état 76
 
 
 État 78
@@ -1162,29 +1180,29 @@ function_definition (78)
     1 primary_expression: '(' . expression ')'
    12 unary_expression: SIZEOF '(' . type_specifier ')'
 
-    SIZEOF      décalage et aller à l'état 41
+    SIZEOF      décalage et aller à l'état 39
     INT         décalage et aller à l'état 2
     VOID        décalage et aller à l'état 3
     STRUCT      décalage et aller à l'état 4
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
     expression                 aller à l'état 85
-    type_specifier             aller à l'état 113
+    type_specifier             aller à l'état 115
     struct_specifier           aller à l'état 14
 
 
@@ -1197,108 +1215,108 @@ function_definition (78)
 
 État 80
 
-   80 selection_statement: IF '(' . expression ')' statement
-   81                    | IF '(' . expression ')' statement ELSE statement
+   83 selection_statement: IF '(' . expression ')' statement
+   84                    | IF '(' . expression ')' statement ELSE statement
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
-    expression                 aller à l'état 114
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
+    expression                 aller à l'état 116
 
 
 État 81
 
-   82 iteration_statement: WHILE '(' . expression ')' statement
+   85 iteration_statement: WHILE '(' . expression ')' statement
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
-    expression                 aller à l'état 115
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
+    expression                 aller à l'état 117
 
 
 État 82
 
-   83 iteration_statement: FOR '(' . expression_statement expression_statement expression ')' statement
+   86 iteration_statement: FOR '(' . expression_statement expression_statement expression ')' statement
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    ';'         décalage et aller à l'état 45
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
-    expression                 aller à l'état 63
-    expression_statement       aller à l'état 116
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
+    expression                 aller à l'état 61
+    expression_statement       aller à l'état 118
 
 
 État 83
 
-   84 jump_statement: RETURN ';' .
+   87 jump_statement: RETURN ';' .
 
-    $défaut  réduction par utilisation de la règle 84 (jump_statement)
+    $défaut  réduction par utilisation de la règle 87 (jump_statement)
 
 
 État 84
 
-   85 jump_statement: RETURN expression . ';'
+   88 jump_statement: RETURN expression . ';'
 
-    ';'  décalage et aller à l'état 117
+    ';'  décalage et aller à l'état 119
 
 
 État 85
 
     1 primary_expression: '(' expression . ')'
 
-    ')'  décalage et aller à l'état 118
+    ')'  décalage et aller à l'état 120
 
 
 État 86
 
     7 postfix_expression: postfix_expression PTR_OP . IDENTIFIER
 
-    IDENTIFIER  décalage et aller à l'état 119
+    IDENTIFIER  décalage et aller à l'état 121
 
 
 État 87
@@ -1306,52 +1324,52 @@ function_definition (78)
     5 postfix_expression: postfix_expression '(' . ')'
     6                   | postfix_expression '(' . argument_expression_list ')'
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    ')'         décalage et aller à l'état 120
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    ')'         décalage et aller à l'état 122
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    argument_expression_list   aller à l'état 121
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
-    expression                 aller à l'état 122
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    argument_expression_list   aller à l'état 123
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
+    expression                 aller à l'état 124
 
 
 État 88
 
    36 expression: unary_expression '=' . expression
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
-    expression                 aller à l'état 123
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
+    expression                 aller à l'état 125
 
 
 État 89
@@ -1365,485 +1383,499 @@ function_definition (78)
 
    18 multiplicative_expression: multiplicative_expression '*' . unary_expression
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression  aller à l'état 53
-    postfix_expression  aller à l'état 54
-    unary_expression    aller à l'état 124
-    unary_operator      aller à l'état 56
+    primary_expression  aller à l'état 51
+    postfix_expression  aller à l'état 52
+    unary_expression    aller à l'état 126
+    unary_operator      aller à l'état 54
 
 
 État 91
 
    19 multiplicative_expression: multiplicative_expression '/' . unary_expression
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression  aller à l'état 53
-    postfix_expression  aller à l'état 54
-    unary_expression    aller à l'état 125
-    unary_operator      aller à l'état 56
+    primary_expression  aller à l'état 51
+    postfix_expression  aller à l'état 52
+    unary_expression    aller à l'état 127
+    unary_operator      aller à l'état 54
 
 
 État 92
 
    22 additive_expression: additive_expression '-' . multiplicative_expression
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 126
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 127
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 128
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 129
 
 
 État 93
 
    21 additive_expression: additive_expression '+' . multiplicative_expression
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 126
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 128
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 128
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 130
 
 
 État 94
 
    26 relational_expression: relational_expression LE_OP . additive_expression
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 126
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 129
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 128
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 131
 
 
 État 95
 
    27 relational_expression: relational_expression GE_OP . additive_expression
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 126
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 130
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 128
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 132
 
 
 État 96
 
    25 relational_expression: relational_expression '>' . additive_expression
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 126
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 131
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 128
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 133
 
 
 État 97
 
    24 relational_expression: relational_expression '<' . additive_expression
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 126
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 132
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 128
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 134
 
 
 État 98
 
    29 equality_expression: equality_expression EQ_OP . relational_expression
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 126
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 133
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 128
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 135
 
 
 État 99
 
    30 equality_expression: equality_expression NE_OP . relational_expression
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 126
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 134
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 128
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 136
 
 
 État 100
 
    32 logical_and_expression: logical_and_expression AND_OP . equality_expression
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 126
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 135
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 128
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 137
 
 
 État 101
 
    34 logical_or_expression: logical_or_expression OR_OP . logical_and_expression
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 126
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 136
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 128
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 138
 
 
 État 102
 
-   79 expression_statement: expression ';' .
+   82 expression_statement: expression ';' .
 
-    $défaut  réduction par utilisation de la règle 79 (expression_statement)
+    $défaut  réduction par utilisation de la règle 82 (expression_statement)
 
 
 État 103
 
    37 declaration: declaration_specifiers declarator . ';'
 
-    ';'  décalage et aller à l'état 29
+    ';'  décalage et aller à l'état 27
 
 
 État 104
 
-   69 sortie: '}' .
+   72 sortie: '}' .
 
-    $défaut  réduction par utilisation de la règle 69 (sortie)
+    $défaut  réduction par utilisation de la règle 72 (sortie)
 
 
 État 105
 
-   75 declaration_list: declaration_list declaration .
+   78 declaration_list: declaration_list declaration .
 
-    $défaut  réduction par utilisation de la règle 75 (declaration_list)
+    $défaut  réduction par utilisation de la règle 78 (declaration_list)
 
 
 État 106
 
-   72 compound_statement: entree declaration_list sortie .
+   75 compound_statement: entree declaration_list sortie .
 
-    $défaut  réduction par utilisation de la règle 72 (compound_statement)
+    $défaut  réduction par utilisation de la règle 75 (compound_statement)
 
 
 État 107
 
-   73 compound_statement: entree declaration_list statement_list . sortie
-   77 statement_list: statement_list . statement
+   76 compound_statement: entree declaration_list statement_list . sortie
+   80 statement_list: statement_list . statement
 
-    SIZEOF      décalage et aller à l'état 41
-    IF          décalage et aller à l'état 42
-    WHILE       décalage et aller à l'état 43
-    FOR         décalage et aller à l'état 44
-    RETURN      décalage et aller à l'état 45
-    '('         décalage et aller à l'état 46
-    '{'         décalage et aller à l'état 28
+    SIZEOF      décalage et aller à l'état 39
+    IF          décalage et aller à l'état 40
+    WHILE       décalage et aller à l'état 41
+    FOR         décalage et aller à l'état 42
+    RETURN      décalage et aller à l'état 43
+    '('         décalage et aller à l'état 44
+    '{'         décalage et aller à l'état 26
     '}'         décalage et aller à l'état 104
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    ';'         décalage et aller à l'état 45
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
-    expression                 aller à l'état 63
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
+    expression                 aller à l'état 61
     statement                  aller à l'état 108
-    entree                     aller à l'état 30
-    sortie                     aller à l'état 137
-    compound_statement         aller à l'état 67
-    expression_statement       aller à l'état 70
-    selection_statement        aller à l'état 71
-    iteration_statement        aller à l'état 72
-    jump_statement             aller à l'état 73
+    entree                     aller à l'état 28
+    sortie                     aller à l'état 139
+    compound_statement         aller à l'état 65
+    expression_statement       aller à l'état 68
+    selection_statement        aller à l'état 69
+    iteration_statement        aller à l'état 70
+    jump_statement             aller à l'état 71
 
 
 État 108
 
-   77 statement_list: statement_list statement .
+   80 statement_list: statement_list statement .
 
-    $défaut  réduction par utilisation de la règle 77 (statement_list)
+    $défaut  réduction par utilisation de la règle 80 (statement_list)
 
 
 État 109
 
-   71 compound_statement: entree statement_list sortie .
+   74 compound_statement: entree statement_list sortie .
 
-    $défaut  réduction par utilisation de la règle 71 (compound_statement)
+    $défaut  réduction par utilisation de la règle 74 (compound_statement)
 
 
 État 110
 
-   55 direct_declarator: '(' @3 declarator . ')'
+   57 direct_declarator: '(' @5 declarator . ')'
 
-    ')'  décalage et aller à l'état 138
+    ')'  décalage et aller à l'état 140
 
 
 État 111
 
-   59 direct_declarator: direct_declarator '(' ')' .
-
-    $défaut  réduction par utilisation de la règle 59 (direct_declarator)
-
-
-État 112
-
-   58 direct_declarator: direct_declarator '(' $@4 . parameter_list ')'
+   60 direct_declarator: direct_declarator '(' $@6 . parameter_list ')'
 
     EXTERN  décalage et aller à l'état 1
     INT     décalage et aller à l'état 2
     VOID    décalage et aller à l'état 3
     STRUCT  décalage et aller à l'état 4
 
-    declaration_specifiers  aller à l'état 139
+    declaration_specifiers  aller à l'état 141
     type_specifier          aller à l'état 7
     struct_specifier        aller à l'état 14
-    parameter_list          aller à l'état 140
-    parameter_declaration   aller à l'état 141
+    parameter_list          aller à l'état 142
+    parameter_declaration   aller à l'état 143
 
 
-État 113
+État 112
 
-   12 unary_expression: SIZEOF '(' type_specifier . ')'
-
-    ')'  décalage et aller à l'état 142
-
-
-État 114
-
-   80 selection_statement: IF '(' expression . ')' statement
-   81                    | IF '(' expression . ')' statement ELSE statement
-
-    ')'  décalage et aller à l'état 143
-
-
-État 115
-
-   82 iteration_statement: WHILE '(' expression . ')' statement
+   62 direct_declarator: direct_declarator '(' $@7 . ')'
 
     ')'  décalage et aller à l'état 144
 
 
+État 113
+
+   51 struct_declaration: type_specifier declarator ';' .
+
+    $défaut  réduction par utilisation de la règle 51 (struct_declaration)
+
+
+État 114
+
+   45 struct_specifier: STRUCT IDENTIFIER '{' $@1 struct_declaration_list '}' .
+
+    $défaut  réduction par utilisation de la règle 45 (struct_specifier)
+
+
+État 115
+
+   12 unary_expression: SIZEOF '(' type_specifier . ')'
+
+    ')'  décalage et aller à l'état 145
+
+
 État 116
 
-   83 iteration_statement: FOR '(' expression_statement . expression_statement expression ')' statement
+   83 selection_statement: IF '(' expression . ')' statement
+   84                    | IF '(' expression . ')' statement ELSE statement
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
-
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
-    expression                 aller à l'état 63
-    expression_statement       aller à l'état 145
+    ')'  décalage et aller à l'état 146
 
 
 État 117
 
-   85 jump_statement: RETURN expression ';' .
+   85 iteration_statement: WHILE '(' expression . ')' statement
 
-    $défaut  réduction par utilisation de la règle 85 (jump_statement)
+    ')'  décalage et aller à l'état 147
 
 
 État 118
+
+   86 iteration_statement: FOR '(' expression_statement . expression_statement expression ')' statement
+
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    ';'         décalage et aller à l'état 45
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
+
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
+    expression                 aller à l'état 61
+    expression_statement       aller à l'état 148
+
+
+État 119
+
+   88 jump_statement: RETURN expression ';' .
+
+    $défaut  réduction par utilisation de la règle 88 (jump_statement)
+
+
+État 120
 
     1 primary_expression: '(' expression ')' .
 
     $défaut  réduction par utilisation de la règle 1 (primary_expression)
 
 
-État 119
+État 121
 
     7 postfix_expression: postfix_expression PTR_OP IDENTIFIER .
 
     $défaut  réduction par utilisation de la règle 7 (postfix_expression)
 
 
-État 120
+État 122
 
     5 postfix_expression: postfix_expression '(' ')' .
 
     $défaut  réduction par utilisation de la règle 5 (postfix_expression)
 
 
-État 121
+État 123
 
     6 postfix_expression: postfix_expression '(' argument_expression_list . ')'
     9 argument_expression_list: argument_expression_list . ',' expression
 
-    ')'  décalage et aller à l'état 146
-    ','  décalage et aller à l'état 147
+    ')'  décalage et aller à l'état 149
+    ','  décalage et aller à l'état 150
 
 
-État 122
+État 124
 
     8 argument_expression_list: expression .
 
     $défaut  réduction par utilisation de la règle 8 (argument_expression_list)
 
 
-État 123
+État 125
 
    36 expression: unary_expression '=' expression .
 
     $défaut  réduction par utilisation de la règle 36 (expression)
 
 
-État 124
+État 126
 
    18 multiplicative_expression: multiplicative_expression '*' unary_expression .
 
     $défaut  réduction par utilisation de la règle 18 (multiplicative_expression)
 
 
-État 125
+État 127
 
    19 multiplicative_expression: multiplicative_expression '/' unary_expression .
 
     $défaut  réduction par utilisation de la règle 19 (multiplicative_expression)
 
 
-État 126
+État 128
 
    17 multiplicative_expression: unary_expression .
 
     $défaut  réduction par utilisation de la règle 17 (multiplicative_expression)
 
 
-État 127
+État 129
 
    18 multiplicative_expression: multiplicative_expression . '*' unary_expression
    19                          | multiplicative_expression . '/' unary_expression
@@ -1855,7 +1887,7 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 22 (additive_expression)
 
 
-État 128
+État 130
 
    18 multiplicative_expression: multiplicative_expression . '*' unary_expression
    19                          | multiplicative_expression . '/' unary_expression
@@ -1867,7 +1899,7 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 21 (additive_expression)
 
 
-État 129
+État 131
 
    21 additive_expression: additive_expression . '+' multiplicative_expression
    22                    | additive_expression . '-' multiplicative_expression
@@ -1879,7 +1911,7 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 26 (relational_expression)
 
 
-État 130
+État 132
 
    21 additive_expression: additive_expression . '+' multiplicative_expression
    22                    | additive_expression . '-' multiplicative_expression
@@ -1891,7 +1923,7 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 27 (relational_expression)
 
 
-État 131
+État 133
 
    21 additive_expression: additive_expression . '+' multiplicative_expression
    22                    | additive_expression . '-' multiplicative_expression
@@ -1903,7 +1935,7 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 25 (relational_expression)
 
 
-État 132
+État 134
 
    21 additive_expression: additive_expression . '+' multiplicative_expression
    22                    | additive_expression . '-' multiplicative_expression
@@ -1915,7 +1947,7 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 24 (relational_expression)
 
 
-État 133
+État 135
 
    24 relational_expression: relational_expression . '<' additive_expression
    25                      | relational_expression . '>' additive_expression
@@ -1931,7 +1963,7 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 29 (equality_expression)
 
 
-État 134
+État 136
 
    24 relational_expression: relational_expression . '<' additive_expression
    25                      | relational_expression . '>' additive_expression
@@ -1947,7 +1979,7 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 30 (equality_expression)
 
 
-État 135
+État 137
 
    29 equality_expression: equality_expression . EQ_OP relational_expression
    30                    | equality_expression . NE_OP relational_expression
@@ -1959,7 +1991,7 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 32 (logical_and_expression)
 
 
-État 136
+État 138
 
    32 logical_and_expression: logical_and_expression . AND_OP equality_expression
    34 logical_or_expression: logical_or_expression OR_OP logical_and_expression .
@@ -1969,341 +2001,348 @@ function_definition (78)
     $défaut  réduction par utilisation de la règle 34 (logical_or_expression)
 
 
-État 137
-
-   73 compound_statement: entree declaration_list statement_list sortie .
-
-    $défaut  réduction par utilisation de la règle 73 (compound_statement)
-
-
-État 138
-
-   55 direct_declarator: '(' @3 declarator ')' .
-
-    $défaut  réduction par utilisation de la règle 55 (direct_declarator)
-
-
 État 139
 
-   62 parameter_declaration: declaration_specifiers . declarator
+   76 compound_statement: entree declaration_list statement_list sortie .
 
-    '*'  décalage et aller à l'état 17
-
-    $défaut  réduction par utilisation de la règle 52 (@2)
-
-    declarator  aller à l'état 148
-    @2          aller à l'état 19
+    $défaut  réduction par utilisation de la règle 76 (compound_statement)
 
 
 État 140
 
-   58 direct_declarator: direct_declarator '(' $@4 parameter_list . ')'
-   61 parameter_list: parameter_list . ',' parameter_declaration
+   57 direct_declarator: '(' @5 declarator ')' .
 
-    ')'  décalage et aller à l'état 149
-    ','  décalage et aller à l'état 150
+    $défaut  réduction par utilisation de la règle 57 (direct_declarator)
 
 
 État 141
 
-   60 parameter_list: parameter_declaration .
+   65 parameter_declaration: declaration_specifiers . declarator
 
-    $défaut  réduction par utilisation de la règle 60 (parameter_list)
+    '*'  décalage et aller à l'état 17
+
+    $défaut  réduction par utilisation de la règle 54 (@4)
+
+    declarator  aller à l'état 151
+    @4          aller à l'état 19
 
 
 État 142
+
+   60 direct_declarator: direct_declarator '(' $@6 parameter_list . ')'
+   64 parameter_list: parameter_list . ',' parameter_declaration
+
+    ')'  décalage et aller à l'état 152
+    ','  décalage et aller à l'état 153
+
+
+État 143
+
+   63 parameter_list: parameter_declaration .
+
+    $défaut  réduction par utilisation de la règle 63 (parameter_list)
+
+
+État 144
+
+   62 direct_declarator: direct_declarator '(' $@7 ')' .
+
+    $défaut  réduction par utilisation de la règle 62 (direct_declarator)
+
+
+État 145
 
    12 unary_expression: SIZEOF '(' type_specifier ')' .
 
     $défaut  réduction par utilisation de la règle 12 (unary_expression)
 
 
-État 143
-
-   80 selection_statement: IF '(' expression ')' . statement
-   81                    | IF '(' expression ')' . statement ELSE statement
-
-    SIZEOF      décalage et aller à l'état 41
-    IF          décalage et aller à l'état 42
-    WHILE       décalage et aller à l'état 43
-    FOR         décalage et aller à l'état 44
-    RETURN      décalage et aller à l'état 45
-    '('         décalage et aller à l'état 46
-    '{'         décalage et aller à l'état 28
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
-
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
-    expression                 aller à l'état 63
-    statement                  aller à l'état 151
-    entree                     aller à l'état 30
-    compound_statement         aller à l'état 67
-    expression_statement       aller à l'état 70
-    selection_statement        aller à l'état 71
-    iteration_statement        aller à l'état 72
-    jump_statement             aller à l'état 73
-
-
-État 144
-
-   82 iteration_statement: WHILE '(' expression ')' . statement
-
-    SIZEOF      décalage et aller à l'état 41
-    IF          décalage et aller à l'état 42
-    WHILE       décalage et aller à l'état 43
-    FOR         décalage et aller à l'état 44
-    RETURN      décalage et aller à l'état 45
-    '('         décalage et aller à l'état 46
-    '{'         décalage et aller à l'état 28
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
-
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
-    expression                 aller à l'état 63
-    statement                  aller à l'état 152
-    entree                     aller à l'état 30
-    compound_statement         aller à l'état 67
-    expression_statement       aller à l'état 70
-    selection_statement        aller à l'état 71
-    iteration_statement        aller à l'état 72
-    jump_statement             aller à l'état 73
-
-
-État 145
-
-   83 iteration_statement: FOR '(' expression_statement expression_statement . expression ')' statement
-
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
-
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
-    expression                 aller à l'état 153
-
-
 État 146
+
+   83 selection_statement: IF '(' expression ')' . statement
+   84                    | IF '(' expression ')' . statement ELSE statement
+
+    SIZEOF      décalage et aller à l'état 39
+    IF          décalage et aller à l'état 40
+    WHILE       décalage et aller à l'état 41
+    FOR         décalage et aller à l'état 42
+    RETURN      décalage et aller à l'état 43
+    '('         décalage et aller à l'état 44
+    '{'         décalage et aller à l'état 26
+    ';'         décalage et aller à l'état 45
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
+
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
+    expression                 aller à l'état 61
+    statement                  aller à l'état 154
+    entree                     aller à l'état 28
+    compound_statement         aller à l'état 65
+    expression_statement       aller à l'état 68
+    selection_statement        aller à l'état 69
+    iteration_statement        aller à l'état 70
+    jump_statement             aller à l'état 71
+
+
+État 147
+
+   85 iteration_statement: WHILE '(' expression ')' . statement
+
+    SIZEOF      décalage et aller à l'état 39
+    IF          décalage et aller à l'état 40
+    WHILE       décalage et aller à l'état 41
+    FOR         décalage et aller à l'état 42
+    RETURN      décalage et aller à l'état 43
+    '('         décalage et aller à l'état 44
+    '{'         décalage et aller à l'état 26
+    ';'         décalage et aller à l'état 45
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
+
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
+    expression                 aller à l'état 61
+    statement                  aller à l'état 155
+    entree                     aller à l'état 28
+    compound_statement         aller à l'état 65
+    expression_statement       aller à l'état 68
+    selection_statement        aller à l'état 69
+    iteration_statement        aller à l'état 70
+    jump_statement             aller à l'état 71
+
+
+État 148
+
+   86 iteration_statement: FOR '(' expression_statement expression_statement . expression ')' statement
+
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
+
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
+    expression                 aller à l'état 156
+
+
+État 149
 
     6 postfix_expression: postfix_expression '(' argument_expression_list ')' .
 
     $défaut  réduction par utilisation de la règle 6 (postfix_expression)
 
 
-État 147
+État 150
 
     9 argument_expression_list: argument_expression_list ',' . expression
 
-    SIZEOF      décalage et aller à l'état 41
-    '('         décalage et aller à l'état 46
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
+    SIZEOF      décalage et aller à l'état 39
+    '('         décalage et aller à l'état 44
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
 
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
-    expression                 aller à l'état 154
-
-
-État 148
-
-   62 parameter_declaration: declaration_specifiers declarator .
-
-    $défaut  réduction par utilisation de la règle 62 (parameter_declaration)
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
+    expression                 aller à l'état 157
 
 
-État 149
+État 151
 
-   58 direct_declarator: direct_declarator '(' $@4 parameter_list ')' .
+   65 parameter_declaration: declaration_specifiers declarator .
 
-    $défaut  réduction par utilisation de la règle 58 (direct_declarator)
+    $défaut  réduction par utilisation de la règle 65 (parameter_declaration)
 
 
-État 150
+État 152
 
-   61 parameter_list: parameter_list ',' . parameter_declaration
+   60 direct_declarator: direct_declarator '(' $@6 parameter_list ')' .
+
+    $défaut  réduction par utilisation de la règle 60 (direct_declarator)
+
+
+État 153
+
+   64 parameter_list: parameter_list ',' . parameter_declaration
 
     EXTERN  décalage et aller à l'état 1
     INT     décalage et aller à l'état 2
     VOID    décalage et aller à l'état 3
     STRUCT  décalage et aller à l'état 4
 
-    declaration_specifiers  aller à l'état 139
+    declaration_specifiers  aller à l'état 141
     type_specifier          aller à l'état 7
     struct_specifier        aller à l'état 14
-    parameter_declaration   aller à l'état 155
-
-
-État 151
-
-   80 selection_statement: IF '(' expression ')' statement .
-   81                    | IF '(' expression ')' statement . ELSE statement
-
-    ELSE  décalage et aller à l'état 156
-
-    $défaut  réduction par utilisation de la règle 80 (selection_statement)
-
-
-État 152
-
-   82 iteration_statement: WHILE '(' expression ')' statement .
-
-    $défaut  réduction par utilisation de la règle 82 (iteration_statement)
-
-
-État 153
-
-   83 iteration_statement: FOR '(' expression_statement expression_statement expression . ')' statement
-
-    ')'  décalage et aller à l'état 157
+    parameter_declaration   aller à l'état 158
 
 
 État 154
+
+   83 selection_statement: IF '(' expression ')' statement .
+   84                    | IF '(' expression ')' statement . ELSE statement
+
+    ELSE  décalage et aller à l'état 159
+
+    $défaut  réduction par utilisation de la règle 83 (selection_statement)
+
+
+État 155
+
+   85 iteration_statement: WHILE '(' expression ')' statement .
+
+    $défaut  réduction par utilisation de la règle 85 (iteration_statement)
+
+
+État 156
+
+   86 iteration_statement: FOR '(' expression_statement expression_statement expression . ')' statement
+
+    ')'  décalage et aller à l'état 160
+
+
+État 157
 
     9 argument_expression_list: argument_expression_list ',' expression .
 
     $défaut  réduction par utilisation de la règle 9 (argument_expression_list)
 
 
-État 155
-
-   61 parameter_list: parameter_list ',' parameter_declaration .
-
-    $défaut  réduction par utilisation de la règle 61 (parameter_list)
-
-
-État 156
-
-   81 selection_statement: IF '(' expression ')' statement ELSE . statement
-
-    SIZEOF      décalage et aller à l'état 41
-    IF          décalage et aller à l'état 42
-    WHILE       décalage et aller à l'état 43
-    FOR         décalage et aller à l'état 44
-    RETURN      décalage et aller à l'état 45
-    '('         décalage et aller à l'état 46
-    '{'         décalage et aller à l'état 28
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
-
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
-    expression                 aller à l'état 63
-    statement                  aller à l'état 158
-    entree                     aller à l'état 30
-    compound_statement         aller à l'état 67
-    expression_statement       aller à l'état 70
-    selection_statement        aller à l'état 71
-    iteration_statement        aller à l'état 72
-    jump_statement             aller à l'état 73
-
-
-État 157
-
-   83 iteration_statement: FOR '(' expression_statement expression_statement expression ')' . statement
-
-    SIZEOF      décalage et aller à l'état 41
-    IF          décalage et aller à l'état 42
-    WHILE       décalage et aller à l'état 43
-    FOR         décalage et aller à l'état 44
-    RETURN      décalage et aller à l'état 45
-    '('         décalage et aller à l'état 46
-    '{'         décalage et aller à l'état 28
-    ';'         décalage et aller à l'état 47
-    '&'         décalage et aller à l'état 48
-    '*'         décalage et aller à l'état 49
-    '-'         décalage et aller à l'état 50
-    IDENTIFIER  décalage et aller à l'état 51
-    CONSTANT    décalage et aller à l'état 52
-
-    primary_expression         aller à l'état 53
-    postfix_expression         aller à l'état 54
-    unary_expression           aller à l'état 55
-    unary_operator             aller à l'état 56
-    multiplicative_expression  aller à l'état 57
-    additive_expression        aller à l'état 58
-    relational_expression      aller à l'état 59
-    equality_expression        aller à l'état 60
-    logical_and_expression     aller à l'état 61
-    logical_or_expression      aller à l'état 62
-    expression                 aller à l'état 63
-    statement                  aller à l'état 159
-    entree                     aller à l'état 30
-    compound_statement         aller à l'état 67
-    expression_statement       aller à l'état 70
-    selection_statement        aller à l'état 71
-    iteration_statement        aller à l'état 72
-    jump_statement             aller à l'état 73
-
-
 État 158
 
-   81 selection_statement: IF '(' expression ')' statement ELSE statement .
+   64 parameter_list: parameter_list ',' parameter_declaration .
 
-    $défaut  réduction par utilisation de la règle 81 (selection_statement)
+    $défaut  réduction par utilisation de la règle 64 (parameter_list)
 
 
 État 159
 
-   83 iteration_statement: FOR '(' expression_statement expression_statement expression ')' statement .
+   84 selection_statement: IF '(' expression ')' statement ELSE . statement
 
-    $défaut  réduction par utilisation de la règle 83 (iteration_statement)
+    SIZEOF      décalage et aller à l'état 39
+    IF          décalage et aller à l'état 40
+    WHILE       décalage et aller à l'état 41
+    FOR         décalage et aller à l'état 42
+    RETURN      décalage et aller à l'état 43
+    '('         décalage et aller à l'état 44
+    '{'         décalage et aller à l'état 26
+    ';'         décalage et aller à l'état 45
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
+
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
+    expression                 aller à l'état 61
+    statement                  aller à l'état 161
+    entree                     aller à l'état 28
+    compound_statement         aller à l'état 65
+    expression_statement       aller à l'état 68
+    selection_statement        aller à l'état 69
+    iteration_statement        aller à l'état 70
+    jump_statement             aller à l'état 71
+
+
+État 160
+
+   86 iteration_statement: FOR '(' expression_statement expression_statement expression ')' . statement
+
+    SIZEOF      décalage et aller à l'état 39
+    IF          décalage et aller à l'état 40
+    WHILE       décalage et aller à l'état 41
+    FOR         décalage et aller à l'état 42
+    RETURN      décalage et aller à l'état 43
+    '('         décalage et aller à l'état 44
+    '{'         décalage et aller à l'état 26
+    ';'         décalage et aller à l'état 45
+    '&'         décalage et aller à l'état 46
+    '*'         décalage et aller à l'état 47
+    '-'         décalage et aller à l'état 48
+    IDENTIFIER  décalage et aller à l'état 49
+    CONSTANT    décalage et aller à l'état 50
+
+    primary_expression         aller à l'état 51
+    postfix_expression         aller à l'état 52
+    unary_expression           aller à l'état 53
+    unary_operator             aller à l'état 54
+    multiplicative_expression  aller à l'état 55
+    additive_expression        aller à l'état 56
+    relational_expression      aller à l'état 57
+    equality_expression        aller à l'état 58
+    logical_and_expression     aller à l'état 59
+    logical_or_expression      aller à l'état 60
+    expression                 aller à l'état 61
+    statement                  aller à l'état 162
+    entree                     aller à l'état 28
+    compound_statement         aller à l'état 65
+    expression_statement       aller à l'état 68
+    selection_statement        aller à l'état 69
+    iteration_statement        aller à l'état 70
+    jump_statement             aller à l'état 71
+
+
+État 161
+
+   84 selection_statement: IF '(' expression ')' statement ELSE statement .
+
+    $défaut  réduction par utilisation de la règle 84 (selection_statement)
+
+
+État 162
+
+   86 iteration_statement: FOR '(' expression_statement expression_statement expression ')' statement .
+
+    $défaut  réduction par utilisation de la règle 86 (iteration_statement)
