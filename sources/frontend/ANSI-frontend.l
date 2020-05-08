@@ -279,7 +279,7 @@ char *add_declaration(char* var, arbre_t *type, char* declarations)
 	{
 	    if(type->root == INT_T)
 		{new_declarations=concatener(new_declarations, "int ", var, ";\n", NULL);}
-	    else if(type->root == PTR_T)
+	    else
 		{
 		    {new_declarations=concatener(new_declarations, "void *", var, ";\n", NULL);}
 		}
@@ -344,6 +344,16 @@ int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2, int cmp_strct)
 				    if( fils1 != NULL && fils2 != NULL)
 					{ if(fils1->root == VOID_T || fils2->root == VOID_T) {return 1;}} /* si un des pointeurs est un void *, alors c'est bon*/
 				}
+			    if(arbre1->root == STRUCT_T)
+				{
+				    arbre_t *fils1= arbre1->fils_gauche;
+				    arbre_t *fils2= arbre2->fils_gauche;
+			    
+				    if( fils1 == NULL || fils2 == NULL)
+					{
+					    return !strcmp(arbre1->name, arbre2->name);
+					}
+				}
 				
 			    int g= cmp_arbre_t(arbre1->fils_gauche, arbre2->fils_gauche, cmp_strct);
 			    if(g)
@@ -351,10 +361,10 @@ int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2, int cmp_strct)
 			    else {return 0;}
 			}
 			
-			}
+		}
 	    else {return 0;}
-			}
-			}
+	}
+}
 
 int compare_arbre_struct(arbre_t *arbre1, arbre_t *arbre2)
 {return cmp_arbre_t(arbre1, arbre2, 1);}
@@ -362,26 +372,30 @@ int compare_arbre_struct(arbre_t *arbre1, arbre_t *arbre2)
 int compare_arbre_t(arbre_t *arbre1, arbre_t *arbre2)
  {return cmp_arbre_t(arbre1, arbre2, 0);}
  
- arbre_t *basic_type(type_t t, char* name) /* creer type de base (int_t ou void_t) */
- {
-	arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
+arbre_t *basic_type(type_t t, char* name) /* creer type de base (int_t ou void_t) */
+{
+    arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
 
 	
-	if(t == INT_T || t == VOID_T || t== ERROR_T)
-	    {
-		arbre->root= t;
-		arbre->fils_gauche= NULL;
-		arbre->fils_droit= NULL;
-		arbre->name= strdup(name);
+    if(t == INT_T || t == VOID_T || t== ERROR_T)
+	{
+	    arbre->root= t;
+	    arbre->fils_gauche= NULL;
+	    arbre->fils_droit= NULL;
+	    arbre->name= strdup(name);
 
-		return arbre;
-	    }
-	else {return NULL;}
-    }
+	    return arbre;
+	}
+    else {return NULL;}
+}
 
 arbre_t *fct_type(arbre_t *depart, arbre_t *arrivee, char* name)
 {
     arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
+    if(verif_type(depart, ERROR_T) || verif_type(depart, ERROR_T))
+	{
+	    return basic_type(ERROR_T, strdup(name));
+	}
     arbre->root= FCT_T;
     arbre->fils_gauche= depart;
     arbre->fils_droit= arrivee;
@@ -393,6 +407,10 @@ arbre_t *fct_type(arbre_t *depart, arbre_t *arrivee, char* name)
 arbre_t *ptr_type(arbre_t *t, char* name)
 {
     arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
+    if(verif_type(t, ERROR_T))
+	{
+	    return basic_type(ERROR_T, strdup(name));
+	}
     arbre->root= PTR_T;	
     arbre->fils_gauche= t;
     arbre->fils_droit= NULL;
@@ -404,6 +422,10 @@ arbre_t *ptr_type(arbre_t *t, char* name)
 arbre_t *prod_type(arbre_t *t1, arbre_t *t2, char* name)
 {
     arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
+    if(verif_type(t1, ERROR_T) || verif_type(t2, ERROR_T))
+	{
+	    return basic_type(ERROR_T, strdup(name));
+	}
     arbre->root= PROD_T;
     arbre->fils_gauche= t1;
     arbre->fils_droit= t2;
@@ -415,6 +437,10 @@ arbre_t *prod_type(arbre_t *t1, arbre_t *t2, char* name)
 arbre_t *struc_type(arbre_t *champs, char* name)
 {
     arbre_t *arbre= (arbre_t *) malloc(sizeof(arbre_t));
+    if(verif_type(champs, ERROR_T) )
+	{
+	    return basic_type(ERROR_T, strdup(name));
+	}
     arbre->root= STRUCT_T;	
     arbre->fils_gauche= champs;
     arbre->fils_droit= NULL;
@@ -426,29 +452,49 @@ arbre_t *struc_type(arbre_t *champs, char* name)
 /* il est requis que l'argument structure soit un arbre_t dont root est STRUCT_T*/
 int get_offset_member(arbre_t *structure, char* member_name)
 {
-    int offset=0;
+    int size_of_struc=sizeof_type(structure);
+    int offset= size_of_struc;
     arbre_t *prod_member= structure->fils_gauche;
     if (prod_member == NULL) {return -1;}
-    while(prod_member && !strcmp(prod_member->fils_gauche->name, member_name) )
+    if (!(verif_type(prod_member, PROD_T))) {return 0;}
+    //fprintf(stderr, "prod_member_type: %s\n", get_type_readable(prod_member->root));
+    while(prod_member && strcmp(prod_member->fils_droit->name, member_name) )
 	{
-	    offset+= sizeof_type(prod_member->fils_gauche);
-	    prod_member=prod_member->fils_droit; 
+	    //fprintf(stderr, "offset pour %s: %d\n",member_name,  offset);
+	    offset-= sizeof_type(prod_member->fils_droit);
+	    prod_member=prod_member->fils_gauche;
+	    if(!verif_type(prod_member, PROD_T)) {break;}
 	}
     if(prod_member == NULL){return -1;} //on a pas trouvé le champs demandé
-    else {return offset;}
+    else {
+	if(verif_type(prod_member, PROD_T)) {offset-= sizeof_type(prod_member->fils_droit);}
+	else {offset-= sizeof_type(prod_member);}
+	//fprintf(stderr, "offset pour %s: %d\n",member_name,  offset);
+	return offset;}
 }
+
 
 /* il est requis que l'argument structure soit un arbre_t dont root est STRUCT_T*/
 arbre_t *get_type_member(arbre_t *structure, char* member_name)
 {
     arbre_t *prod_member= structure->fils_gauche;
     if (prod_member == NULL) {return basic_type(ERROR_T, "");}
-    while(prod_member && !strcmp(prod_member->fils_gauche->name, member_name) )
+    if (!(verif_type(prod_member, PROD_T)))
+	{	
+	    // fprintf(stderr, "LE TYPE RETROUVE POUR %s EST (solo) : %s\n", member_name, draw_type_expr(prod_member));
+	    return prod_member;
+	}
+    while(prod_member && strcmp(prod_member->fils_droit->name, member_name) )
 	{
-	    prod_member=prod_member->fils_droit; 
+	    //	    fprintf(stderr, "LE TYPE STRUCTURE POUR %s (..........) : %s ........... %s\n", member_name, draw_type_expr(prod_member), draw_type_expr(prod_member->fils_droit));
+	    prod_member=prod_member->fils_gauche;
+	    if(!verif_type(prod_member, PROD_T)) {break;}
 	}
     if(prod_member == NULL){return basic_type(ERROR_T, "");} //on a pas trouvé le champs demandé
-    else {return prod_member->fils_gauche;}
+    
+    if(verif_type(prod_member, PROD_T)){ prod_member=prod_member->fils_droit; }
+    //fprintf(stderr, "LE TYPE RETROUVE POUR %s EST : %s\n", member_name, draw_type_expr(prod_member));
+    return prod_member;
 }
 
 
@@ -525,12 +571,19 @@ void type_error_affect(arbre_t *expected_type, arbre_t *found_type, int line, at
     return ;
 }
 	
-void type_error_relational(arbre_t *found_left_type, arbre_t *found_right_type, int line, attributs_t *attribut)
+void type_error_relational(arbre_t *found_left_type, arbre_t *found_right_type, int line, attributs_t *attribut )
 {
     fprintf(stderr, "Type error line %d Relationnal expression > left type: %s, right type: %s \n", line, draw_type_expr(found_left_type), draw_type_expr(found_right_type) );
     attribut->type= basic_type(ERROR_T, "");
     error=SEMANTICERROR;
     return;
+}
+
+void type_error_custom(char* error_message, attributs_t *attribut )
+{
+    fprintf(stderr, "%s", error_message);
+    attribut->type= basic_type(ERROR_T, "");
+    error=SEMANTICERROR;
 }
 
 char* get_type_readable(type_t type)
@@ -578,25 +631,25 @@ char *draw_type_expr(arbre_t *type_expr)
 	    switch(root)
 		{
 		case 0: //INT_T
-		    return strdup("INT_T");
+		    return concatener(s, strdup("[INT_T : "), type_expr->name, strdup("]"), NULL);
 		    break;
 		case 1: //VOID_T
-		    return strdup("VOID_T");
+		    return concatener(s, strdup("[VOID_T : "), type_expr->name, strdup("]"), NULL);
 		    break;
 		case 2: //ERROR_T
-		    return strdup("ERROR_T");
+		    return concatener(s, strdup("[ERROR_T : "), type_expr->name, strdup("]"), NULL);
 		    break;
 		case 3: //FCT_T		    
-		    return concatener(s, strdup("("), draw_type_expr(type_expr->fils_gauche), strdup(") -> "), draw_type_expr(type_expr->fils_droit), NULL);
+		    return concatener(s, strdup("[("), draw_type_expr(type_expr->fils_gauche), strdup(") -> ("), draw_type_expr(type_expr->fils_droit), strdup(") : "), type_expr->name, strdup("]"), NULL);
 		    break;
 		case 4: //PTR_T
-		    return concatener(s, strdup("PTR("), draw_type_expr(type_expr->fils_gauche), strdup(")"), NULL);
+		    return concatener(s, strdup("[PTR("), draw_type_expr(type_expr->fils_gauche), strdup(")"), strdup(" : "), type_expr->name, strdup("]"),  NULL);
 		    break;
 		case 5://PROD_T
-		    return concatener(s, draw_type_expr(type_expr->fils_gauche), strdup(" x "), draw_type_expr(type_expr->fils_droit), NULL);
+		    return concatener(s, draw_type_expr(type_expr->fils_gauche), strdup(" . "), draw_type_expr(type_expr->fils_droit), NULL);
 		    break;
 		case 6://STRUCT_T
-		    return concatener(s, strdup("STRUCT_T ("), draw_type_expr(type_expr->fils_gauche), strdup(")"), NULL);
+		    return concatener(s, strdup("[STRUCT_T ("), draw_type_expr(type_expr->fils_gauche), strdup(")"), strdup(" : "), type_expr->name, strdup("]"), NULL);
 		    break;
 		default:
 		    return strdup("");
@@ -605,53 +658,41 @@ char *draw_type_expr(arbre_t *type_expr)
 	}
 }
 
+
 int sizeof_type(arbre_t *type)
-    {
-	return sizeof_type_t(type, 0);
-    }
+{
+    if (type == NULL) {return 0;}
+    else
+	{
+	    switch(type->root)
+		{
+		case 0: //INT_T
+		    return sizeof(int);
+		    break;
+		case 1: //VOID_T
+		    return sizeof(void);
+		    break;
+		case 2: //ERROR_T
+		    return 0;
+		    break;
+		case 3: //FCT_T		    
+		    return sizeof(int);
+		    break;
+		case 4: //PTR_T
+		    return sizeof(int*);	    
+		    break;
+		case 5://PROD_T
+		    return (sizeof_type(type->fils_gauche) + sizeof_type(type->fils_droit));
+		    break;
+		case 6://STRUCT_T
+		    return sizeof_type(type->fils_gauche);
+		    break;
+		default:
+		    return 0;
+		    break;
+		}
+	}
+}
 
-int sizeof_type_t(arbre_t *type, int ptr)
-    {
-	if (type == NULL) {return 0;}
-	else
-	    {
-		switch(type->root)
-		    {
-		    case 0: //INT_T
-			return sizeof(int);
-			break;
-		    case 1: //VOID_T
-			return sizeof(void);
-			break;
-		    case 2: //ERROR_T
-			return sizeof(void);
-			break;
-		    case 3: //FCT_T		    
-			return sizeof(int);
-			break;
-		    case 4: //PTR_T
-			if (ptr)
-			    {
-				int *p;
-				return sizeof(p);
-			    }
-			else
-			    {
-				return (sizeof_type_t(type->fils_gauche, 1));
-			    }
-			break;
-		    case 5://PROD_T
-			return (sizeof_type_t(type->fils_gauche, ptr) + sizeof_type_t(type->fils_droit, ptr));
-			break;
-		    case 6://STRUCT_T
-			return sizeof_type_t(type->fils_gauche, ptr);
-			break;
-		    default:
-			return 0;
-			break;
-		    }
-	    }
-    }
-
-    void init_error() {error=0;}
-    int get_error_code() {return error;}
+void init_error() {error=0;}
+int get_error_code() {return error;}

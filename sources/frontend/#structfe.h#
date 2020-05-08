@@ -30,6 +30,7 @@ typedef struct _attributs_t {
   char *res;
   symbole_t *id;
   int is_ptr_fct;
+  arbre_t *type_return;
 } attributs_t;
 
 typedef struct _table_t {
