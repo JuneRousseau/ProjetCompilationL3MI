@@ -81,14 +81,16 @@ postfix_expression
 
 | postfix_expression '(' ')'
 {
-/* on vérifie que le type de postfix_expression est une fonction qui prend void en entrée*/
-    if(verif_type($1.type, FCT_T)) /*on a bien une fonction*/
+    /* on vérifie que le type de postfix_expression est une fonction qui prend void en entrée*/
+
+    if($1.type!= NULL && (verif_type($1.type, FCT_T) || (verif_type($1.type, PTR_T) && verif_type($1.type->fils_gauche, FCT_T)) )) /*on a bien une fonction ou pointeur sur fonction*/
 	{
-	    arbre_t *depart= $1.type->fils_gauche;
-	    if (verif_type(depart, VOID_T)) /*l'espace de départ est bien VOID_T*/ /* VOID OU NULL??*/
-		{$$.type = $1.type->fils_droit;}
-	    else
-		{type_error_function_arguments(depart, basic_type(VOID_T, ""), yylineno, &$$);}
+	    arbre_t *type_fct= verif_type($1.type, PTR_T) ? $1.type->fils_gauche : $1.type;
+	    arbre_t *depart= type_fct->fils_gauche;
+		if (verif_type(depart, VOID_T)) /*l'espace de départ est bien VOID_T*/ /* VOID OU NULL??*/
+		    {$$.type = type_fct->fils_droit;}
+		else
+		    {type_error_function_arguments(depart, basic_type(VOID_T, ""), yylineno, &$$);}
 	}
     else
 	{type_error(FCT_T, $1.type, yylineno, &$$);}
@@ -105,11 +107,12 @@ postfix_expression
 {
 
     /* on vérifie que le type de postfix_expression est une fonction qui prend le bon type en entrée*/
-    if(verif_type($1.type, FCT_T)) /*on a bien une fonction*/
+    if($1.type!= NULL && (verif_type($1.type, FCT_T) || (verif_type($1.type, PTR_T) && verif_type($1.type->fils_gauche, FCT_T)) )) /*on a bien une fonction ou pointeur sur fonction*/
 	{
-	    arbre_t *depart= $1.type->fils_gauche;
+	    arbre_t *type_fct= verif_type($1.type, PTR_T) ? $1.type->fils_gauche : $1.type;
+	    arbre_t *depart= type_fct->fils_gauche;
 	    if (compare_arbre_t(depart, $3.type)) /*l'espace de départ est bien du bon type*/
-		{$$.type = $1.type->fils_droit;}
+		{$$.type = type_fct->fils_droit;}
 	    else
 		{type_error_function_arguments(depart, $3.type, yylineno, &$$);}
 	}
@@ -653,7 +656,8 @@ declaration
     $$.type= $2.type;
     $$.declarations=strdup("");
 
-    if($$.type->root == FCT_T){pop();} /*il faudra verifier si on a un pointeur sur fonction*/
+    if($$.type!= NULL && (verif_type($$.type, FCT_T) || (verif_type($$.type, PTR_T) && verif_type($$.type->fils_gauche, FCT_T)) )){pop();} /*on a bien une fonction ou pointeur sur fonction*/
+    //if($$.type->root == FCT_T){pop();} /*il faudra verifier si on a un pointeur sur fonction*/
 
 }
 
@@ -781,7 +785,8 @@ struct_declaration
     $2.type->name= strdup($2.id->nom); //modif ici
     $$.type= $2.type;
     $$.declarations=strdup("");
-    if($$.type->root == FCT_T){pop();} /*il faudra verifier si on a un pointeur sur fonction*/
+if($$.type!= NULL && (verif_type($$.type, FCT_T) || (verif_type($$.type, PTR_T) && verif_type($$.type->fils_gauche, FCT_T)) )){pop();} /*on a bien une fonction ou pointeur sur fonction*/
+    //if($$.type->root == FCT_T){pop();} /*il faudra verifier si on a un pointeur sur fonction*/
 }
 ;
 
@@ -810,8 +815,10 @@ direct_declarator
 :  '(' {$<attributs>$.type= $<attributs>0.type;} declarator ')'
 {
     $$.code = init_code($$.code); $$.code = concatener($$.code, "(", $3.code, ")", NULL);
-    $$.type= $<attributs>0.type;
-    $$.type= $3.type;
+    //$$.type= $3.type;
+    //    fprintf(stderr, "Type de declarator: %s\n", draw_type_expr($3.type));
+    if(verif_type($3.type, PTR_T)){ $$.type= ptr_type(fct_type(NULL, $3.type->fils_gauche, ""), "");} //si c'est un pointeur, c'est qu'on a en fait un type fonction
+    else {$$.type= $3.type;}
     $$.id= $3.id;
     $$.declarations=strdup("");
 }
@@ -859,7 +866,8 @@ direct_declarator
 | direct_declarator '(' {push(nouvelle_table());}  parameter_list ')'
 {
     $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "(",$4.code,")", NULL);
-    $$.type= fct_type($4.type, $1.type, "");
+    if(verif_type($1.type, PTR_T) && verif_type($1.type->fils_gauche, FCT_T)){$1.type->fils_gauche->fils_gauche= $4.type; $1.type->fils_gauche->name= $1.id->nom; $$.type= $1.type;}
+    else{$$.type= fct_type($4.type, $1.type, $1.id->nom);}
     $$.id= $1.id;
     $$.declarations=strdup("");
 }	      
@@ -867,7 +875,8 @@ direct_declarator
 |   direct_declarator '(' {push(nouvelle_table());} ')'
 {
     $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "()", NULL);
-    $$.type= fct_type(basic_type(VOID_T, ""), $1.type, "");
+    if(verif_type($1.type, PTR_T) && verif_type($1.type->fils_gauche, FCT_T)){$1.type->fils_gauche->fils_gauche= basic_type(VOID_T, ""); $1.type->fils_gauche->name= $1.id->nom; $$.type= $1.type;}
+    else{$$.type= fct_type(basic_type(VOID_T, ""), $1.type, $1.id->nom);}
     $$.id= $1.id;
     $$.declarations=strdup("");
 }
@@ -896,7 +905,8 @@ parameter_declaration
     $$.type= $2.type;
     $$.declarations=strdup("");
     $2.id->is_arg=1;
-    if($$.type->root == FCT_T){pop();} /*il faudra verifier si on a un pointeur sur fonction*/
+if($$.type!= NULL && (verif_type($$.type, FCT_T) || (verif_type($$.type, PTR_T) && verif_type($$.type->fils_gauche, FCT_T)) )){pop();} /*on a bien une fonction ou pointeur sur fonction*/
+    //if($$.type->root == FCT_T){pop();} /*il faudra verifier si on a un pointeur sur fonction*/
 }
 ;
 

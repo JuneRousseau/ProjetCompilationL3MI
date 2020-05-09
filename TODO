@@ -3,17 +3,18 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 TODO:
 -factoriser les fonctions quand c'est possible
--comparer les structures avec les noms des champs!
 -verifier que les parametres sont de type int OU pointeur UNIQUEMENT!
 -verifier que les return ne renvoient QUE des int, pointeurs ou constantes UNIQUEMENT!
--verifi qu'on ne declare pas une structures toute seule (sans pointeur)
+-verifier qu'on ne declare pas une structures toute seule (sans pointeur)
 -les pointeurs de pointeurs ne sont PAS autorisés!
--verifier que les structures sotn alloués par un malloc
+-verifier que les structures sont allouées par un malloc
 -dans les statements, si on a un ERROR_T, il faut transmettre un ERROR_T et pas un VOID_T
+-il faut garder une compatibilité entre les pointeurs et les int (laquelle?)
+-generation du code pour un pointeur sur fonction (qui doit devenir pointeur sur void)
 
 ERREURS GRAVES : 
-Typage des pointeurs sur fonctions lors des declarations ne passent pas /!\
-Quand on compare les arbres de type, on sait pas forcement si il s'agit de types "primitifs" ou de structure (il faudrait etre capable de le detecter)
+Typage des pointeurs sur fonctions lors des declarations ne passent pas /!\ (si mais en considerant que
+si on a un pointeur dans '(' declarator ')' , c'est que c'est un ptr sur fct )
 
 
 A DEMANDER :
@@ -22,9 +23,8 @@ A DEMANDER :
 
 
 NOUS SOMMES PERPLEXE:
-sizeof ~~~~~~~~~
-le free pour la concatenation
-definitions de structures dans differents niveau de portee
+typage des fonctions 
+le free pour la concatenation ?
 malloc(0) pour les sprintf (pour le member error on a un seg fault)
 
 
