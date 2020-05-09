@@ -553,9 +553,11 @@ logical_and_expression
     char* label_suite;
     char* label_falsee;
     char* label_truee;
+    char* label_end;
     label_suite= strdup(new_label(label_suite));
     label_falsee= strdup(new_label(label_falsee));
     label_truee= strdup(new_label(label_truee));
+    label_end= strdup(new_label(label_end));
 
     $$.code = concatener($$.code, $1.code, "if (", $1.res, ") goto ", label_suite,";\n", NULL);
     $$.code = concatener($$.code, "goto ", label_falsee, ";\n", NULL);
@@ -563,7 +565,9 @@ logical_and_expression
     $$.code = concatener($$.code, $3.code, "if (", $3.res, ") goto ", label_truee,";\n", NULL);
     $$.code = concatener($$.code,"goto ", label_falsee, ";\n", NULL);
     $$.code = concatener($$.code,"\n",  label_truee,":\n", $$.res, "= 1;\n", NULL);
+    $$.code = concatener($$.code,"goto ", label_end, ";\n", NULL);
     $$.code = concatener($$.code,"\n", label_falsee,":\n", $$.res, "= 0;\n", NULL);
+    $$.code = concatener($$.code,"\n",  label_end,":\n", NULL);
 
     char* tmp_decla;
     tmp_decla= init_code(tmp_decla);
@@ -595,17 +599,21 @@ logical_or_expression
     char* label_suite;
     char* label_falsee;
     char* label_truee;
+    char* label_end;
     label_suite= strdup(new_label(label_suite));
     label_falsee= strdup(new_label(label_falsee));
     label_truee= strdup(new_label(label_truee));
+    label_end= strdup(new_label(label_end));
  
     $$.code = concatener($$.code,"", $1.code, "if (", $1.res, ") goto ", label_truee,";\n", NULL);
     $$.code = concatener($$.code,"", "goto ", label_suite, ";\n", NULL);
     $$.code = concatener($$.code,"", label_suite, ":\n", NULL);
     $$.code = concatener($$.code,"", $3.code, "if (", $3.res, ") goto ", label_truee,";\n", NULL);
     $$.code = concatener($$.code,"", "goto ", label_falsee, ";\n", NULL);
-    $$.code = concatener($$.code,"", label_truee,":\n", $$.res, "= 1;\n", NULL);
-    $$.code = concatener($$.code,"", label_falsee,":\n", $$.res, "= 0;\n", NULL);
+    $$.code = concatener($$.code,"\n", label_truee,":\n", $$.res, "= 1;\n", NULL);
+    $$.code = concatener($$.code,"goto ", label_end, ";\n", NULL);
+    $$.code = concatener($$.code,"\n", label_falsee,":\n", $$.res, "= 0;\n", NULL);
+    $$.code = concatener($$.code,"\n",  label_end,":\n", NULL);
 
     char* tmp_decla;
     tmp_decla= init_code(tmp_decla);
@@ -1095,10 +1103,10 @@ selection_statement
     $$.code= concatener($$.code, $3.code,"\n", NULL);
     $$.code= concatener($$.code, "if (", $3.res, ") goto ", label_truee, ";\n", NULL);
     $$.code= concatener($$.code, "goto ", label_falsee, ";\n", NULL);
-    $$.code= concatener($$.code, label_truee, ":\n", $5.code, NULL);
+    $$.code= concatener($$.code, "\n",  label_truee, ":\n", $5.code, NULL);
     $$.code= concatener($$.code, "goto ", label_end, ";\n", NULL);
-    $$.code= concatener($$.code, label_falsee, ":\n", $7.code,  NULL);
-    $$.code= concatener($$.code, label_end, ":\n", NULL);
+    $$.code= concatener($$.code, "\n", label_falsee, ":\n", $7.code,  NULL);
+    $$.code= concatener($$.code, "\n", label_end, ":\n", NULL);
     $$.res= NULL;
 
     if(compare_arbre_t($5.type, $7.type))
