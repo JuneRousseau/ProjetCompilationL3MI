@@ -55,8 +55,6 @@ primary_expression
 
 | IDENTIFIER
 {
-    //fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE AU MOMENT OU ON VEUT IDENTIFIER %s:\n", $1);
-    //afficher_pile();
     $$.code = init_code($$.code);
     $$.res = strdup($1);
     symbole_t *s= find($1);
@@ -64,8 +62,7 @@ primary_expression
 	{$$.type=s->type;}
     else
 	{
-	    fprintf(stderr, "line %d: l'identifiant %s n'a jamais ete declare\n", yylineno, $1);
-	    $$.type= basic_type(ERROR_T, strdup($1));
+	    identifier_unkonwn_error($1, yylineno, &$$);
 	}
     $$.declarations=strdup("");
 } ;
@@ -145,8 +142,6 @@ postfix_expression
 	    char* error_msg= malloc(0);
 	    if (offset == -1)
 		{
-		    //fprintf(stderr, "%s", $1.type->fils_gauche->name);
-		    //set_error_code(2);
 		    member_error(strdup($1.type->fils_gauche->name), strdup($3), yylineno, &$$);
 		}
 	    else {type_error_pointer_struc( $1.type, yylineno, &$$);}
@@ -156,8 +151,6 @@ postfix_expression
 	    arbre_t *type= get_type_member($1.type->fils_gauche, $3);
 	    $$.type= type;
 	}
-    //fprintf(stderr, "Le type de la structure est: %s\n", draw_type_expr($1.type));    
-    //fprintf(stderr, "Le type trouvé pour le -> est: %s\n", draw_type_expr($$.type));    
     $$.code = strdup($1.code);
     $$.res = strdup(new_var($$.res));
     char* offset_c;
@@ -213,7 +206,7 @@ unary_expression
 
     else if(!(strcmp($1.code, "&")))
 	{
-	    if($2.type == NULL) {fprintf(stderr, "Type error line %d > Expected type: not NULL , Found_type: NULL \n", yylineno); $$.type=basic_type(ERROR_T, ""); }
+	    if($2.type == NULL) {address_error(yylineno, &$$);}
 	    else{$$.type = ptr_type($2.type, ""); }
 	}
 
@@ -233,25 +226,19 @@ unary_expression
 | SIZEOF '(' type_specifier ')'
 {
     $$.code = init_code($$.code);
-    //$$.res = strdup(new_var($$.res));
-    //$$.code = concatener($$.code, $$.res, " = (", $3.code , ");\n", NULL);
     $$.res=init_code($$.res);
     sprintf($$.res, "%d", sizeof_type($3.type));
     $$.type= basic_type(INT_T, "");
     $$.declarations = strdup("");
-    //$$.declarations= add_declaration($$.res, $$.type, strdup(""));
 }
 
 | SIZEOF unary_expression
 {
     $$.code = init_code($$.code);
-    //$$.res = strdup(new_var($$.res));
-    //$$.code = concatener($$.code, $$.res, " = sizeof(",$2.res , ");\n", NULL);
     $$.res=init_code($$.res);
     sprintf($$.res, "%d", sizeof_type($2.type));
     $$.type= basic_type(INT_T, "");
     $$.declarations = strdup("");
-    //$$.declarations= add_declaration($$.res, $$.type, $2.declarations);
 }       
 ; 
 
@@ -484,9 +471,6 @@ equality_expression
 
 | equality_expression EQ_OP relational_expression
 {
-    //$$.res = init_code($$.res);
-    //$$.res = concatener($$.res, $$.res, " = ", $1.res, "==", $3.res);
-
     if(compare_arbre_t($1.type, $3.type)) {$$.type= basic_type(INT_T, "");}
     else
 	{
@@ -633,30 +617,28 @@ expression
 
 | unary_expression '=' expression
 {
-    //fprintf(stderr, "Type de unary expression: %s\n", draw_type_expr($1.type));
-    //fprintf(stderr, "Type de expression: %s\n", draw_type_expr($3.type));
-    if(compare_arbre_t($1.type, $3.type)) {
-	$$.type= $1.type;}
-    else {
-	if(verif_type($1.type, PTR_T) && verif_type($3.type, INT_T)){$$.type= $1.type;}
-	else {type_error_affect($1.type, $3.type, yylineno, &$$);}
-    }
+    if(compare_arbre_t($1.type, $3.type)){$$.type= $1.type;}
+    else
+	{
+	    if(verif_type($1.type, PTR_T) && verif_type($3.type, INT_T)){$$.type= $1.type;}
+	    else {type_error_affect($1.type, $3.type, yylineno, &$$);}
+	}
 
-	$$.code = init_code($$.code);
-	$$.res = strdup($1.res);
+    $$.code = init_code($$.code);
+    $$.res = strdup($1.res);
 	
-	if(verif_type($1.type, PTR_T) && !(verif_type($3.type, PTR_T)))
-	    {
-	$$.code = concatener($$.code, $1.code, $3.code, "*", $1.res, " = ", $3.res, ";\n", NULL);
-    }
-	else
-	    {
-	$$.code = concatener($$.code, $1.code, $3.code, $1.res, " = ", $3.res, ";\n", NULL);
-    }
+    if(verif_type($1.type, PTR_T) && !(verif_type($3.type, PTR_T)))
+	{
+	    $$.code = concatener($$.code, $1.code, $3.code, "*", $1.res, " = ", $3.res, ";\n", NULL);
+	}
+    else
+	{
+	    $$.code = concatener($$.code, $1.code, $3.code, $1.res, " = ", $3.res, ";\n", NULL);
+	}
     
-	$$.declarations= init_code($$.declarations);
-	$$.declarations= concatener($$.declarations, $1.declarations, $3.declarations, NULL);
-    }
+    $$.declarations= init_code($$.declarations);
+    $$.declarations= concatener($$.declarations, $1.declarations, $3.declarations, NULL);
+}
 ;
 
 declaration
@@ -668,13 +650,10 @@ declaration
     else {$$.code=concatener($$.code, "void ", $2.code, ";\n", NULL);}
     
     $$.type= $2.type;
-    //$2.id->type= $2.type;
     $$.declarations=strdup("");
-    //fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE APRES AVOIR DEFINI(avant pop) %s:\n", $2.id->nom);
-    //afficher_pile();
+
     if($$.type->root == FCT_T){pop();} /*il faudra verifier si on a un pointeur sur fonction*/
-    //fprintf(stderr, "\nON AFFICHE LA TABLE DES SYMBOLE APRES AVOIR DEFINI(apres pop)  %s:\n", $2.id->nom);
-    //afficher_pile();
+
 }
 
 | struct_specifier ';'
@@ -749,8 +728,7 @@ struct_specifier
 	{
 	    if(verif_type(s->type, STRUCT_T))
 		{
-	(s->type)= struc_type($5.type, strdup($2));
-		    //afficher_pile();
+		    (s->type)= struc_type($5.type, strdup($2));
 		}
 	    $$.type= s->type;
 	}
@@ -772,18 +750,10 @@ struct_specifier
 
 | STRUCT IDENTIFIER
 {
-    //afficher_pile();
     $$.code= strdup("void");
     symbole_t *s_id= find($2);
-    if(s_id)
-	{
-	    $$.type=s_id->type;
-	}
-    else
-	{
-	    fprintf(stderr, "La structure %s n'a jamais ete definie\n", $2);
-	    $$.type=basic_type(ERROR_T, "");
-	}
+    if(s_id){$$.type=s_id->type;}
+    else{structure_error($2, yylineno, &$$);}
 }
 ;
 
@@ -810,7 +780,6 @@ struct_declaration
     $$.code=strdup("");
     $2.type->name= strdup($2.id->nom); //modif ici
     $$.type= $2.type;
-    //$2.id->type= $2.type;
     $$.declarations=strdup("");
     if($$.type->root == FCT_T){pop();} /*il faudra verifier si on a un pointeur sur fonction*/
 }
@@ -821,7 +790,6 @@ declarator
 {
     $$.code= init_code($$.code);
     $$.code= concatener($$.code, "*", $3.code, NULL);
-    //$$.type= ptr_type($3.type, "");
     $$.id = $3.id;
     $$.type= $3.type;
     $$.id->type= $$.type;
@@ -852,11 +820,7 @@ direct_declarator
 {
     symbole_t *s;
     s= rechercher(top(), $1);
-    if(s)
-	{
-	    fprintf(stderr, "Identifiant \"%s\" deja declare et du type %s", $1, draw_type_expr(s->type));
-	    $$.type=basic_type(ERROR_T, strdup($1));
-	}
+    if(s){identifier_known_error($1, yylineno, &$$);}
     else
 	{
 	    if(top()->suivant)
@@ -865,8 +829,7 @@ direct_declarator
 		    if(s)
 			{ if(s->is_arg)
 				{
-				    fprintf(stderr, "L'identifiant %s est un argument de fonction du type %s", $1, draw_type_expr(s->type));  
-				    $$.type=basic_type(ERROR_T, strdup($1));
+				    identifier_argument_error($1, yylineno, &$$);
 				}
 			    else
 				{$$.type= $<attributs>0.type;
@@ -899,7 +862,6 @@ direct_declarator
     $$.type= fct_type($4.type, $1.type, "");
     $$.id= $1.id;
     $$.declarations=strdup("");
-    //afficher_pile();
 }	      
 
 |   direct_declarator '(' {push(nouvelle_table());} ')'
@@ -911,8 +873,7 @@ direct_declarator
 }
     ;
 
-parameter_list
-: parameter_declaration
+parameter_list: parameter_declaration
 {
     $$.code = strdup($1.code);
     $$.type = $1.type;
@@ -1016,7 +977,6 @@ compound_statement
     $$.code = concatener($$.code, "{\n", $2.code, $3.declarations, $3.code ,"}\n", NULL);
     $$.type = $3.type;
     $$.declarations= strdup("");
-    //$$.declarations= strdup($3.declarations);
 }
 ;
 
@@ -1087,7 +1047,7 @@ selection_statement
     $$.code = concatener($$.code, label_truee, ":\n", $5.code, label_falsee, ":\n", NULL);
     $$.res = NULL;
 
-    $$.type= $5.type;
+    $$.type= basic_type(VOID_T, "");
     $$.declarations= strdup($3.declarations);
 }
 
@@ -1109,18 +1069,7 @@ selection_statement
     $$.code= concatener($$.code, "\n", label_end, ":\n", NULL);
     $$.res= NULL;
 
-    if(compare_arbre_t($5.type, $7.type))
-	{
-	    $$.type= $5.type;
-	}
-    else
-	{
-	    /*char* error_msg;
-	    error_msg=malloc(0);
-	    sprintf(error_msg, "Type error line %d: Les types de retour dans le if (%s) et dans le else (%s) doivent etre les memes", yylineno, draw_type_expr($5.type), draw_type_expr($7.type));
-	    type_error_custom(error_msg, &$$);*/
-	    $$.type=basic_type(VOID_T, "");
-	}
+    $$.type=basic_type(VOID_T, "");
     $$.declarations= strdup($3.declarations);
 }
     ;
@@ -1142,7 +1091,6 @@ iteration_statement
     $$.code= concatener($$.code, "goto ", label_end, ";\n\n",label_end,":\n", NULL);
     $$.res= strdup("");
     $$.declarations=init_code($$.declarations);
-    //fprintf(stderr, "Declarations dans le while : [ %s ]\n", $$.declarations);
     $$.declarations=concatener($$.declarations, $3.declarations, $5.declarations, NULL);
     $$.type= basic_type(VOID_T, "");
 }
@@ -1172,6 +1120,7 @@ iteration_statement
 }
     ;
 
+/* verifier que le type de retour de la fonction courante est bien celle du return*/
 jump_statement
 : RETURN ';'
 {
@@ -1249,31 +1198,7 @@ function_definition
 %%
 	 
 int main()
-{
-    /* init_pile();
-       push(nouvelle_table());
-       symbole_t *x=ajouter(top(), "x");
-       x->type=basic_type(INT_T, "");
-       fprintf(stderr, "Ajout du symbole x: \n");
-       afficher_pile();
-       push(nouvelle_table());
-       symbole_t *y=ajouter(top(), "y");
-       y->type=basic_type(INT_T, "");
-       fprintf(stderr, "Ajout du symbole y: \n");
-       afficher_pile();
-       pop();
-       fprintf(stderr, "On pop la table: \n");
-       afficher_pile();
-       pop();
-       fprintf(stderr, "On pop la table: \n");
-       afficher_pile();
-       push(nouvelle_table());
-       fprintf(stderr, "On ajoute une nouvelle table: \n");
-       afficher_pile();
-       push(nouvelle_table());
-       fprintf(stderr, "On ajoute une nouvelle table: \n");
-       afficher_pile();*/
-    
+{   
     init_pile();
     init_cpt_var();
     init_cpt_label();
@@ -1285,13 +1210,11 @@ int main()
 	    c=yyparse();
 	}
 
-    /*afficher_pile();*/
-    exit(get_error_code());
-    
+    exit(get_error_code());    
 }
 
 int yyerror(char* s)
 {
-    fprintf(stderr, "line %d: %s\n", yylineno, s);
+    fprintf(stderr, "syntax line %d: %s\n", yylineno, s);
     exit(SYNTAXERROR);
 }

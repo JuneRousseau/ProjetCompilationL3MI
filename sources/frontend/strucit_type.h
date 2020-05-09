@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdarg.h>
 #include "strucit_utils.h"
 
 int is_leaf(arbre_t *arbre);
@@ -22,14 +21,6 @@ int get_offset_member(arbre_t *structure, char* member_name);
 arbre_t *get_type_member(arbre_t *structure, char* member_name);
 
 int verif_type(arbre_t *expr_type, type_t expected_type);
-void type_error_custom(char* error_message, attributs_t *attribut );
-void type_error(type_t expected_type, arbre_t *found_type, int line, attributs_t *attribut);
-void type_error_function_arguments(arbre_t *expected_depart, arbre_t *found_depart, int line, attributs_t *attribut);
-void type_error_function_definition(arbre_t *expected_arrivee, arbre_t *found_arrivee, int line, attributs_t *attribut);
-void type_error_affect(arbre_t *expected_type, arbre_t *found_type, int line, attributs_t *attribut);
-void type_error_relational(arbre_t *found_left_type, arbre_t *found_right_type, int line, attributs_t *attribut);
-void type_error_pointer_struc(arbre_t *found_type, int line, attributs_t *attribut );
-void member_error(char *structure, char* member, int line, attributs_t *attribut );
 
 char* get_type_readable(type_t type);
 char *draw_type_expr(arbre_t *type_expr);

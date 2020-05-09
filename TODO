@@ -10,6 +10,7 @@ TODO:
 -verifi qu'on ne declare pas une structures toute seule (sans pointeur)
 -les pointeurs de pointeurs ne sont PAS autorisés!
 -verifier que les structures sotn alloués par un malloc
+-dans les statements, si on a un ERROR_T, il faut transmettre un ERROR_T et pas un VOID_T
 
 ERREURS GRAVES : 
 Typage des pointeurs sur fonctions lors des declarations ne passent pas /!\

@@ -84,4 +84,27 @@ printf("%s\n", draw_type_expr(fct5));
 printf("%s\n", draw_type_expr(fct6));
 printf("%s\n", draw_type_expr(fct7)); 
 
+init_pile();
+       push(nouvelle_table());
+       symbole_t *x=ajouter(top(), "x");
+       x->type=basic_type(INT_T, "");
+       fprintf(stderr, "Ajout du symbole x: \n");
+       afficher_pile();
+       push(nouvelle_table());
+       symbole_t *y=ajouter(top(), "y");
+       y->type=basic_type(INT_T, "");
+       fprintf(stderr, "Ajout du symbole y: \n");
+       afficher_pile();
+       pop();
+       fprintf(stderr, "On pop la table: \n");
+       afficher_pile();
+       pop();
+       fprintf(stderr, "On pop la table: \n");
+       afficher_pile();
+       push(nouvelle_table());
+       fprintf(stderr, "On ajoute une nouvelle table: \n");
+       afficher_pile();
+       push(nouvelle_table());
+       fprintf(stderr, "On ajoute une nouvelle table: \n");
+       afficher_pile();
 
