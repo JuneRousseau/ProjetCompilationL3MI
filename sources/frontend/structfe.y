@@ -1087,14 +1087,18 @@ selection_statement
 {
     char* label_falsee;
     char* label_truee;
+    char* label_end;
     label_falsee= strdup(new_label(label_falsee));
     label_truee= strdup(new_label(label_truee));
+    label_end= strdup(new_label(label_end));
     $$.code= init_code($$.code);
     $$.code= concatener($$.code, $3.code,"\n", NULL);
     $$.code= concatener($$.code, "if (", $3.res, ") goto ", label_truee, ";\n", NULL);
     $$.code= concatener($$.code, "goto ", label_falsee, ";\n", NULL);
-    $$.code = concatener($$.code, label_truee, ":\n", $5.code, NULL);
-    $$.code = concatener($$.code, label_falsee, ":\n", $7.code,  NULL);
+    $$.code= concatener($$.code, label_truee, ":\n", $5.code, NULL);
+    $$.code= concatener($$.code, "goto ", label_end, ";\n", NULL);
+    $$.code= concatener($$.code, label_falsee, ":\n", $7.code,  NULL);
+    $$.code= concatener($$.code, label_end, ":\n", NULL);
     $$.res= NULL;
 
     if(compare_arbre_t($5.type, $7.type))
