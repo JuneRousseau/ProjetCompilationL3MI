@@ -29,7 +29,7 @@ test_compilation()
 	touch compil_log
 	name=${file%%.*}
 	name_output="./outputs/$name$output"
-	(./sources/frontend/structfe < ./Tests/$file) > $name_output 2>compil_log
+	(./sources/frontend/structfe.out < ./Tests/$file) > $name_output 2>compil_log
 	compil="$?"	
 	if [ $compil == 0 ]
 	then

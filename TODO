@@ -2,9 +2,9 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 
 TODO:
--portee des definitions de structures a gerer
 -retrouver le type de retour de la fonction QUAND ON FAIT UN RETURN (donc connaitre le nom de la fct)
 -factoriser les fonctions quand c'est possible
+-comparer les structures avec les noms des champs!
 
 ERREURS GRAVES : 
 Typage des pointeurs sur fonctions lors des declarations ne passent pas /!\

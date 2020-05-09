@@ -53,3 +53,7 @@ dkms.conf
 
 # Output files
 **/outputs/
+
+#Tmp files
+*~
+\#*\#

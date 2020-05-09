@@ -2,74 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#define TAILLE 103
-
-int yylex();
-int yyerror(char* s);
-
-typedef enum { INT_T, VOID_T, ERROR_T, FCT_T, PTR_T, PROD_T, STRUCT_T} type_t;
-
-typedef struct _arbre_t {
-  type_t root;
-  struct _arbre_t *fils_gauche;
-  struct _arbre_t *fils_droit;
-  char* name;
-} arbre_t;
-
-typedef struct _symbole_t {
-  char *nom;
-  arbre_t *type;
-  int is_arg;
-  struct _symbole_t *suivant;
-} symbole_t;
-
-typedef struct _attributs_t {
-  char *code;
-  char *declarations;
-  arbre_t *type;
-  char *res;
-  symbole_t *id;
-  int is_ptr_fct;
-  arbre_t *type_return;
-} attributs_t;
-
-typedef struct _table_t {
-  symbole_t *table[TAILLE];
-  struct _table_t *suivant;
-  struct _table_t *precedent;
-} table_t;
-
-symbole_t *ajouter( table_t *table, char *nom);
-symbole_t *rechercher( table_t *table, char *nom );
-table_t *nouvelle_table();
-void supprimer_table();
-int hash(char *nom);
-
-typedef struct _pile_t {
-  table_t *premier;
-} pile_t;
-
-pile_t *init_pile();
-pile_t *push(table_t *table);
-pile_t *pop();
-table_t *top();
-symbole_t *find( char *nom);
-
-void afficher_pile();
-void afficher_table();
-
-char *init_code(char *code);
-char *ajouter_code(char *code, char *str);
-
-
-void init_cpt_var();
-char *new_var(char *str);
-char *add_declaration(char* var, arbre_t *type, char* declarations);
-
-void init_cpt_label();
-char *new_label(char *str);
-
-char *concatener(char *cs, ...);
+#include "strucit_utils.h"
 
 int compare_arbre_struct(arbre_t *arbre1, arbre_t *arbre2);
 int compare_arbre_t(arbre_t *arbre1, arbre_t *arbre2);
@@ -96,7 +29,3 @@ void type_error_custom(char* error_message, attributs_t *attribut );
   
 char* get_type_readable(type_t type);
 char *draw_type_expr(arbre_t *type_expr);
-
-
-void init_error();
-int get_error_code();
