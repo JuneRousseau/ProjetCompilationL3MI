@@ -303,7 +303,7 @@ char *draw_type_expr(arbre_t *type_expr)
 	  break;
 	  
 	case FCT_T: //FCT_T
-	  drawing= concatener(drawing, "(", draw_type_expr(type_expr->fils_gauche), ") -> (", draw_type_expr(type_expr->fils_droit), ")", NULL);
+	  drawing= concatener(drawing, "FCT_T{(", draw_type_expr(type_expr->fils_gauche), ") -> (", draw_type_expr(type_expr->fils_droit), ")}", NULL);
 	  break;
 	  
 	case PTR_T: //PTR_T

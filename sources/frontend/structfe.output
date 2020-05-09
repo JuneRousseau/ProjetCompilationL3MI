@@ -146,9 +146,9 @@ Grammaire
    92 external_declaration: function_definition
    93                     | declaration
 
-   94 @8: %empty
+   94 $@8: %empty
 
-   95 function_definition: declaration_specifiers declarator @8 compound_statement
+   95 function_definition: declaration_specifiers declarator $@8 compound_statement
 
 
 Terminaux, suivis des règles où ils apparaissent
@@ -282,7 +282,7 @@ external_declaration (80)
     à gauche: 92 93, à droite: 90 91
 function_definition (81)
     à gauche: 95, à droite: 92
-@8 (82)
+$@8 (82)
     à gauche: 94, à droite: 95
 
 
@@ -351,7 +351,7 @@ function_definition (81)
 État 6
 
    37 declaration: declaration_specifiers . declarator ';'
-   95 function_definition: declaration_specifiers . declarator @8 compound_statement
+   95 function_definition: declaration_specifiers . declarator $@8 compound_statement
 
     '*'  décalage et aller à l'état 17
 
@@ -464,13 +464,13 @@ function_definition (81)
 État 18
 
    37 declaration: declaration_specifiers declarator . ';'
-   95 function_definition: declaration_specifiers declarator . @8 compound_statement
+   95 function_definition: declaration_specifiers declarator . $@8 compound_statement
 
     ';'  décalage et aller à l'état 26
 
-    $défaut  réduction par utilisation de la règle 94 (@8)
+    $défaut  réduction par utilisation de la règle 94 ($@8)
 
-    @8  aller à l'état 27
+    $@8  aller à l'état 27
 
 
 État 19
@@ -546,7 +546,7 @@ function_definition (81)
 
 État 27
 
-   95 function_definition: declaration_specifiers declarator @8 . compound_statement
+   95 function_definition: declaration_specifiers declarator $@8 . compound_statement
 
     '{'  décalage et aller à l'état 36
 
@@ -702,7 +702,7 @@ function_definition (81)
 
 État 38
 
-   95 function_definition: declaration_specifiers declarator @8 compound_statement .
+   95 function_definition: declaration_specifiers declarator $@8 compound_statement .
 
     $défaut  réduction par utilisation de la règle 95 (function_definition)
 

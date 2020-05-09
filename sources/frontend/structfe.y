@@ -4,6 +4,7 @@
 #define SYNTAXERROR 1
 
     extern int yylineno;
+arbre_t *type_retour;
     %}
 
 %token <attributs> SIZEOF
@@ -127,7 +128,7 @@ postfix_expression
 
 
 
-| postfix_expression PTR_OP IDENTIFIER /* ATTENTION, les structures n'existent pas dans le backend, il faudra modifier cet routine sémantique */
+| postfix_expression PTR_OP IDENTIFIER
 {
     int offset;
     if(verif_type($1.type, PTR_T))
@@ -905,7 +906,6 @@ statement
     $$.code = strdup($1.code);
     $$.type= $1.type;
     $$.declarations= strdup($1.declarations);
-$$.type_retour=$<attributs>0.type_retour;
 }
 
 | expression_statement
@@ -913,7 +913,6 @@ $$.type_retour=$<attributs>0.type_retour;
     $$.code = strdup($1.code);
     $$.type= $1.type;
     $$.declarations= strdup($1.declarations);
-$$.type_retour=$<attributs>0.type_retour;
 }
 
 | selection_statement
@@ -921,7 +920,6 @@ $$.type_retour=$<attributs>0.type_retour;
     $$.code = strdup($1.code);
     $$.type= $1.type;
     $$.declarations= strdup($1.declarations);
-$$.type_retour=$<attributs>0.type_retour;
 }
 
 | iteration_statement
@@ -929,7 +927,6 @@ $$.type_retour=$<attributs>0.type_retour;
     $$.code = strdup($1.code);
     $$.type= $1.type;
     $$.declarations= strdup($1.declarations);
-$$.type_retour=$<attributs>0.type_retour;
 }
 
 | jump_statement
@@ -937,12 +934,11 @@ $$.type_retour=$<attributs>0.type_retour;
     $$.code = strdup($1.code);
     $$.type= $1.type;
     $$.declarations= strdup($1.declarations);
-$$.type_retour=$<attributs>0.type_retour;
 }
 ;
 
 entree
-: '{' {push(nouvelle_table()); $<attributs>$.type_retour= $<attributs>0.type_retour;} ;
+: '{' {push(nouvelle_table());} ;
 
 sortie
 : '}' {pop();} ;
@@ -962,7 +958,6 @@ compound_statement
     $$.code = concatener($$.code, "{\n", $2.declarations, $2.code ,"}\n", NULL);
     $$.type = $2.type;
     $$.declarations= strdup("");
-    $$.type_retour=$<attributs>0.type_retour;
 }
 
 
@@ -972,7 +967,6 @@ compound_statement
     $$.code = concatener($$.code, "{\n", $2.code ,"}\n", NULL);
     $$.type = $2.type;
     $$.declarations= strdup("");
-    $$.type_retour=$<attributs>0.type_retour;
 }
 
 
@@ -982,7 +976,6 @@ compound_statement
     $$.code = concatener($$.code, "{\n", $2.code, $3.declarations, $3.code ,"}\n", NULL);
     $$.type = $3.type;
     $$.declarations= strdup("");
-    $$.type_retour=$<attributs>0.type_retour;
 }
 ;
 
@@ -992,7 +985,6 @@ declaration_list
     $$.code= strdup($1.code); /*verifier qu'on a pas une erreur de type*/
     $$.type= $1.type;
     $$.declarations=strdup("");
-    $$.type_retour=$<attributs>0.type_retour;
 }
 
 | declaration_list declaration
@@ -1001,7 +993,6 @@ declaration_list
     $$.code= concatener($$.code, $1.code, $2.code, NULL);
     $$.type= $2.type;
     $$.declarations=strdup("");
-    $$.type_retour=$<attributs>0.type_retour;
 }
 ;
 
@@ -1011,7 +1002,6 @@ statement_list
     $$.code=strdup($1.code);
     $$.type=$1.type;
     $$.declarations= strdup($1.declarations);
-    $$.type_retour=$<attributs>0.type_retour;
 }
 
 | statement_list statement
@@ -1021,7 +1011,6 @@ statement_list
     $$.type= $2.type;
     $$.declarations= init_code($$.declarations);
     $$.declarations= concatener($$.declarations, $1.declarations, $2.declarations, NULL);
-    $$.type_retour=$<attributs>0.type_retour;
 }
     ;
 
@@ -1032,7 +1021,6 @@ expression_statement
     $$.code=ajouter_code($$.code, ";\n"); $$.res= NULL;
     $$.type= basic_type(VOID_T, "");
     $$.declarations= strdup("\n");
-    $$.type_retour=$<attributs>0.type_retour;
 }
 
 | expression ';'
@@ -1041,7 +1029,6 @@ expression_statement
     $$.res= strdup($1.res);
     $$.type= $1.type;
     $$.declarations= strdup($1.declarations);
-    $$.type_retour=$<attributs>0.type_retour;
 }
 ;
 
@@ -1061,7 +1048,6 @@ selection_statement
 
     $$.type= basic_type(VOID_T, "");
     $$.declarations= strdup($3.declarations);
-    $$.type_retour=$<attributs>0.type_retour;
 }
 
 | IF '(' expression ')' statement ELSE statement
@@ -1084,7 +1070,6 @@ selection_statement
 
     $$.type=basic_type(VOID_T, "");
     $$.declarations= strdup($3.declarations);
-    $$.type_retour=$<attributs>0.type_retour;
 }
     ;
 
@@ -1107,7 +1092,6 @@ iteration_statement
     $$.declarations=init_code($$.declarations);
     $$.declarations=concatener($$.declarations, $3.declarations, $5.declarations, NULL);
     $$.type= basic_type(VOID_T, "");
-    $$.type_retour=$<attributs>0.type_retour;
 }
 
 
@@ -1132,7 +1116,6 @@ iteration_statement
     $$.declarations=concatener($$.declarations, $3.declarations, $4.declarations, $5.declarations, $7.declarations, NULL);
 
     $$.type= basic_type(VOID_T, "");
-$$.type_retour=$<attributs>0.type_retour;
 }
     ;
 
@@ -1144,17 +1127,17 @@ jump_statement
     $$.code= ajouter_code($$.code, "return ;\n");
     $$.type= basic_type(VOID_T, "");
     $$.declarations= strdup("\n");
-    if(!verif_type($<attributs>0.type_retour, VOID_T))
-	{type_error_function_definition(basic_type(VOID_T,""), $<attributs>0.type_retour, yylineno, &$$);}
+    if(!verif_type(type_retour, VOID_T))
+	{type_error_function_definition(type_retour, basic_type(VOID_T,""), yylineno, &$$);}
 }
 
 | RETURN expression ';'
 {
     $$.code= strdup($2.code);
-    $$.code= concatener($$.code, "return ", $2.res," ;\n", NULL);
+    $$.code= concatener($$.code, "return ", $2.res," ;\n", NULL); 
     $$.type= $2.type;
     $$.declarations= strdup($2.declarations);
-    if(!compare_arbre_t($<attributs>0.type_retour, $2.type)){type_error_function_definition($2.type, $<attributs>0.type_retour, yylineno, &$$);}
+	    if(!compare_arbre_t(type_retour, $2.type)){type_error_function_definition(type_retour, $2.type, yylineno, &$$);}
 
 }
     ;
@@ -1198,21 +1181,12 @@ external_declaration
 
 
 function_definition
-: declaration_specifiers declarator {$<attributs>$.type_retour= ($<attributs>0.type)->fils_droit;} compound_statement
+: declaration_specifiers declarator {type_retour= ($<attributs>2.type)->fils_droit;} compound_statement
 {
     pop(); /*on pop la table des symboles des parametres*/
     $$.code = init_code($$.code);
     $$.code = concatener($$.code, $1.code, " " ,$2.code, $4.code, NULL);
     $$.type = $2.type;
-    if(verif_type($2.type, FCT_T))
-	{
-	    arbre_t * arrivee= $2.type->fils_droit;
-	    if(!(compare_arbre_t(arrivee, $4.type)))
-		{
-		    type_error_function_definition(arrivee, $4.type, yylineno, &$$);
-		}
-	}
-    else {type_error(FCT_T, $4.type, yylineno, &$$);}
 }
     ;
 

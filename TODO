@@ -2,7 +2,6 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 
 TODO:
--retrouver le type de retour de la fonction QUAND ON FAIT UN RETURN (donc connaitre le nom de la fct)
 -factoriser les fonctions quand c'est possible
 -comparer les structures avec les noms des champs!
 -verifier que les parametres sont de type int OU pointeur UNIQUEMENT!
