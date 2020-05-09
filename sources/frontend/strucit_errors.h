@@ -11,6 +11,7 @@ void type_error_pointer_struc(arbre_t *found_type, int line, attributs_t *attrib
 void identifier_unkonwn_error(char *id, int line, attributs_t *attribut);
 void address_error(int line, attributs_t *attribut);
 void structure_error(char *id, int line, attributs_t *attribut);
+void structure_known_error(char *id, int line, attributs_t *attribut);
 void identifier_known_error(char *id, int line, attributs_t *attribut);
 void identifier_argument_error(char *id, int line, attributs_t *attribut);
 

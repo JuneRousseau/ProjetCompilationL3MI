@@ -1,16 +1,14 @@
 #include "strucit_utils.h"
-#define RANDMAX 100000000
 
 int cpt_label;
 int error;
 
 char *ajouter_code(char *code_genere, char *str){
-    int new_size= strlen(code_genere)+strlen(str)+1;
-	char *new_code = (char *)malloc(new_size);
-	strcpy(new_code, code_genere);
-	strcat(new_code, str);
-	/*free(code_genere);*/
-      	return new_code;
+  int new_size= strlen(code_genere)+strlen(str)+1;
+  char *new_code = (char *)malloc(new_size);
+  strcpy(new_code, code_genere);
+  strcat(new_code, str);
+  return new_code;
 }
 
 char *init_code(char *code_genere){

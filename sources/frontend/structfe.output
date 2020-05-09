@@ -65,9 +65,9 @@ Grammaire
    42               | INT
    43               | struct_specifier
 
-   44 $@1: %empty
+   44 @1: %empty
 
-   45 struct_specifier: STRUCT IDENTIFIER '{' $@1 struct_declaration_list '}'
+   45 struct_specifier: STRUCT IDENTIFIER '{' @1 struct_declaration_list '}'
 
    46 $@2: %empty
 
@@ -226,7 +226,7 @@ type_specifier (53)
     à gauche: 41 42 43, à droite: 12 39 40 51
 struct_specifier (54)
     à gauche: 45 47 48, à droite: 38 43
-$@1 (55)
+@1 (55)
     à gauche: 44, à droite: 45
 $@2 (56)
     à gauche: 46, à droite: 47
@@ -329,7 +329,7 @@ function_definition (81)
 
 État 4
 
-   45 struct_specifier: STRUCT . IDENTIFIER '{' $@1 struct_declaration_list '}'
+   45 struct_specifier: STRUCT . IDENTIFIER '{' @1 struct_declaration_list '}'
    47                 | STRUCT . '{' $@2 struct_declaration_list '}'
    48                 | STRUCT . IDENTIFIER
 
@@ -440,7 +440,7 @@ function_definition (81)
 
 État 16
 
-   45 struct_specifier: STRUCT IDENTIFIER . '{' $@1 struct_declaration_list '}'
+   45 struct_specifier: STRUCT IDENTIFIER . '{' @1 struct_declaration_list '}'
    48                 | STRUCT IDENTIFIER .
 
     '{'  décalage et aller à l'état 24
@@ -516,11 +516,11 @@ function_definition (81)
 
 État 24
 
-   45 struct_specifier: STRUCT IDENTIFIER '{' . $@1 struct_declaration_list '}'
+   45 struct_specifier: STRUCT IDENTIFIER '{' . @1 struct_declaration_list '}'
 
-    $défaut  réduction par utilisation de la règle 44 ($@1)
+    $défaut  réduction par utilisation de la règle 44 (@1)
 
-    $@1  aller à l'état 36
+    @1  aller à l'état 36
 
 
 État 25
@@ -670,7 +670,7 @@ function_definition (81)
 
 État 36
 
-   45 struct_specifier: STRUCT IDENTIFIER '{' $@1 . struct_declaration_list '}'
+   45 struct_specifier: STRUCT IDENTIFIER '{' @1 . struct_declaration_list '}'
 
     INT     décalage et aller à l'état 2
     VOID    décalage et aller à l'état 3
@@ -1162,7 +1162,7 @@ function_definition (81)
 
 État 77
 
-   45 struct_specifier: STRUCT IDENTIFIER '{' $@1 struct_declaration_list . '}'
+   45 struct_specifier: STRUCT IDENTIFIER '{' @1 struct_declaration_list . '}'
    50 struct_declaration_list: struct_declaration_list . struct_declaration
 
     INT     décalage et aller à l'état 2
@@ -1749,7 +1749,7 @@ function_definition (81)
 
 État 114
 
-   45 struct_specifier: STRUCT IDENTIFIER '{' $@1 struct_declaration_list '}' .
+   45 struct_specifier: STRUCT IDENTIFIER '{' @1 struct_declaration_list '}' .
 
     $défaut  réduction par utilisation de la règle 45 (struct_specifier)
 

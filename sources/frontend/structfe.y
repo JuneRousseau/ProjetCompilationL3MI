@@ -714,8 +714,7 @@ struct_specifier
     symbole_t *s=rechercher(top(), id);
     if(s)
 	{
-	    fprintf(stderr, "La structure %s est deja definie\n", id);
-	    s->type=basic_type(ERROR_T, "");
+	    structure_known_error(id, yylineno, &$<attributs>$);
 	}
     else
 	{ symbole_t *n= ajouter(top(), strdup(id)); n->type= struc_type(NULL, id); }
