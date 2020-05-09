@@ -32,9 +32,10 @@ void type_error_function_arguments(arbre_t *expected_depart, arbre_t *found_depa
 /* Erreur de type sur le retour de la fonction */
 void type_error_function_definition(arbre_t *expected_arrivee, arbre_t *found_arrivee, int line, attributs_t *attribut)
 {
-  char *msg= (char *)malloc(0);
+  //char *msg= (char *)malloc(0);
+  char msg[550];
   sprintf(msg, "Erreur de type ligne %d ~ Type de retour attendu: %s, Type de retour obtenu: %s \n", line, draw_type_expr(expected_arrivee), draw_type_expr(found_arrivee));
-  if( (expected_arrivee != NULL && expected_arrivee->root == ERROR_T) || (found_arrivee != NULL && found_arrivee->root == ERROR_T)){msg=strdup("");}
+  if( (expected_arrivee != NULL && expected_arrivee->root == ERROR_T) || (found_arrivee != NULL && found_arrivee->root == ERROR_T)){sprintf(msg, "%s", strdup(""));}
   type_error_custom(msg, attribut);
   return ;
 }
@@ -63,7 +64,7 @@ void type_error_relational(arbre_t *left_type, arbre_t *right_type, int line, at
 void member_error(char *structure, char* member, int line, attributs_t *attribut)
 {
   char msg[150];
-  sprintf(msg, "Erreur ligne %d ~ La structure %s ne possede pas de champs %s", line, structure, member);
+  sprintf(msg, "Erreur ligne %d ~ La structure %s ne possede pas de champs %s\n", line, structure, member);
   type_error_custom(msg, attribut);
   return ;
 }
