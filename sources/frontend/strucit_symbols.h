@@ -1,5 +1,7 @@
 #include "strucit_type.h"
 
+char *generate_name(char* var, char* name, int *cpt);
+
 void init_cpt_var();
 char *new_var(char *str);
 

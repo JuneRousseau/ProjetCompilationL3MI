@@ -6,182 +6,198 @@ int cpt_label;
 int cpt_var;
 pile_t *pile;
 
-void init_cpt_var(){
-    cpt_var = 0;
-    srand((unsigned) time(NULL));
-    }
+/* Fonction de generation de nom pour les labels et les variables temporaires */
+char *generate_name(char* var, char* name, int *cpt)
+{
+  int random_part;
+  var = malloc(0);
+
+  do {
+    random_part= rand() % RANDMAX;
+    sprintf(var, "%s_%d_%d", name, *cpt, random_part);
+  } while(find(var) != NULL);
+
+  *cpt= *cpt+1;
+   
+  return var;
+}
+
+void init_cpt_var()
+{
+  cpt_var = 0;
+  srand((unsigned) time(NULL));
+}
 
 char *new_var(char *var){
-    var = malloc(0);
-    int random_part;
-
-    do {
-	random_part= rand() % RANDMAX;
-	sprintf(var, "temp_%d_%d", cpt_var, random_part);
-    } while(find(var) != NULL);
-    
-    cpt_var++;
-    return var;
+  return generate_name(var, "temp", &(cpt_var));
 }
 
 void init_cpt_label(){
-    cpt_label = 0;
-    srand((unsigned) time(NULL));
+  cpt_label = 0;
+  srand((unsigned) time(NULL));
 }
 
 char *new_label(char *label)
 {
-    label = malloc(0);
-    int random_part;
-
-    do {
-	random_part= rand() % RANDMAX;
-	sprintf(label, "label_%d_%d", cpt_label, random_part);
-    } while(find(label) != NULL);
-    
-    cpt_label++;
-
-    return label;
+  return generate_name(label, "label", &(cpt_label));
 }
+
+
 
 /* Gestion tables des symboles */
 
-symbole_t *rechercher(table_t *tableSymbole, char *nom)
-{
-    int h;
-    symbole_t *s;
-    symbole_t *precedent;
-    h = hash(nom);
-    s = tableSymbole->table[h];
-    precedent = NULL;
-    while ( s != NULL )
-	{
-	    if ( strcmp( s->nom, nom ) == 0 )
-		return s;
-	    precedent = s;
-	    s = s->suivant;
-	}
-    return s;
-}
 
+
+/* Ajout d'un symbole par son nom dans la table donnée */
 symbole_t *ajouter(table_t *tableSymbole, char *nom)
 {
-    int h;
-    symbole_t *s;
-    symbole_t *precedent;
-    h = hash(nom);
-    s = tableSymbole->table[h];
-    precedent = NULL;
-    while ( s != NULL )
-	{
-	    if ( strcmp( s->nom, nom ) == 0 )
-		return s; /* Si l'identifiant existe déjà, on retourne NULL */
-	    precedent = s;
-	    s = s->suivant;
-	}
-    if ( precedent == NULL )
-	{
-	    tableSymbole->table[h] = (symbole_t *) malloc(sizeof(symbole_t));
-	    s = tableSymbole->table[h];
-	}
-    else
-	{
-	    precedent->suivant = (symbole_t *) malloc(sizeof(symbole_t));
-	    s = precedent->suivant;
-	}
-    s->nom = strdup(nom);
-    s->suivant = NULL;
-    s->type= NULL;
-    return s;
+  int h;
+  symbole_t *s;
+  symbole_t *precedent;
+  h = hash(nom);
+  s = tableSymbole->table[h];
+  precedent = NULL;
+  while ( s != NULL )
+    {
+      if ( strcmp( s->nom, nom ) == 0 )
+	return s; /* Si l'identifiant existe déjà, on retourne NULL */
+      precedent = s;
+      s = s->suivant;
+    }
+  if ( precedent == NULL )
+    {
+      tableSymbole->table[h] = (symbole_t *) malloc(sizeof(symbole_t));
+      s = tableSymbole->table[h];
+    }
+  else
+    {
+      precedent->suivant = (symbole_t *) malloc(sizeof(symbole_t));
+      s = precedent->suivant;
+    }
+  s->nom = strdup(nom);
+  s->suivant = NULL;
+  s->type= NULL;
+  return s;
 }
 
-
+/* Fonction de hashage pour la table des symboles */
 int hash( char *nom ) {
- int i, r;
- int taille = strlen(nom);
- r = 0;
- for ( i = 0; i < taille; i++ )
- r = ((r << 8) + nom[i]) % TAILLE;
- return r;
+  int i, r;
+  int taille = strlen(nom);
+  r = 0;
+  for ( i = 0; i < taille; i++ )
+    r = ((r << 8) + nom[i]) % TAILLE;
+  return r;
 }
 
+/* Creation d'une table des symboles */
 table_t *nouvelle_table(){
-    table_t *p = (table_t *) malloc(sizeof(table_t));
-    //fprintf(stderr, "le pointeur vers la nouvelle table est %p\n", p);
-    p->suivant = NULL;
-    p->precedent = NULL;
-    for(int i=0; i<TAILLE; i++)
-	{
-	    p->table[i]=NULL;
-	    //fprintf(stderr, "Table[%d]: %p\n",i , p->table[i]);
+  table_t *p = (table_t *) malloc(sizeof(table_t));
+  p->suivant = NULL;
+  p->precedent = NULL;
+  for(int i=0; i<TAILLE; i++)
+    {
+      p->table[i]=NULL;
 	    
-	}
-    return p;
+    }
+  return p;
 }
 
+/* Suppression d'un table des symboles (avec free) */
 void supprimer_table(table_t *t)
 {
-    //fprintf(stderr, "on libere le pointeur %p\n", t);
-    for(int i=0; i<TAILLE; i++)
-	{
-	    //fprintf(stderr, "Avant: %p\n", t->table[i]);
-	    free(t->table[i]);
-	    t->table[i]=NULL;
-	    //fprintf(stderr, "Apres: %p\n", t->table[i]);
-	    
-	}
-    free(t->table);
-    //free(t);
-    //fprintf(stderr, "on a libere le pointeur %p\n", t);
-    //afficher_table(t);
+  for(int i=0; i<TAILLE; i++)
+    {
+      free(t->table[i]);
+      t->table[i]=NULL;
+    }
+  free(t->table);
 }
 
-pile_t *push(table_t *table)
-    {
-	table_t *t= top(pile);
-	t->precedent= table;
-	table->suivant=t;
-	table->precedent=NULL;
-	pile->premier= table;
-	return pile;
-    }
-
-pile_t *pop()
-    {
-	table_t *last_top= top();
-	table_t *new_top = last_top->suivant;
-	new_top->precedent = NULL;
-	pile->premier= new_top;
-	supprimer_table(last_top);
-	return pile;
-    }
-
-
+/* Retourne la table sur le top de la pile */
 table_t *top()
-    {
-	return pile->premier;
-    }
+{
+  return pile->premier;
+}
 
+/* Initialise la pile */
 pile_t *init_pile()
-    {
-	pile = (pile_t *) malloc(sizeof(pile_t));
-	pile->premier= nouvelle_table();
-	return pile;
-    }
+{
+  pile = (pile_t *) malloc(sizeof(pile_t));
+  pile->premier= nouvelle_table();
+  return pile;
+}
 
+/* Ajout de la table donnée sur la pile */
+pile_t *push(table_t *table)
+{
+  table_t *t= top(pile);
+  t->precedent= table;
+  table->suivant=t;
+  table->precedent=NULL;
+  pile->premier= table;
+  return pile;
+}
+
+/* Suppression de la table présente sur le top de la pile */
+pile_t *pop()
+{
+  table_t *last_top= top();
+  table_t *new_top = last_top->suivant;
+  new_top->precedent = NULL;
+  pile->premier= new_top;
+  supprimer_table(last_top);
+  return pile;
+}
+
+/* Recherche d'un symbole par son nom dans la table donnée */
+symbole_t *rechercher(table_t *tableSymbole, char *nom)
+{
+  symbole_t *s;
+  s = tableSymbole->table[hash(nom)];
+  while ( s != NULL )
+    {
+      if ( strcmp( s->nom, nom ) == 0 )
+	return s;
+      s = s->suivant;
+    }
+  return s;
+}
+
+/* Recherche d'un symbole dans l'ensemble de la pile */
 symbole_t *find(char *nom)
-    {
-	table_t *table_courante= top(pile);
-	symbole_t *symbole= NULL;
-	while(table_courante != NULL && symbole == NULL){
-	    symbole = rechercher(table_courante, nom);
-	    table_courante = table_courante->suivant;
-	    }
+{
+  table_t *table_courante= top(pile);
+  symbole_t *symbole= NULL;
+  while(table_courante != NULL && symbole == NULL){
+    symbole = rechercher(table_courante, nom);
+    table_courante = table_courante->suivant;
+  }
 
-	return symbole;
-    }
-	   
+  return symbole;
+}
 
+/* Ajoute aux déclarations courantes la déclaration d'une nouvelle variable du type donné (qui ne peut être que int ou void*) */
+/* Attention, le type passé en paramètre ne DOIT pas être NULL */
+char *add_declaration(char* var, arbre_t *type, char* declarations)
+{
+    char *new_declarations;
+    new_declarations= strdup(declarations);
+    if(type != NULL)
+	{
+	    if(type->root == INT_T)
+		{new_declarations=concatener(new_declarations, "int ", var, ";\n", NULL);}
+	    else
+		{
+		    {new_declarations=concatener(new_declarations, "void *", var, ";\n", NULL);}
+		}
+	}
+    else
+	{fprintf(stderr, "Erreur de type: ca ne peut pas être NULL"); exit(42);}
+    return new_declarations;
+}
+
+/* Fonction de debug pour afficher la pile et les tables de symboles */
 void afficher_pile()
     {
 	table_t *table_courante = top();
@@ -213,21 +229,3 @@ void afficher_table(table_t *t)
 	    }
 	fprintf(stderr, "\n");
     }
-
-char *add_declaration(char* var, arbre_t *type, char* declarations)
-{
-    char *new_declarations;
-    new_declarations= strdup(declarations);
-    if(type != NULL)
-	{
-	    if(type->root == INT_T)
-		{new_declarations=concatener(new_declarations, "int ", var, ";\n", NULL);}
-	    else
-		{
-		    {new_declarations=concatener(new_declarations, "void *", var, ";\n", NULL);}
-		}
-	}
-    else
-	{fprintf(stderr, "WTF POURQUOI C'EST NULL??"); exit(42);}
-    return new_declarations;
-}

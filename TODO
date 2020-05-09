@@ -8,6 +8,8 @@ TODO:
 -verifier que les parametres sont de type int OU pointeur UNIQUEMENT!
 -verifier que les return ne renvoient QUE des int, pointeurs ou constantes UNIQUEMENT!
 -verifi qu'on ne declare pas une structures toute seule (sans pointeur)
+-les pointeurs de pointeurs ne sont PAS autorisés!
+-verifier que les structures sotn alloués par un malloc
 
 ERREURS GRAVES : 
 Typage des pointeurs sur fonctions lors des declarations ne passent pas /!\
