@@ -25,6 +25,7 @@ NOUS SOMMES PERPLEXE:
 sizeof ~~~~~~~~~
 le free pour la concatenation
 definitions de structures dans differents niveau de portee
+malloc(0) pour les sprintf (pour le member error on a un seg fault)
 
 
 

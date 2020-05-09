@@ -138,18 +138,18 @@ postfix_expression
 	    if(verif_type($1.type->fils_gauche, STRUCT_T)) {offset= get_offset_member($1.type->fils_gauche, $3);}
 	    else{offset= -2;}
 	}
-    else
-	{
-	    fprintf(stderr, "Type error line %d: expected_type: PTR_T( STRUCT_T ) found_type: %s\n", yylineno, draw_type_expr($1.type));
-	    offset= -2;
-	}
+    else {offset= -2;}
 
     if(offset < 0) /*il y a une erreur*/
 	{
 	    char* error_msg= malloc(0);
-	    if (offset == -1) {sprintf(error_msg, "Type error line %d: The structure %s doesn't have the following member %s\n", yylineno, draw_type_expr($1.type), $3);}
-	    else { sprintf(error_msg, "Type error line %d: expected_type: PTR_T( STRUCT_T ) found_type: %s\n", yylineno, draw_type_expr($1.type));}
-	    type_error_custom(error_msg, &$$);
+	    if (offset == -1)
+		{
+		    //fprintf(stderr, "%s", $1.type->fils_gauche->name);
+		    //set_error_code(2);
+		    member_error(strdup($1.type->fils_gauche->name), strdup($3), yylineno, &$$);
+		}
+	    else {type_error_pointer_struc( $1.type, yylineno, &$$);}
 	}
     else
 	{
