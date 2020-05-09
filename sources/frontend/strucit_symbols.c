@@ -43,42 +43,8 @@ char *new_label(char *label)
 }
 
 
-
 /* Gestion tables des symboles */
 
-
-
-/* Ajout d'un symbole par son nom dans la table donnée */
-symbole_t *ajouter(table_t *tableSymbole, char *nom)
-{
-  int h;
-  symbole_t *s;
-  symbole_t *precedent;
-  h = hash(nom);
-  s = tableSymbole->table[h];
-  precedent = NULL;
-  while ( s != NULL )
-    {
-      if ( strcmp( s->nom, nom ) == 0 )
-	return s; /* Si l'identifiant existe déjà, on retourne NULL */
-      precedent = s;
-      s = s->suivant;
-    }
-  if ( precedent == NULL )
-    {
-      tableSymbole->table[h] = (symbole_t *) malloc(sizeof(symbole_t));
-      s = tableSymbole->table[h];
-    }
-  else
-    {
-      precedent->suivant = (symbole_t *) malloc(sizeof(symbole_t));
-      s = precedent->suivant;
-    }
-  s->nom = strdup(nom);
-  s->suivant = NULL;
-  s->type= NULL;
-  return s;
-}
 
 /* Fonction de hashage pour la table des symboles */
 int hash( char *nom ) {
@@ -114,10 +80,36 @@ void supprimer_table(table_t *t)
   free(t->table);
 }
 
-/* Retourne la table sur le top de la pile */
-table_t *top()
+/* Ajout d'un symbole par son nom dans la table donnée */
+symbole_t *ajouter(table_t *tableSymbole, char *nom)
 {
-  return pile->premier;
+  int h;
+  symbole_t *s;
+  symbole_t *precedent;
+  h = hash(nom);
+  s = tableSymbole->table[h];
+  precedent = NULL;
+  while ( s != NULL )
+    {
+      if ( strcmp( s->nom, nom ) == 0 )
+	return s; /* Si l'identifiant existe déjà, on retourne NULL */
+      precedent = s;
+      s = s->suivant;
+    }
+  if ( precedent == NULL )
+    {
+      tableSymbole->table[h] = (symbole_t *) malloc(sizeof(symbole_t));
+      s = tableSymbole->table[h];
+    }
+  else
+    {
+      precedent->suivant = (symbole_t *) malloc(sizeof(symbole_t));
+      s = precedent->suivant;
+    }
+  s->nom = strdup(nom);
+  s->suivant = NULL;
+  s->type= NULL;
+  return s;
 }
 
 /* Initialise la pile */
@@ -126,6 +118,12 @@ pile_t *init_pile()
   pile = (pile_t *) malloc(sizeof(pile_t));
   pile->premier= nouvelle_table();
   return pile;
+}
+
+/* Retourne la table sur le top de la pile */
+table_t *top()
+{
+  return pile->premier;
 }
 
 /* Ajout de la table donnée sur la pile */
