@@ -11,6 +11,7 @@ TODO:
 -dans les statements, si on a un ERROR_T, il faut transmettre un ERROR_T et pas un VOID_T
 -il faut garder une compatibilité entre les pointeurs et les int (laquelle?)
 -generation du code pour un pointeur sur fonction (qui doit devenir pointeur sur void)
+-si les types sont trop long, ne pas les afficher dans les erreurs (necessaire ??)
 
 ERREURS GRAVES : 
 Typage des pointeurs sur fonctions lors des declarations ne passent pas /!\ (si mais en considerant que
