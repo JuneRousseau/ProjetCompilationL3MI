@@ -792,7 +792,10 @@ if($$.type!= NULL && (verif_type($$.type, FCT_T) || (verif_type($$.type, PTR_T) 
 ;
 
 declarator
-: '*' {$<attributs>$.type= ptr_type($<attributs>0.type, "");} direct_declarator
+: '*' {
+    if(verif_type($<attributs>0.type, PTR_T)){doubl_pointeur_error(yylineno, &$<attributs>$);}
+    else {$<attributs>$.type= ptr_type($<attributs>0.type, "");}
+ } direct_declarator
 {
     $$.code= init_code($$.code);
     $$.code= concatener($$.code, "*", $3.code, NULL);

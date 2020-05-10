@@ -3,7 +3,7 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 TODO:
 -factoriser les fonctions quand c'est possible
--verifier que les return ne renvoient QUE des int, pointeurs ou constantes UNIQUEMENT!
+-verifier que les return ne renvoient QUE des int, pointeurs (structure? int/void? cf a demander) UNIQUEMENT!
 -verifier qu'on ne declare pas une structures toute seule (sans pointeur)
 -les pointeurs de pointeurs ne sont PAS autorisés!
 -verifier que les structures sont allouées par un malloc
@@ -15,7 +15,8 @@ ERREURS GRAVES :
 -si on a un expression du type "id->champs = expr", on a pas forcement la traduction avec le dereferencement
 
 A DEMANDER :
--rendre le projet-> makefile ? script bash? 
+-rendre le projet-> makefile ? script bash?
+-type de retour d'une fonction "uniquement type de bases ou pointeurs sur structures" ... et pointeurs sur int/void?
 
 
 

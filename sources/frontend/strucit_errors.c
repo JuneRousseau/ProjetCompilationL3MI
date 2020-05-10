@@ -137,4 +137,12 @@ void bad_type_parameter_error(arbre_t *found_type, int line, attributs_t *attrib
   type_error_custom(msg, attribut);
   return;
 }
+
+void doubl_pointeur_error(int line, attributs_t *attribut)
+{
+  char *msg= (char *)malloc(0);
+  msg=concatener(msg, "Erreur ligne ", itos(line), " ~ Les pointeurs de pointeurs sont interdits\n",NULL);
+  type_error_custom(msg, attribut);
+  return;
+}
   

@@ -15,4 +15,5 @@ void structure_known_error(char *id, int line, attributs_t *attribut);
 void identifier_known_error(char *id, int line, attributs_t *attribut);
 void identifier_argument_error(char *id, int line, attributs_t *attribut);
 void bad_type_parameter_error(arbre_t *found_type, int line, attributs_t *attribut);
+void doubl_pointeur_error(int line, attributs_t *attribut);
 
