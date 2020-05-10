@@ -886,7 +886,8 @@ direct_declarator
 parameter_list: parameter_declaration
 {
     $$.code = strdup($1.code);
-    $$.type = $1.type;
+    if(verif_type($1.type, INT_T) || verif_type($1.type, PTR_T)){$$.type = $1.type;}
+    else { bad_type_parameter_error($1.type, yylineno, &$$);}
     $$.declarations=strdup("");
 }
 
@@ -894,7 +895,8 @@ parameter_list: parameter_declaration
 {
     $$.code = init_code($$.code);
     $$.code = concatener($$.code, $1.code, "," , $3.code, NULL);
-    $$.type= prod_type($1.type, $3.type, ""); /*c'est un arbre "recursif a gauche"*/
+    if(verif_type($3.type, INT_T) || verif_type($3.type, PTR_T)){prod_type($1.type, $3.type, "");}/*c'est un arbre "recursif a gauche"*/
+    else { bad_type_parameter_error($3.type, yylineno, &$$);}
     $$.declarations=strdup("");
 }
 ;

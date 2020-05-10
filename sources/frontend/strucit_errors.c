@@ -122,9 +122,19 @@ void identifier_known_error(char *id, int line, attributs_t *attribut)
 }
 
 void identifier_argument_error(char *id, int line, attributs_t *attribut)
-  {
+{
   char *msg= (char *)malloc(0);
   msg=concatener(msg, "Erreur ligne ", itos(line), " ~ l'identifiant ", id, " est un parametre de fonction\n", NULL);
   type_error_custom(msg, attribut);
   return;
 }
+
+/* Mauvaise declaration des parametres d'une fonction */
+void bad_type_parameter_error(arbre_t *found_type, int line, attributs_t *attribut)
+{
+  char *msg= (char *)malloc(0);
+  msg=concatener(msg, "Erreur ligne ", itos(line), " ~ les parametres de fonctions ne peuvent etre que des INT_T ou des PTR_T, mais pas ", draw_type_expr(found_type),"\n",NULL);
+  type_error_custom(msg, attribut);
+  return;
+}
+  

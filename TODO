@@ -3,7 +3,6 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 TODO:
 -factoriser les fonctions quand c'est possible
--verifier que les parametres sont de type int OU pointeur UNIQUEMENT!
 -verifier que les return ne renvoient QUE des int, pointeurs ou constantes UNIQUEMENT!
 -verifier qu'on ne declare pas une structures toute seule (sans pointeur)
 -les pointeurs de pointeurs ne sont PAS autorisés!
