@@ -1,5 +1,5 @@
 #include "strucit_errors.h"
-#define SEMANTICERROR 1
+#define SEMANTICERROR 2
 
 /* Gestions du message d'erreur de type */ 
 void type_error_custom(char* error_message, attributs_t *attribut )

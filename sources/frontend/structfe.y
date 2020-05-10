@@ -631,7 +631,8 @@ expression
     $$.code = init_code($$.code);
     $$.res = strdup($1.res);
 	
-    if(verif_type($1.type, PTR_T) && !(verif_type($3.type, PTR_T)))
+    //if(verif_type($1.type, PTR_T) && !(verif_type($3.type, PTR_T)))
+    if(verif_type($1.type, PTR_T))
 	{
 	    $$.code = concatener($$.code, $1.code, $3.code, "*", $1.res, " = ", $3.res, ";\n", NULL);
 	}
@@ -1159,7 +1160,7 @@ jump_statement
 program_start
 : program
 {
-    if(!(verif_type($1.type, ERROR_T)) || get_error_code()!=0)
+    if(!(verif_type($1.type, ERROR_T)) && get_error_code()==0)
 	{printf("%s", $1.code);}
     else{printf("%s", strdup(""));}
 }

@@ -42,7 +42,6 @@ int a;
 
 int main() {
 
-struct liste1 {int *n;};
 
 struct liste1 *l1;
 struct liste2 *l2;
@@ -50,11 +49,11 @@ struct liste2 *l2;
 //struct node *n;
 int a;
 l1=malloc(sizeof(l1));
-//l1->precedent= 0;
+l1->precedent= 0;
 l1->suivant= 0;
-//l1->valeur= 42;
+l1->valeur= 42;
 a=41;
-l1->n=&a;
+//l1->n=&a;
 //n->n=&a; 
 
 if(l1 != 0)
