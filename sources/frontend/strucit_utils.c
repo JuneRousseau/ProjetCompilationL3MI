@@ -35,3 +35,11 @@ char *concatener(char *strs, ...)
 void init_error(){error=0;}
 int get_error_code(){return error;}
 void set_error_code(int n){error=n;}
+
+/*retourne une chaine de caractere contenant un entier passe en parametre*/
+char *itos(int n)
+{
+  char *s= (char *)malloc(0);
+  sprintf(s, "%d", n);
+  return s;
+}

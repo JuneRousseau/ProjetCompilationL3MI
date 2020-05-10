@@ -52,3 +52,5 @@ char *ajouter_code(char *code, char *str);
 void init_error();
 int get_error_code();
 void set_error_code(int n);
+
+char *itos(int n);

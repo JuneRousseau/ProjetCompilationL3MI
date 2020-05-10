@@ -1,14 +1,6 @@
 #include "strucit_errors.h"
 #define SEMANTICERROR 1
 
-/*retourne une chaine de caractere contenant un entier passe en parametre*/
-char *itos(int n)
-{
-  char *s= (char *)malloc(0);
-  sprintf(s, "%d", n);
-  return s;
-}
-
 /* Gestions du message d'erreur de type */ 
 void type_error_custom(char* error_message, attributs_t *attribut )
 {
