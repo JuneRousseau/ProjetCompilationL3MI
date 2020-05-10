@@ -145,4 +145,13 @@ void doubl_pointeur_error(int line, attributs_t *attribut)
   type_error_custom(msg, attribut);
   return;
 }
+
+/* Declaration d'une structure sans passer par un pointeur */
+void structure_declaration_error(int line, attributs_t *attribut)
+{
+  char *msg= (char *)malloc(0);
+  msg=concatener(msg, "Erreur ligne ", itos(line), " ~ Il est interdit de declarer une structure sans passer par un pointeur\n",NULL);
+  type_error_custom(msg, attribut);
+  return;
+}
   

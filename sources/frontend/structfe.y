@@ -653,12 +653,14 @@ declaration
     if(verif_type($2.type, INT_T))
 	{$$.code=concatener($$.code, $1.code, " ", $2.code, ";\n", NULL);}
     else {$$.code=concatener($$.code, "void ", $2.code, ";\n", NULL);}
-    
-    $$.type= $2.type;
+
     $$.declarations=strdup("");
 
-    if($$.type!= NULL && (verif_type($$.type, FCT_T) || (verif_type($$.type, PTR_T) && verif_type($$.type->fils_gauche, FCT_T)) )){pop();} /*on a bien une fonction ou pointeur sur fonction*/
+    if($2.type!= NULL && (verif_type($2.type, FCT_T) || (verif_type($2.type, PTR_T) && verif_type($2.type->fils_gauche, FCT_T)) )){pop();} /*on a bien une fonction ou pointeur sur fonction*/
     //if($$.type->root == FCT_T){pop();} /*il faudra verifier si on a un pointeur sur fonction*/
+
+    if(verif_type($2.type, STRUCT_T)){structure_declaration_error(yylineno, &$$);}
+	else{$$.type=$2.type;}
 
 }
 
@@ -876,7 +878,7 @@ direct_declarator
     $$.declarations=strdup("");
 }	      
 
-|   direct_declarator '(' {push(nouvelle_table());} ')'
+| direct_declarator '(' {push(nouvelle_table());} ')'
 {
     $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "()", NULL);
     if(verif_type($1.type, PTR_T) && verif_type($1.type->fils_gauche, FCT_T)){$1.type->fils_gauche->fils_gauche= basic_type(VOID_T, ""); $1.type->fils_gauche->name= $1.id->nom; $$.type= $1.type;}

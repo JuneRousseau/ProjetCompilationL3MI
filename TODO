@@ -5,7 +5,6 @@ TODO:
 -factoriser les fonctions quand c'est possible
 -verifier que les return ne renvoient QUE des int, pointeurs (structure? int/void? cf a demander) UNIQUEMENT!
 -verifier qu'on ne declare pas une structures toute seule (sans pointeur)
--les pointeurs de pointeurs ne sont PAS autorisés!
 -verifier que les structures sont allouées par un malloc
 -il faut garder une compatibilité entre les pointeurs et les int (laquelle?)
 -generation du code pour un pointeur sur fonction (qui doit devenir pointeur sur void)
@@ -13,6 +12,7 @@ TODO:
 
 ERREURS GRAVES : 
 -si on a un expression du type "id->champs = expr", on a pas forcement la traduction avec le dereferencement
+-typage des pointeurs sur fonctions
 
 A DEMANDER :
 -rendre le projet-> makefile ? script bash?
