@@ -654,6 +654,8 @@ declaration
 	{$$.code=concatener($$.code, $1.code, " ", $2.code, ";\n", NULL);}
     else {$$.code=concatener($$.code, "void ", $2.code, ";\n", NULL);}
 
+    fprintf(stderr, "type de %s : %s\n", $2.id->nom, draw_type_expr($2.type));
+
     $$.declarations=strdup("");
 
     if($2.type!= NULL && (verif_type($2.type, FCT_T) || (verif_type($2.type, PTR_T) && verif_type($2.type->fils_gauche, FCT_T)) )){pop();} /*on a bien une fonction ou pointeur sur fonction*/
@@ -1203,8 +1205,9 @@ external_declaration
 
 
 function_definition
-: declaration_specifiers declarator {type_retour= ($<attributs>2.type)->fils_droit;} compound_statement
+: declaration_specifiers declarator {type_retour= ($<attributs>2.type)->fils_droit; if(type_retour==NULL) {type_retour=basic_type(ERROR_T, "");}} compound_statement
 {
+fprintf(stderr, "type de %s : %s\n", $2.id->nom, draw_type_expr($2.type));
     pop(); /*on pop la table des symboles des parametres*/
     $$.code = init_code($$.code);
     $$.code = concatener($$.code, $1.code, " " ,$2.code, $4.code, NULL);
