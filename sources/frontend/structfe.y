@@ -1022,7 +1022,7 @@ statement_list
     $$.declarations= init_code($$.declarations);
     $$.declarations= concatener($$.declarations, $1.declarations, $2.declarations, NULL);
 }
-    ;
+;
 
 expression_statement
 : ';'
@@ -1056,7 +1056,8 @@ selection_statement
     $$.code = concatener($$.code, label_truee, ":\n", $5.code, label_falsee, ":\n", NULL);
     $$.res = NULL;
 
-    $$.type= basic_type(VOID_T, "");
+    if(verif_type($3.type, ERROR_T) || verif_type($5.type, ERROR_T)){$$.type= basic_type(ERROR_T, "");}
+    else {$$.type= basic_type(VOID_T, "");}
     $$.declarations= strdup($3.declarations);
 }
 
@@ -1078,10 +1079,11 @@ selection_statement
     $$.code= concatener($$.code, "\n", label_end, ":\n", NULL);
     $$.res= NULL;
 
-    $$.type=basic_type(VOID_T, "");
+    if(verif_type($3.type, ERROR_T) || verif_type($5.type, ERROR_T) || verif_type($7.type, ERROR_T)){$$.type= basic_type(ERROR_T, "");}
+    else {$$.type= basic_type(VOID_T, "");}
     $$.declarations= strdup($3.declarations);
 }
-    ;
+;
 
 iteration_statement
 : WHILE '(' expression ')' statement
@@ -1101,7 +1103,9 @@ iteration_statement
     $$.res= strdup("");
     $$.declarations=init_code($$.declarations);
     $$.declarations=concatener($$.declarations, $3.declarations, $5.declarations, NULL);
-    $$.type= basic_type(VOID_T, "");
+
+    if(verif_type($3.type, ERROR_T) || verif_type($5.type, ERROR_T)){$$.type= basic_type(ERROR_T, "");}
+    else {$$.type= basic_type(VOID_T, "");}
 }
 
 
@@ -1125,9 +1129,10 @@ iteration_statement
     $$.declarations=init_code($$.declarations);
     $$.declarations=concatener($$.declarations, $3.declarations, $4.declarations, $5.declarations, $7.declarations, NULL);
 
-    $$.type= basic_type(VOID_T, "");
+   if(verif_type($3.type, ERROR_T) || verif_type($4.type, ERROR_T) || verif_type($5.type, ERROR_T) || verif_type($7.type, ERROR_T)){$$.type= basic_type(ERROR_T, "");}
+    else {$$.type= basic_type(VOID_T, "");}
 }
-    ;
+;
 
 /* verifier que le type de retour de la fonction courante est bien celle du return*/
 jump_statement
@@ -1137,8 +1142,7 @@ jump_statement
     $$.code= ajouter_code($$.code, "return ;\n");
     $$.type= basic_type(VOID_T, "");
     $$.declarations= strdup("\n");
-    if(!verif_type(type_retour, VOID_T))
-	{type_error_function_definition(type_retour, basic_type(VOID_T,""), yylineno, &$$);}
+    if(!verif_type(type_retour, VOID_T)){type_error_function_definition(type_retour, basic_type(VOID_T,""), yylineno, &$$);}
 }
 
 | RETURN expression ';'
@@ -1147,10 +1151,10 @@ jump_statement
     $$.code= concatener($$.code, "return ", $2.res," ;\n", NULL); 
     $$.type= $2.type;
     $$.declarations= strdup($2.declarations);
-	    if(!compare_arbre_t(type_retour, $2.type)){type_error_function_definition(type_retour, $2.type, yylineno, &$$);}
+    if(!compare_arbre_t(type_retour, $2.type)){type_error_function_definition(type_retour, $2.type, yylineno, &$$);}
 
 }
-    ;
+;
 
 program_start
 : program
@@ -1173,7 +1177,7 @@ program
     $$.code = concatener($$.code, $1.code, $2.code, NULL);
     $$.type= prod_type($1.type, $2.type, "");
 }
-    ;
+;
 
 external_declaration
 : function_definition
@@ -1187,7 +1191,7 @@ external_declaration
     $$.code = strdup($1.code);
     $$.type = $1.type;
 }
-    ;
+;
 
 
 function_definition
@@ -1198,7 +1202,7 @@ function_definition
     $$.code = concatener($$.code, $1.code, " " ,$2.code, $4.code, NULL);
     $$.type = $2.type;
 }
-    ;
+;
 
 %%
 	 
