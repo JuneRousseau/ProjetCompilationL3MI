@@ -44,4 +44,4 @@ flex ANSI-frontend. && bison -v -d structfe.y && gcc lex.yy.c structfe.tab.c str
 
 Puis se rendre dans le dossier ./sources/backend et compiler manuellement la partie backend via la commande suivante:
 
-flex ANSI-backend.l && bison -v -d structbe.y && gcc lex.yy.c structbe.tab.c-o $structbe.out -lfl
+flex ANSI-backend.l && bison -v -d structbe.y && gcc lex.yy.c structbe.tab.c -o structbe.out -lfl
