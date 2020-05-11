@@ -19,7 +19,6 @@ typedef struct _symbole_t {
   char *nom;
   arbre_t *type;
   int is_arg;
-  int is_malloc;
   struct _symbole_t *suivant;
 } symbole_t;
 

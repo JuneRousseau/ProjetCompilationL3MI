@@ -64,7 +64,7 @@ l1=malloc(sizeof(l1));
 
 l1->suivant= 0;
 l1->valeur= 42;
-l1->n= 0;
+//l1->n= 0;
 //a=41;
 //l1->n=&a;
 //n->n=&a; 

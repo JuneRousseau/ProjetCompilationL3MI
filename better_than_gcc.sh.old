@@ -49,33 +49,59 @@ test_compilation()
 	else
 	    if [ $compil == 1 ]
 	    then
-		echo $file: Erreur de syntaxe a la compilation
+		echo $file: Compilation Syntax error
 	    else
 		if [ $compil == 2 ]
 		then
-		    echo $file: Erreur semantique a la compilation
+		    echo $file: Compilation Semantic error
 	        else
-		    echo $file: Autre erreur a la compilation
+		    echo $file: Compilation Another error
 		fi
 	    fi
 	fi
-	cat compil_log
+	if [ $answer == 'y' ]
+	    then
+		cat compil_log
+	    fi
+	echo
 	rm compil_log
     fi
-    echo
 }
 
 
-if [ $# == 0 ]
+echo -e "Voulez vous compiler le structfe ? [y ou n]: \c"
+read answer
+compilation=0
+if [ $answer == 'y' ]
 then
-    list_file=`ls ./Tests`
-else
-    list_file=$@
+    cd ./sources/frontend
+    touch log
+    ./compil.sh ANSI-frontend.l structfe >log 2>log
+    compilation=$?
+    cat log
+    if [ $compilation != 0 ]
+    then
+	echo "Compilateur non recompile (fail):"
+	cat log
+    fi
+    rm log
+    cd ../..
 fi
 
-rm ./outputs/*
-
-for f in $list_file
-do
-    test_compilation $f
-done
+if [ $compilation == 0 ]
+   then
+       echo -e "Voulez-vous lire la sortie erreur sur le terminal? [y ou n]: \c"
+       read answer
+       
+       if [ $# == 0 ]
+       then
+	   list_file=`ls ./Tests`
+       else
+	   list_file=$@
+       fi
+    for f in $list_file
+    do
+	test_compilation $f
+    done
+fi
+       

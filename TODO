@@ -1,13 +1,10 @@
 Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
-
 TODO:
--corriger le get_offset_member pour avoir -1 quand on veux acceder a un champs qui ne fais pas parti de la structure
 
 ERREURS GRAVES : 
 
 A DEMANDER :
--verifier que les structures sont allouées par un malloc??
 
 
 NOUS SOMMES PERPLEXE:

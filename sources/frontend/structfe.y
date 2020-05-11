@@ -152,8 +152,7 @@ postfix_expression
 	    else{offset= -2;}
 	}
     else {offset= -2;}
-    fprintf(stderr, "Offset pour %s: %d\n", $3, offset);
-
+   
     if(offset < 0) /*il y a une erreur*/
 	{
 	    char* error_msg= malloc(0);
@@ -683,16 +682,9 @@ expression
     char *ptr_1=strdup("");
     char *ptr_3=strdup("");
 
-   /* if(verif_type($1.type, PTR_T) && verif_type($1.type->fils_gauche, STRUCT_T))
-	{
-	    if (!strcmp($3.id->nom, "malloc") && verif_type($3.id->type, FCT_T) )
-		{$3.id->is_malloc=1;}
-	}*/
-
     if($1.is_struc_member)
 	{
 	    ptr_1=strdup("*");
-	    //if(!(($1.id)->is_malloc)){not_allocated_struc_error($1.id->nom, yylineno);}
 	}
     if($3.is_struc_member){ptr_3=strdup("*");}
     $$.code = concatener($$.code, $1.code, $3.code, ptr_1, $1.res, " = ", ptr_3, $3.res, ";\n", NULL);
@@ -764,7 +756,7 @@ declaration_specifiers
     $$.code= concatener($$.code, "extern ", $2.code, NULL);
     $$.type = $2.type;
     $$.declarations=strdup("");
-$$.is_externn=1;
+    $$.is_externn=1;
 }
 
 | type_specifier
@@ -874,8 +866,7 @@ struct_declaration
     $2.type->name= strdup($2.id->nom); //modif ici
     $$.type= $2.type;
     $$.declarations=strdup("");
-if($$.type!= NULL && (verif_type($$.type, FCT_T) || (verif_type($$.type, PTR_T) && verif_type($$.type->fils_gauche, FCT_T)) )){pop();} /*on a bien une fonction ou pointeur sur fonction*/
-    //if($$.type->root == FCT_T){pop();} /*il faudra verifier si on a un pointeur sur fonction*/
+    if($$.type!= NULL && (verif_type($$.type, FCT_T) || (verif_type($$.type, PTR_T) && verif_type($$.type->fils_gauche, FCT_T)) )){pop();} /*on a bien une fonction ou pointeur sur fonction*/
 }
 ;
 
