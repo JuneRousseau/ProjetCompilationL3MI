@@ -42,6 +42,8 @@ primary_expression
     $$.res = strdup($2.res);
     $$.declarations= strdup($2.declarations);
     $$.type= $2.type;
+    $$.is_struc_member= $2.is_struc_member;
+    $$.id= $2.id;
 }
 
 | CONSTANT
@@ -51,6 +53,8 @@ primary_expression
     $$.declarations=strdup("");
 
     $$.type= basic_type(INT_T, "");
+    $$.is_struc_member= 0;
+    $$.id=NULL;
 }
 
 
@@ -66,6 +70,8 @@ primary_expression
 	    identifier_unkonwn_error($1, yylineno, &$$);
 	}
     $$.declarations=strdup("");
+    $$.is_struc_member= 0;
+    $$.id= s;
 } ;
 
 postfix_expression
@@ -76,6 +82,8 @@ postfix_expression
     $$.declarations= strdup($1.declarations);
 
     $$.type= $1.type;
+    $$.is_struc_member= $1.is_struc_member;
+    $$.id= $1.id;
 }
 
 
@@ -87,10 +95,10 @@ postfix_expression
 	{
 	    arbre_t *type_fct= verif_type($1.type, PTR_T) ? $1.type->fils_gauche : $1.type;
 	    arbre_t *depart= type_fct->fils_gauche;
-		if (verif_type(depart, VOID_T)) /*l'espace de départ est bien VOID_T*/ /* VOID OU NULL??*/
-		    {$$.type = type_fct->fils_droit;}
-		else
-		    {type_error_function_arguments(depart, basic_type(VOID_T, ""), yylineno, &$$);}
+	    if (verif_type(depart, VOID_T)) /*l'espace de départ est bien VOID_T*/ /* VOID OU NULL??*/
+		{$$.type = type_fct->fils_droit;}
+	    else
+		{type_error_function_arguments(depart, basic_type(VOID_T, ""), yylineno, &$$);}
 	}
     else
 	{type_error(FCT_T, $1.type, yylineno, &$$);}
@@ -99,6 +107,8 @@ postfix_expression
     $$.res = strdup(new_var($$.res));
     $$.code = concatener($$.code, $1.code, $$.res, " = ", $1.res, "()", ";\n", NULL);
     $$.declarations= add_declaration($$.res, $$.type, $1.declarations);
+    $$.is_struc_member= $1.is_struc_member;
+    $$.id= $1.id;
 }
 
 
@@ -127,6 +137,8 @@ postfix_expression
     tmp_decla= init_code(tmp_decla);
     tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
     $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
+    $$.is_struc_member= $1.is_struc_member;
+    $$.id= $1.id;
 }
 
 
@@ -140,6 +152,7 @@ postfix_expression
 	    else{offset= -2;}
 	}
     else {offset= -2;}
+    fprintf(stderr, "Offset pour %s: %d\n", $3, offset);
 
     if(offset < 0) /*il y a une erreur*/
 	{
@@ -160,8 +173,10 @@ postfix_expression
     char* offset_c;
     offset_c= malloc(0);
     sprintf(offset_c, "%d", offset);
-    $$.code = concatener($$.code, $1.code, $$.res, " = ",$1.res, "+", offset_c, ";\n", NULL);;
+    $$.code = concatener($$.code, $1.code, $$.res, " = ",$1.res, "+", offset_c, ";\n", NULL);
     $$.declarations= add_declaration($$.res, ptr_type(basic_type(VOID_T,""),""), $1.declarations);
+    $$.is_struc_member= 1;
+    $$.id= $1.id;
 }
 ;
 
@@ -197,6 +212,8 @@ unary_expression
     $$.res = strdup($1.res);
     $$.type= $1.type;
     $$.declarations= strdup($1.declarations);
+    $$.is_struc_member= $1.is_struc_member;
+    $$.id= $1.id;
 }
 
 
@@ -224,6 +241,8 @@ unary_expression
     $$.res = strdup(new_var($$.res)); /* stockage du resultat*/
     $$.code = concatener($$.code, $2.code, $$.res, " = ", $1.code, $2.res,";\n", NULL);
     $$.declarations= add_declaration($$.res, $$.type, $2.declarations);
+    $$.is_struc_member= $2.is_struc_member;
+    $$.id= $2.id;
 }
 
 
@@ -234,6 +253,8 @@ unary_expression
     sprintf($$.res, "%d", sizeof_type($3.type));
     $$.type= basic_type(INT_T, "");
     $$.declarations = strdup("");
+    $$.is_struc_member= 0;
+    $$.id= NULL;
 }
 
 | SIZEOF unary_expression
@@ -243,6 +264,8 @@ unary_expression
     sprintf($$.res, "%d", sizeof_type($2.type));
     $$.type= basic_type(INT_T, "");
     $$.declarations = strdup("");
+    $$.is_struc_member= 0;
+    $$.id= NULL;
 }       
 ; 
 
@@ -274,6 +297,8 @@ multiplicative_expression
     $$.res = strdup($1.res);
     $$.type = $1.type;
     $$.declarations= strdup($1.declarations);
+    $$.is_struc_member= $1.is_struc_member;
+    $$.id= $1.id;
 }
 
 
@@ -293,7 +318,8 @@ multiplicative_expression
     tmp_decla= init_code(tmp_decla);
     tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
     $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
-
+    $$.is_struc_member= 0;
+    $$.id= NULL;
 }
 
 
@@ -315,6 +341,7 @@ multiplicative_expression
     tmp_decla= init_code(tmp_decla);
     tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
     $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
+$$.is_struc_member= 0;
 }
 ;
 
@@ -326,6 +353,8 @@ additive_expression
     $$.res = strdup($1.res);
     $$.type = $1.type;
     $$.declarations= strdup($1.declarations);
+    $$.is_struc_member= $1.is_struc_member;
+    $$.id= $1.id;
 }
 
 
@@ -352,6 +381,7 @@ additive_expression
     tmp_decla= init_code(tmp_decla);
     tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
     $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
+$$.is_struc_member= 0;
 }
 
 
@@ -378,6 +408,7 @@ additive_expression
     tmp_decla= init_code(tmp_decla);
     tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
     $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
+    $$.is_struc_member= 0;
 }
 ;
 
@@ -388,6 +419,8 @@ relational_expression
     $$.res = strdup($1.res);
     $$.type = $1.type;
     $$.declarations= strdup($1.declarations);
+    $$.is_struc_member= $1.is_struc_member;
+    $$.id= $1.id;
 }
 
 | relational_expression '<' additive_expression
@@ -406,6 +439,7 @@ relational_expression
 
     $$.declarations= init_code($$.declarations);
     $$.declarations= concatener($$.declarations, $1.declarations, $3.declarations, NULL);
+$$.is_struc_member= 0;
 }
 
 | relational_expression '>' additive_expression
@@ -425,6 +459,7 @@ relational_expression
 
     $$.declarations= init_code($$.declarations);
     $$.declarations= concatener($$.declarations, $1.declarations, $3.declarations, NULL);
+$$.is_struc_member= 0;
 }
 
 | relational_expression LE_OP additive_expression
@@ -443,6 +478,7 @@ relational_expression
 
     $$.declarations= init_code($$.declarations);
     $$.declarations= concatener($$.declarations, $1.declarations, $3.declarations, NULL);
+$$.is_struc_member= 0;
 }
 
 | relational_expression GE_OP additive_expression
@@ -461,6 +497,7 @@ relational_expression
 
     $$.declarations= init_code($$.declarations);
     $$.declarations= concatener($$.declarations, $1.declarations, $3.declarations, NULL);
+$$.is_struc_member= 0;
 }
 ;
 
@@ -471,6 +508,8 @@ equality_expression
     $$.res = strdup($1.res);
     $$.type = $1.type;
     $$.declarations= strdup($1.declarations);
+    $$.is_struc_member= $1.is_struc_member;
+    $$.id= $1.id;
 }
 
 | equality_expression EQ_OP relational_expression
@@ -493,6 +532,7 @@ equality_expression
 
     $$.declarations= init_code($$.declarations);
     $$.declarations= concatener($$.declarations, $1.declarations, $3.declarations, NULL);
+$$.is_struc_member= 0;
 }
 
 | equality_expression NE_OP relational_expression
@@ -515,6 +555,7 @@ equality_expression
 
     $$.declarations= init_code($$.declarations);
     $$.declarations= concatener($$.declarations, $1.declarations, $3.declarations, NULL);
+$$.is_struc_member= 0;
 }
 ;
 
@@ -525,6 +566,8 @@ logical_and_expression
     $$.res = strdup($1.res);
     $$.type = $1.type;
     $$.declarations= strdup($1.declarations);
+    $$.is_struc_member= $1.is_struc_member;
+    $$.id= $1.id;
 }
 
 | logical_and_expression AND_OP equality_expression
@@ -561,6 +604,7 @@ logical_and_expression
     tmp_decla= init_code(tmp_decla);
     tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
     $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
+$$.is_struc_member= 0;
 }
 ;
 
@@ -571,6 +615,8 @@ logical_or_expression
     $$.res = strdup($1.res);
     $$.type = $1.type;
     $$.declarations= strdup($1.declarations);
+    $$.is_struc_member= $1.is_struc_member;
+    $$.id= $1.id;
 }
 
 | logical_or_expression OR_OP logical_and_expression
@@ -607,6 +653,7 @@ logical_or_expression
     tmp_decla= init_code(tmp_decla);
     tmp_decla= concatener(tmp_decla, $1.declarations, $3.declarations, NULL);
     $$.declarations= add_declaration($$.res, $$.type, tmp_decla);
+$$.is_struc_member= 0;
 }
 ;
 
@@ -617,6 +664,8 @@ expression
     $$.res = strdup($1.res);
     $$.type= $1.type;
     $$.declarations= strdup($1.declarations);
+    $$.is_struc_member= $1.is_struc_member;
+    $$.id= $1.id;
 }
 
 | unary_expression '=' expression
@@ -631,15 +680,22 @@ expression
     $$.code = init_code($$.code);
     $$.res = strdup($1.res);
 	
-    //if(verif_type($1.type, PTR_T) && !(verif_type($3.type, PTR_T)))
-    if(verif_type($1.type, PTR_T))
+    char *ptr_1=strdup("");
+    char *ptr_3=strdup("");
+
+   /* if(verif_type($1.type, PTR_T) && verif_type($1.type->fils_gauche, STRUCT_T))
 	{
-	    $$.code = concatener($$.code, $1.code, $3.code, "*", $1.res, " = ", $3.res, ";\n", NULL);
-	}
-    else
+	    if (!strcmp($3.id->nom, "malloc") && verif_type($3.id->type, FCT_T) )
+		{$3.id->is_malloc=1;}
+	}*/
+
+    if($1.is_struc_member)
 	{
-	    $$.code = concatener($$.code, $1.code, $3.code, $1.res, " = ", $3.res, ";\n", NULL);
+	    ptr_1=strdup("*");
+	    //if(!(($1.id)->is_malloc)){not_allocated_struc_error($1.id->nom, yylineno);}
 	}
+    if($3.is_struc_member){ptr_3=strdup("*");}
+    $$.code = concatener($$.code, $1.code, $3.code, ptr_1, $1.res, " = ", ptr_3, $3.res, ";\n", NULL);
     
     $$.declarations= init_code($$.declarations);
     $$.declarations= concatener($$.declarations, $1.declarations, $3.declarations, NULL);
@@ -651,9 +707,15 @@ declaration
 {
     $$.code=init_code($$.code);
 
-    if(verif_type($2.type, INT_T))
+    if(verif_type($2.type, INT_T) || verif_type($2.type, VOID_T))
 	{$$.code=concatener($$.code, $1.code, " ", $2.id->nom, ";\n", NULL);}
-    else {$$.code=concatener($$.code, "void *", $2.id->nom, ";\n", NULL);}
+    else
+	{
+	    if($1.is_externn){$$.code=concatener($$.code, $1.code, " ", $2.code, ";\n", NULL);}
+	    else{$$.code=concatener($$.code, "void *", $2.id->nom, ";\n", NULL);}
+	}
+
+
 
     $$.declarations=strdup("");
 
@@ -681,8 +743,6 @@ declaration
 	}
     if($2.type!= NULL && verif_type($2.type, PTR_T) && verif_type($2.type->fils_gauche, PTR_T)){doubl_pointeur_error(yylineno, &$<attributs>$);} /*si on a un pointeur de pointeur*/
 
-
-
     if(verif_type($2.type, STRUCT_T)){structure_declaration_error(yylineno, &$$);}
     else{$$.type=$2.type;}
 
@@ -704,6 +764,7 @@ declaration_specifiers
     $$.code= concatener($$.code, "extern ", $2.code, NULL);
     $$.type = $2.type;
     $$.declarations=strdup("");
+$$.is_externn=1;
 }
 
 | type_specifier
@@ -711,6 +772,7 @@ declaration_specifiers
     $$.code= strdup($1.code);
     $$.type= $1.type;
     $$.declarations=strdup("");
+    $$.is_externn=0;
 }
 ;
 

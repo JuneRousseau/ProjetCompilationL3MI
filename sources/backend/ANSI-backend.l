@@ -24,6 +24,8 @@ int yyerror(char* s);
 {D}+                    { return CONSTANT; }
 
 "/*"(.|\n|\r)*"*/" ; /*Commentaires*/
+"//"([^\n\r]*)[\n\r]
+
 
 "<="                    { return LE_OP; }
 ">="                    { return GE_OP; }

@@ -19,6 +19,7 @@ typedef struct _symbole_t {
   char *nom;
   arbre_t *type;
   int is_arg;
+  int is_malloc;
   struct _symbole_t *suivant;
 } symbole_t;
 
@@ -39,7 +40,8 @@ typedef struct _attributs_t {
   char *res;
   symbole_t *id;
   int is_ptr_fct;
-  arbre_t *type_retour;
+  int is_struc_member; //est ce que l'expression est du type struct->champs
+  int is_externn;
 } attributs_t;
 
 /* Fonctions utilitaires */

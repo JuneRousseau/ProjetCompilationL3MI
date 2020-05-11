@@ -18,4 +18,5 @@ void bad_type_parameter_error(arbre_t *found_type, int line, attributs_t *attrib
 void doubl_pointeur_error(int line, attributs_t *attribut);
 void structure_declaration_error(int line, attributs_t *attribut);
 void bad_definition_function_retour_error(int line, arbre_t *type);
+void not_allocated_struc_error(char* id, int line);
 

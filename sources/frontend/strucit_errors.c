@@ -164,3 +164,11 @@ void bad_definition_function_retour_error(int line, arbre_t *type)
   type_error_custom(msg, type);
   return;
 }
+
+/* Utilisation d'une structure sans l'avoir alloué via un malloc */
+void not_allocated_struc_error(char* id, int line)
+{
+  fprintf(stderr,"%s est une structure qui n'a jamais ete allouee avec une fonction de type malloc\n", id);
+  set_error_code(SEMANTICERROR); //On change le code d'erreur
+  return;
+}

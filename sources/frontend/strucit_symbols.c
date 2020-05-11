@@ -14,7 +14,8 @@ char *generate_name(char* var, char* name, int *cpt)
 
   do {
     random_part= rand() % RANDMAX;
-    sprintf(var, "%s_%d_%d", name, *cpt, random_part);
+    //sprintf(var, "%s_%d_%d", name, *cpt, random_part);
+    sprintf(var, "_%s%d", name, *cpt);
   } while(find(var) != NULL);
 
   *cpt= *cpt+1;
@@ -29,7 +30,7 @@ void init_cpt_var()
 }
 
 char *new_var(char *var){
-  return generate_name(var, "temp", &(cpt_var));
+  return generate_name(var, "t", &(cpt_var));
 }
 
 void init_cpt_label(){
@@ -109,6 +110,8 @@ symbole_t *ajouter(table_t *tableSymbole, char *nom)
   s->nom = strdup(nom);
   s->suivant = NULL;
   s->type= NULL;
+  s->is_arg=0;
+  s->is_malloc=0;
   return s;
 }
 

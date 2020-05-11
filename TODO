@@ -2,16 +2,14 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 
 TODO:
--verifier que les structures sont allouées par un malloc
+-corriger le get_offset_member pour avoir -1 quand on veux acceder a un champs qui ne fais pas parti de la structure
 
 ERREURS GRAVES : 
--si on a un expression du type "id->champs = expr", on a pas forcement la traduction avec le dereferencement
 
 A DEMANDER :
-
+-verifier que les structures sont allouées par un malloc??
 
 
 NOUS SOMMES PERPLEXE:
 typage des fonctions (en considerant que si on a un pointeur dans '(' declarator ')' , c'est que c'est un ptr sur fct )
 le free pour la concatenation ?
-

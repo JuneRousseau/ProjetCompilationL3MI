@@ -1,5 +1,3 @@
-extern int printd(int i);
-extern void *malloc(int i);
 /*
 int f(int a)
 {
@@ -25,12 +23,7 @@ struct liste2 {
 int val;
 struct liste2 *s;
 };*/
-
-
-struct liste {
-int valeur;
-struct liste *suivant;
-};				
+				
 /*
 struct liste1 *koukou(struct liste1 *l1, struct liste2 *l2)
 {
@@ -39,6 +32,7 @@ return l1;
 }*/
 
 //int a;
+/*
 struct liste *parcours(struct liste *l, struct liste *(*f)(struct liste *p)) {
   int i;
   struct liste *p;
@@ -49,21 +43,25 @@ struct liste *parcours(struct liste *l, struct liste *(*f)(struct liste *p)) {
     if(p!=0) p->valeur=i;
   }
   return tete;
-}
+}*/
+
+extern int printd(int i);
+extern void *malloc(int i);
+
+struct liste {
+int valeur;
+struct liste *suivant;
+};
 
 int main() {
 
-
 struct liste *l1;
-
-
-
-//truct liste2 *l2;
+struct liste *(*fct)(struct liste *p);
 
 //struct node *n;
 //int a;
 l1=malloc(sizeof(l1));
-l1->precedent= 0;
+l1->n= 0;
 l1->suivant= 0;
 l1->valeur= 42;
 //a=41;
