@@ -202,13 +202,15 @@ int get_offset_member(arbre_t *structure, char* member_name)
   arbre_t *prod_member= structure->fils_gauche;
   
   if (prod_member == NULL) {return -1;}
-  if (!(verif_type(prod_member, PROD_T))) {if(!(strcmp(prod_member->name, member_name))) {return 0;} else {return -1;}}
+  if (!(verif_type(prod_member, PROD_T))) {if((!strcmp(prod_member->name, member_name))) {return 0;} else {return -1;}}
   while(prod_member && strcmp(prod_member->fils_droit->name, member_name) )
     {
       offset-= sizeof_type(prod_member->fils_droit);
       prod_member=prod_member->fils_gauche;
-      if(!verif_type(prod_member, PROD_T)) {break;}
+if (!(verif_type(prod_member, PROD_T))) {if((!strcmp(prod_member->name, member_name))) {return 0;} else {return -1;}}
+      //if(!verif_type(prod_member, PROD_T)) {break;}
     }
+  
   if(prod_member == NULL){return -1;} //on a pas trouvé le champs demandé
   else
     {
