@@ -555,7 +555,7 @@ logical_and_expression
     $$.code = concatener($$.code,"\n",  label_truee,":\n", $$.res, "= 1;\n", NULL);
     $$.code = concatener($$.code,"goto ", label_end, ";\n", NULL);
     $$.code = concatener($$.code,"\n", label_falsee,":\n", $$.res, "= 0;\n", NULL);
-    $$.code = concatener($$.code,"\n",  label_end,":\n", NULL);
+    $$.code = concatener($$.code,"\n",  label_end,": ;\n", NULL);
 
     char* tmp_decla;
     tmp_decla= init_code(tmp_decla);
@@ -601,7 +601,7 @@ logical_or_expression
     $$.code = concatener($$.code,"\n", label_truee,":\n", $$.res, "= 1;\n", NULL);
     $$.code = concatener($$.code,"goto ", label_end, ";\n", NULL);
     $$.code = concatener($$.code,"\n", label_falsee,":\n", $$.res, "= 0;\n", NULL);
-    $$.code = concatener($$.code,"\n",  label_end,":\n", NULL);
+    $$.code = concatener($$.code,"\n",  label_end,": ;\n", NULL);
 
     char* tmp_decla;
     tmp_decla= init_code(tmp_decla);
@@ -650,15 +650,10 @@ declaration
 : declaration_specifiers declarator ';'
 {
     $$.code=init_code($$.code);
-    /*if(verif_type($2.type, INT_T))
-	{$$.code=concatener($$.code, $1.code, " ", $2.code, ";\n", NULL);}
-    else {$$.code=concatener($$.code, "void ", $2.code, ";\n", NULL);}*/
-if(verif_type($2.type, INT_T))
+
+    if(verif_type($2.type, INT_T))
 	{$$.code=concatener($$.code, $1.code, " ", $2.id->nom, ";\n", NULL);}
     else {$$.code=concatener($$.code, "void *", $2.id->nom, ";\n", NULL);}
-
-
-    fprintf(stderr, "type de %s : %s\n", $2.id->nom, draw_type_expr($2.type));
 
     $$.declarations=strdup("");
 
@@ -847,8 +842,6 @@ direct_declarator
 :  '(' {$<attributs>$.type= $<attributs>0.type;} declarator ')'
 {
     $$.code = init_code($$.code); $$.code = concatener($$.code, "(", $3.code, ")", NULL);
-    //$$.type= $3.type;
-    //    fprintf(stderr, "Type de declarator: %s\n", draw_type_expr($3.type));
     if(verif_type($3.type, PTR_T)){ $$.type= ptr_type(fct_type(NULL, $3.type->fils_gauche, ""), "");} //si c'est un pointeur, c'est qu'on a en fait un type fonction
     else {$$.type= $3.type;}
     $$.id= $3.id;
@@ -917,7 +910,6 @@ direct_declarator
 parameter_list: parameter_declaration
 {
     $$.code = strdup($1.code);
-    fprintf(stderr, "Type du parametre %s: %s\n", $1.id->nom, draw_type_expr($1.type));
     if(verif_type($1.type, INT_T) || verif_type($1.type, PTR_T)){$$.type = $1.type;}
     else { bad_type_parameter_error($1.type, yylineno, &$$);}
     $$.declarations=strdup("");
@@ -936,14 +928,9 @@ parameter_list: parameter_declaration
 parameter_declaration
 : declaration_specifiers declarator
 {
-    $$.code=init_code($$.code); $$.code=concatener($$.code, $1.code, " ", $2.code," ", NULL);
-    //$$.type= $2.type;
-    $$.declarations=strdup("");
     $$.id=$2.id;
     $2.id->is_arg=1;
-
     
-
     if($2.type!= NULL && (verif_type($2.type, PTR_T) && verif_type($2.type->fils_gauche, FCT_T)))
 	{
 	    pop();
@@ -970,6 +957,12 @@ parameter_declaration
     if(verif_type($2.type, STRUCT_T)){structure_declaration_error(yylineno, &$$);}
     if(!verif_type($2.type, INT_T) && !verif_type($2.type, PTR_T)){bad_type_parameter_error($2.type, yylineno, &$$);}
     else{$$.type=$2.type;}
+
+    $$.code=init_code($$.code);
+    if(verif_type($$.type, PTR_T)){$$.code=concatener($$.code, "void *", $$.id->nom," ", NULL);}
+    else{$$.code=concatener($$.code, $1.code, " ", $2.code," ", NULL);}
+    $$.declarations=strdup("");
+    
 }
 ;
 
@@ -1116,7 +1109,7 @@ selection_statement
     $$.code= concatener($$.code, $3.code, NULL);
     $$.code= concatener($$.code, "if (", $3.res, ") goto ", label_truee, ";\n", NULL);
     $$.code= concatener($$.code, "goto ", label_falsee, ";\n", NULL);
-    $$.code = concatener($$.code, label_truee, ":\n", $5.code, label_falsee, ":\n", NULL);
+    $$.code = concatener($$.code, label_truee, ":\n", $5.code, label_falsee, ": ;\n", NULL);
     $$.res = NULL;
 
     if(verif_type($3.type, ERROR_T) || verif_type($5.type, ERROR_T)){$$.type= basic_type(ERROR_T, "");}
@@ -1139,7 +1132,7 @@ selection_statement
     $$.code= concatener($$.code, "\n",  label_truee, ":\n", $5.code, NULL);
     $$.code= concatener($$.code, "goto ", label_end, ";\n", NULL);
     $$.code= concatener($$.code, "\n", label_falsee, ":\n", $7.code,  NULL);
-    $$.code= concatener($$.code, "\n", label_end, ":\n", NULL);
+    $$.code= concatener($$.code, "\n", label_end, ": ;\n", NULL);
     $$.res= NULL;
 
     if(verif_type($3.type, ERROR_T) || verif_type($5.type, ERROR_T) || verif_type($7.type, ERROR_T)){$$.type= basic_type(ERROR_T, "");}
@@ -1162,7 +1155,7 @@ iteration_statement
     $$.code= concatener($$.code, "goto ", label_end, ";\n", NULL);
     $$.code= concatener($$.code, "\n", label_loop, ":\n", $5.code, "\n", $3.code, "\n", NULL);
     $$.code= concatener($$.code, "if (", $3.res , ") goto ", label_loop, ";\n", NULL);
-    $$.code= concatener($$.code, "goto ", label_end, ";\n\n",label_end,":\n", NULL);
+    $$.code= concatener($$.code, "goto ", label_end, ";\n\n",label_end,": ;\n", NULL);
     $$.res= strdup("");
     $$.declarations=init_code($$.declarations);
     $$.declarations=concatener($$.declarations, $3.declarations, $5.declarations, NULL);
@@ -1186,7 +1179,7 @@ iteration_statement
     $$.code= concatener($$.code, "goto ", label_end, ";\n", NULL);
     $$.code= concatener($$.code, label_loop, ":\n", $7.code, "\n", $5.code, "\n", $4.code, NULL);
     $$.code= concatener($$.code, "if (", $4.res , ") goto ", label_loop, ";\n", NULL);
-    $$.code= concatener($$.code, "goto ", label_end, ";\n",label_end,":\n", NULL);
+    $$.code= concatener($$.code, "goto ", label_end, ";\n",label_end,": ;\n", NULL);
     $$.res= NULL;
     
     $$.declarations=init_code($$.declarations);
@@ -1279,7 +1272,6 @@ switch(type_retour->root)
 }
 } compound_statement
 {
-fprintf(stderr, "type de %s : %s\n", $2.id->nom, draw_type_expr($2.type));
     pop(); /*on pop la table des symboles des parametres*/
     $$.code = init_code($$.code);
     $$.code = concatener($$.code, $1.code, " " ,$2.code, $4.code, NULL);
