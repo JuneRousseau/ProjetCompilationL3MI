@@ -1547,5 +1547,5 @@ int yyerror(char* s)
 {
     fprintf(stderr, "line %d: %s\n", yylineno, s);
     
-    exit(yylineno+1);
+    exit(1);
 }

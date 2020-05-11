@@ -650,19 +650,46 @@ declaration
 : declaration_specifiers declarator ';'
 {
     $$.code=init_code($$.code);
-    if(verif_type($2.type, INT_T))
+    /*if(verif_type($2.type, INT_T))
 	{$$.code=concatener($$.code, $1.code, " ", $2.code, ";\n", NULL);}
-    else {$$.code=concatener($$.code, "void ", $2.code, ";\n", NULL);}
+    else {$$.code=concatener($$.code, "void ", $2.code, ";\n", NULL);}*/
+if(verif_type($2.type, INT_T))
+	{$$.code=concatener($$.code, $1.code, " ", $2.id->nom, ";\n", NULL);}
+    else {$$.code=concatener($$.code, "void *", $2.id->nom, ";\n", NULL);}
+
 
     fprintf(stderr, "type de %s : %s\n", $2.id->nom, draw_type_expr($2.type));
 
     $$.declarations=strdup("");
 
-    if($2.type!= NULL && (verif_type($2.type, FCT_T) || (verif_type($2.type, PTR_T) && verif_type($2.type->fils_gauche, FCT_T)) )){pop();} /*on a bien une fonction ou pointeur sur fonction*/
-    //if($$.type->root == FCT_T){pop();} /*il faudra verifier si on a un pointeur sur fonction*/
+    if($2.type!= NULL && (verif_type($2.type, FCT_T) || (verif_type($2.type, PTR_T) && verif_type($2.type->fils_gauche, FCT_T)) ))
+	{
+	    pop();
+	    arbre_t *type_ret;
+	    if(verif_type($2.type, FCT_T)){type_ret= $2.type->fils_droit;}
+	    else {type_ret= ($2.type->fils_gauche)->fils_droit;}
+
+	    switch(type_ret->root)
+		{
+		case INT_T:
+		case VOID_T:
+		    break;
+		case PTR_T:
+		    //if( !verif_type(type_ret->fils_gauche, STRUCT_T) ) {bad_definition_function_retour_error(yylineno, type_ret);}
+		    break;
+		default:
+		    bad_definition_function_retour_error(yylineno, type_ret);
+		    $$.type=basic_type(ERROR_T, "");
+		    break;
+		}
+ 
+	}
+    if($2.type!= NULL && verif_type($2.type, PTR_T) && verif_type($2.type->fils_gauche, PTR_T)){doubl_pointeur_error(yylineno, &$<attributs>$);} /*si on a un pointeur de pointeur*/
+
+
 
     if(verif_type($2.type, STRUCT_T)){structure_declaration_error(yylineno, &$$);}
-	else{$$.type=$2.type;}
+    else{$$.type=$2.type;}
 
 }
 
@@ -796,10 +823,7 @@ if($$.type!= NULL && (verif_type($$.type, FCT_T) || (verif_type($$.type, PTR_T) 
 ;
 
 declarator
-: '*' {
-    if(verif_type($<attributs>0.type, PTR_T)){doubl_pointeur_error(yylineno, &$<attributs>$);}
-    else {$<attributs>$.type= ptr_type($<attributs>0.type, "");}
- } direct_declarator
+: '*' {$<attributs>$.type= ptr_type($<attributs>0.type, "");} direct_declarator
 {
     $$.code= init_code($$.code);
     $$.code= concatener($$.code, "*", $3.code, NULL);
@@ -893,6 +917,7 @@ direct_declarator
 parameter_list: parameter_declaration
 {
     $$.code = strdup($1.code);
+    fprintf(stderr, "Type du parametre %s: %s\n", $1.id->nom, draw_type_expr($1.type));
     if(verif_type($1.type, INT_T) || verif_type($1.type, PTR_T)){$$.type = $1.type;}
     else { bad_type_parameter_error($1.type, yylineno, &$$);}
     $$.declarations=strdup("");
@@ -902,7 +927,7 @@ parameter_list: parameter_declaration
 {
     $$.code = init_code($$.code);
     $$.code = concatener($$.code, $1.code, "," , $3.code, NULL);
-    if(verif_type($3.type, INT_T) || verif_type($3.type, PTR_T)){prod_type($1.type, $3.type, "");}/*c'est un arbre "recursif a gauche"*/
+    if(verif_type($3.type, INT_T) || verif_type($3.type, PTR_T)){$$.type=prod_type($1.type, $3.type, "");}/*c'est un arbre "recursif a gauche"*/
     else { bad_type_parameter_error($3.type, yylineno, &$$);}
     $$.declarations=strdup("");
 }
@@ -912,11 +937,39 @@ parameter_declaration
 : declaration_specifiers declarator
 {
     $$.code=init_code($$.code); $$.code=concatener($$.code, $1.code, " ", $2.code," ", NULL);
-    $$.type= $2.type;
+    //$$.type= $2.type;
     $$.declarations=strdup("");
+    $$.id=$2.id;
     $2.id->is_arg=1;
-if($$.type!= NULL && (verif_type($$.type, FCT_T) || (verif_type($$.type, PTR_T) && verif_type($$.type->fils_gauche, FCT_T)) )){pop();} /*on a bien une fonction ou pointeur sur fonction*/
-    //if($$.type->root == FCT_T){pop();} /*il faudra verifier si on a un pointeur sur fonction*/
+
+    
+
+    if($2.type!= NULL && (verif_type($2.type, PTR_T) && verif_type($2.type->fils_gauche, FCT_T)))
+	{
+	    pop();
+	    arbre_t *type_ret;
+	    if(verif_type($2.type, FCT_T)){type_ret= $2.type->fils_droit;}
+	    else {type_ret= ($2.type->fils_gauche)->fils_droit;}
+
+	    switch(type_ret->root)
+		{
+		case INT_T:
+		case VOID_T:
+		    break;
+		case PTR_T:
+		    //if( !verif_type(type_ret->fils_gauche, STRUCT_T) ) {bad_definition_function_retour_error(yylineno, type_ret);}
+		    break;
+		default:
+		    bad_definition_function_retour_error(yylineno, type_ret);
+		    $$.type=basic_type(ERROR_T, "");
+		    break;
+		}
+ 
+	}
+    if($2.type!= NULL && verif_type($2.type, PTR_T) && verif_type($2.type->fils_gauche, PTR_T)){doubl_pointeur_error(yylineno, &$<attributs>$);} /*si on a un pointeur de pointeur*/
+    if(verif_type($2.type, STRUCT_T)){structure_declaration_error(yylineno, &$$);}
+    if(!verif_type($2.type, INT_T) && !verif_type($2.type, PTR_T)){bad_type_parameter_error($2.type, yylineno, &$$);}
+    else{$$.type=$2.type;}
 }
 ;
 
@@ -1205,7 +1258,26 @@ external_declaration
 
 
 function_definition
-: declaration_specifiers declarator {type_retour= ($<attributs>2.type)->fils_droit; if(type_retour==NULL) {type_retour=basic_type(ERROR_T, "");}} compound_statement
+: declaration_specifiers declarator
+{
+type_retour= ($<attributs>2.type)->fils_droit;
+if(type_retour==NULL) {type_retour=basic_type(ERROR_T, "");}
+else
+{
+switch(type_retour->root)
+		{
+		case INT_T:
+		case VOID_T:
+		    break;
+		case PTR_T:
+		    //if( !verif_type(type_retour->fils_gauche, STRUCT_T) ) {bad_definition_function_retour_error(yylineno, type_retour);}
+		    break;
+		default:
+		    bad_definition_function_retour_error(yylineno, type_retour);
+		    break;
+		}
+}
+} compound_statement
 {
 fprintf(stderr, "type de %s : %s\n", $2.id->nom, draw_type_expr($2.type));
     pop(); /*on pop la table des symboles des parametres*/
@@ -1218,7 +1290,8 @@ fprintf(stderr, "type de %s : %s\n", $2.id->nom, draw_type_expr($2.type));
 %%
 	 
 int main()
-{   
+{
+    
     init_pile();
     init_cpt_var();
     init_cpt_label();
@@ -1228,7 +1301,7 @@ int main()
     while(c)
 	{
 	    c=yyparse();
-	}
+	    }
 
     exit(get_error_code());    
 }

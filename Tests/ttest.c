@@ -1,6 +1,6 @@
 extern int printd(int i);
 extern void *malloc(int i);
-
+/*
 int f(int a)
 {
 	int c;
@@ -19,43 +19,57 @@ int f(int a)
 	}
 		return f(a-1);
 }
-
+*/
+/*
 struct liste2 {
 int val;
 struct liste2 *s;
-};
+};*/
 
 
-struct liste1 {
+struct liste {
 int valeur;
-struct liste1 *suivant;
-struct liste2 *precedent;
+struct liste *suivant;
 };				
-
+/*
 struct liste1 *koukou(struct liste1 *l1, struct liste2 *l2)
 {
 l1->suivant = l1;
 return l1;
-}
+}*/
 
-int a;
+//int a;
+struct liste *parcours(struct liste *l, struct liste *(*f)(struct liste *p)) {
+  int i;
+  struct liste *p;
+  struct liste *tete;
+  tete=p=f(l); 
+  for (i=0; i<100; i=i+1) {
+    p=f(p);
+    if(p!=0) p-> valeur=i;
+  }
+  return tete;
+}
 
 int main() {
 
 
-struct liste1 *l1;
-struct liste2 *l2;
+struct liste *l1;
+
+
+
+//truct liste2 *l2;
 
 //struct node *n;
-int a;
+//int a;
 l1=malloc(sizeof(l1));
 l1->precedent= 0;
 l1->suivant= 0;
 l1->valeur= 42;
-a=41;
+//a=41;
 //l1->n=&a;
 //n->n=&a; 
-
+/*
 if(l1 != 0)
 {
 	a=1;
@@ -63,7 +77,7 @@ if(l1 != 0)
 else
 {
 	l2=malloc(sizeof(l2));
-}
+}*/
 //*(l1->suivant)= l1;
 //l1= koukou(l1, l2);
 //a=f(*(l->koukou));

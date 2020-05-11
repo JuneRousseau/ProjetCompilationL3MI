@@ -2,8 +2,6 @@ Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 
 TODO:
--factoriser les fonctions quand c'est possible
--verifier que les return ne renvoient QUE des int, pointeurs (structure? int/void? cf a demander) UNIQUEMENT!
 -verifier que les structures sont allouées par un malloc
 -il faut garder une compatibilité entre les pointeurs et les int (laquelle?)
 -generation du code pour un pointeur sur fonction (qui doit devenir pointeur sur void sans les parametres)
@@ -22,6 +20,7 @@ A DEMANDER :
 NOUS SOMMES PERPLEXE:
 typage des fonctions (en considerant que si on a un pointeur dans '(' declarator ')' , c'est que c'est un ptr sur fct )
 le free pour la concatenation ?
+verifier que les return ne renvoient QUE des int, pointeurs (structure? int/void? cf a demander) UNIQUEMENT!
 
 
 

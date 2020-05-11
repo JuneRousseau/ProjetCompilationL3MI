@@ -56,7 +56,6 @@ int cmp_arbre_struct(arbre_t *champs1, arbre_t *champs2)
 	}
 
     }
-  
 }
 
 /* Compare les arbres des expressions de types */
@@ -93,7 +92,11 @@ int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2)
 	      if(g){return cmp_arbre_t(arbre1->fils_droit, arbre2->fils_droit);}
 	      else {return 0;}
 	    }
-	   else {return 0;} // les racines sont différentes, c'est faux
+	  else {// les racines sont différentes,
+	    type_t root1=arbre1->root;
+	    type_t root2=arbre2->root;
+	    if( (root1==PTR_T && root2==INT_T) || (root2==PTR_T && root1==INT_T) ) {return 1;} //on peut comparer pointeur et entier
+	    else {return 0;}} //sinon c'est faux!
 	}
     }
 }
