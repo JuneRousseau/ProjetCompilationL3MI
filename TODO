@@ -11,3 +11,7 @@ A DEMANDER :
 NOUS SOMMES PERPLEXE:
 typage des fonctions (en considerant que si on a un pointeur dans '(' declarator ')' , c'est que c'est un ptr sur fct )
 le free pour la concatenation ?
+
+CHOSES A TESTER:
+
+-

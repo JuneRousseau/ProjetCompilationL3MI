@@ -4,7 +4,7 @@
 #define SYNTAXERROR 1
 
     extern int yylineno;
-arbre_t *type_retour;
+    arbre_t *type_retour;
     %}
 
 %token <attributs> SIZEOF
@@ -62,7 +62,7 @@ primary_expression
 {
     $$.code = init_code($$.code);
     $$.res = strdup($1);
-    symbole_t *s= find($1);
+    symbole_t *s= find(get_pile_id(),$1);
     if(s)
 	{$$.type=s->type;}
     else
@@ -713,7 +713,7 @@ declaration
 
     if($2.type!= NULL && (verif_type($2.type, FCT_T) || (verif_type($2.type, PTR_T) && verif_type($2.type->fils_gauche, FCT_T)) ))
 	{
-	    pop();
+	    pop(get_pile_id());
 	    arbre_t *type_ret;
 	    if(verif_type($2.type, FCT_T)){type_ret= $2.type->fils_droit;}
 	    else {type_ret= ($2.type->fils_gauche)->fils_droit;}
@@ -797,18 +797,18 @@ struct_specifier
 : STRUCT IDENTIFIER '{'
 {
     char *id=$<name>2;
-    symbole_t *s=rechercher(top_type(), id);
+    symbole_t *s=rechercher(top(get_pile_type()), id);
     if(s)
 	{
 	    structure_known_error(id, yylineno, &$<attributs>$);
 	}
     else
-	{ symbole_t *n= ajouter(top_type(), strdup(id)); n->type= struc_type(NULL, id); }
-    push(nouvelle_table());
+	{ symbole_t *n= ajouter(top(get_pile_type()), strdup(id)); n->type= struc_type(NULL, id); }
+    push(get_pile_id(), nouvelle_table());
 } struct_declaration_list '}'
 {
-    pop();
-    symbole_t *s=rechercher(top_type(), $2);
+    pop(get_pile_id());
+    symbole_t *s=rechercher(top(get_pile_type()), $2);
     if(s)
 	{
 	    if(verif_type(s->type, STRUCT_T))
@@ -824,9 +824,9 @@ struct_specifier
 }
 
 
-| STRUCT '{' {push(nouvelle_table());} struct_declaration_list '}'
+| STRUCT '{' {push(get_pile_id(), nouvelle_table());} struct_declaration_list '}'
 {
-    pop();
+    pop(get_pile_id());
     $$.code=strdup("");
     $$.type=struc_type($4.type, "");
     $$.declarations=strdup("");
@@ -836,7 +836,7 @@ struct_specifier
 | STRUCT IDENTIFIER
 {
     $$.code= strdup("void");
-    symbole_t *s_id= find_type($2);
+    symbole_t *s_id= find(get_pile_type(), $2);
     if(s_id){$$.type=s_id->type;}
     else{structure_error($2, yylineno, &$$);}
 }
@@ -866,7 +866,7 @@ struct_declaration
     $2.type->name= strdup($2.id->nom); //modif ici
     $$.type= $2.type;
     $$.declarations=strdup("");
-    if($$.type!= NULL && (verif_type($$.type, FCT_T) || (verif_type($$.type, PTR_T) && verif_type($$.type->fils_gauche, FCT_T)) )){pop();} /*on a bien une fonction ou pointeur sur fonction*/
+    if($$.type!= NULL && (verif_type($$.type, FCT_T) || (verif_type($$.type, PTR_T) && verif_type($$.type->fils_gauche, FCT_T)) )){pop(get_pile_id());} /*on a bien une fonction ou pointeur sur fonction*/
 }
 ;
 
@@ -904,13 +904,13 @@ direct_declarator
 | IDENTIFIER
 {
     symbole_t *s;
-    s= rechercher(top(), $1);
+    s= rechercher(top(get_pile_id()), $1);
     if(s){identifier_known_error($1, yylineno, &$$); s->type=basic_type(ERROR_T, $1);}
     else
 	{
-	    if(top()->suivant)
+	    if(top(get_pile_id())->suivant)
 		{
-		    s= rechercher(top()->suivant, $1);
+		    s= rechercher(top(get_pile_id())->suivant, $1);
 		    if(s)
 			{ if(s->is_arg)
 				{
@@ -918,20 +918,20 @@ direct_declarator
 				}
 			    else
 				{$$.type= $<attributs>0.type;
-				    s= ajouter(top(), $1);}
+				    s= ajouter(top(get_pile_id()), $1);}
 
 			}
 		    else
 			{
 			    $$.type= $<attributs>0.type;
-			    s= ajouter(top(), $1);
+			    s= ajouter(top(get_pile_id()), $1);
 			}
 		    
 		}
 	    else
 		{
 		    $$.type= $<attributs>0.type;
-		    s= ajouter(top(), $1);
+		    s= ajouter(top(get_pile_id()), $1);
 		}
 	}
     $$.id=s;
@@ -941,7 +941,7 @@ direct_declarator
 }
 
 
-| direct_declarator '(' {push(nouvelle_table());}  parameter_list ')'
+| direct_declarator '(' {push(get_pile_id(), nouvelle_table());}  parameter_list ')'
 {
     $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "(",$4.code,")", NULL);
     if(verif_type($1.type, PTR_T) && verif_type($1.type->fils_gauche, FCT_T)){$1.type->fils_gauche->fils_gauche= $4.type; $1.type->fils_gauche->name= $1.id->nom; $$.type= $1.type;}
@@ -950,7 +950,7 @@ direct_declarator
     $$.declarations=strdup("");
 }	      
 
-| direct_declarator '(' {push(nouvelle_table());} ')'
+| direct_declarator '(' {push(get_pile_id(), nouvelle_table());} ')'
 {
     $$.code=init_code($$.code); $$.code= concatener($$.code, $1.code, "()", NULL);
     if(verif_type($1.type, PTR_T) && verif_type($1.type->fils_gauche, FCT_T)){$1.type->fils_gauche->fils_gauche= basic_type(VOID_T, ""); $1.type->fils_gauche->name= $1.id->nom; $$.type= $1.type;}
@@ -986,7 +986,7 @@ parameter_declaration
     
     if($2.type!= NULL && (verif_type($2.type, PTR_T) && verif_type($2.type->fils_gauche, FCT_T)))
 	{
-	    pop();
+	    pop(get_pile_id());
 	    arbre_t *type_ret;
 	    if(verif_type($2.type, FCT_T)){type_ret= $2.type->fils_droit;}
 	    else {type_ret= ($2.type->fils_gauche)->fils_droit;}
@@ -1057,10 +1057,10 @@ statement
 ;
 
 entree
-: '{' {push(nouvelle_table()); push_type(nouvelle_table());} ;
+: '{' {push(get_pile_id(), nouvelle_table()); push(get_pile_type(), nouvelle_table());} ;
 
 sortie
-: '}' {pop(); pop_type();} ;
+: '}' {pop(get_pile_id()); pop(get_pile_type());} ;
 
 compound_statement
 : '{' '}'
@@ -1325,7 +1325,7 @@ switch(type_retour->root)
 }
 } compound_statement
 {
-    pop(); /*on pop la table des symboles des parametres*/
+    pop(get_pile_id()); /*on pop la table des symboles des parametres*/
     $$.code = init_code($$.code);
     $$.code = concatener($$.code, $1.code, " " ,$2.code, $4.code, NULL);
     $$.type = $2.type;
@@ -1337,8 +1337,7 @@ switch(type_retour->root)
 int main()
 {
     
-    init_pile();
-    init_pile_type();
+    init_piles();
     init_cpt_var();
     init_cpt_label();
     init_error();
@@ -1347,7 +1346,7 @@ int main()
     while(c)
 	{
 	    c=yyparse();
-	    }
+	}
 
     //exit(get_error_code());    
 }

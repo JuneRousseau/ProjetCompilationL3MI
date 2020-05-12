@@ -13,20 +13,13 @@ table_t *nouvelle_table();
 void supprimer_table();
 symbole_t *ajouter( table_t *table, char *nom);
 
-pile_t *init_pile();
-table_t *top();
-pile_t *push(table_t *table);
-pile_t *pop();
-
-pile_t *init_pile_type();
-table_t *top_type();
-pile_t *push_type(table_t *table);
-pile_t *pop_type();
+void init_piles();
+table_t *top(pile_t *pile);
+pile_t *push(pile_t *pile, table_t *table);
+pile_t *pop(pile_t *pile);
 
 symbole_t *rechercher( table_t *table, char *nom );
-symbole_t *find( char *nom);
-symbole_t *find_type(char *nom);
-symbole_t *find_in_pile(pile_t *pile, char *nom);
+symbole_t *find(pile_t *pile, char *nom);
 
 char *add_declaration(char* var, arbre_t *type, char* declarations);
 
@@ -34,3 +27,6 @@ void afficher_pile();
 void afficher_pile_t(pile_t *pile);
 void afficher_pile_type();
 void afficher_table();
+
+pile_t *get_pile_id();
+pile_t *get_pile_type();

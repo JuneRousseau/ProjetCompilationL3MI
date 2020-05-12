@@ -4,7 +4,7 @@
 
 int cpt_label;
 int cpt_var;
-pile_t *pile;
+pile_t *pile_id;
 pile_t *pile_type;
 
 /* Fonction de generation de nom pour les labels et les variables temporaires */
@@ -17,7 +17,7 @@ char *generate_name(char* var, char* name, int *cpt)
     random_part= rand() % RANDMAX;
     //sprintf(var, "%s_%d_%d", name, *cpt, random_part);
     sprintf(var, "_%s%d", name, *cpt);
-  } while(find(var) != NULL);
+  } while(find(pile_id, var) != NULL);
 
   *cpt= *cpt+1;
    
@@ -116,37 +116,26 @@ symbole_t *ajouter(table_t *tableSymbole, char *nom)
 }
 
 /* Initialise la pile */
-pile_t *init_pile()
+void init_piles()
 {
-  pile = (pile_t *) malloc(sizeof(pile_t));
-  pile->premier= nouvelle_table();
-  return pile;
-}
+  pile_id = (pile_t *) malloc(sizeof(pile_t));
+  pile_id->premier= nouvelle_table();
 
-/* Initialise la pile des types*/
-pile_t *init_pile_type()
-{
   pile_type = (pile_t *) malloc(sizeof(pile_t));
   pile_type->premier= nouvelle_table();
-  return pile_type;
+
 }
 
 /* Retourne la table sur le top de la pile */
-table_t *top()
+table_t *top(pile_t *pile)
 {
   return pile->premier;
 }
 
-/* Retourne la table sur le top de la pile des types*/
-table_t *top_type()
-{
-  return pile_type->premier;
-}
-
 /* Ajout de la table donnée sur la pile */
-pile_t *push(table_t *table)
+pile_t *push(pile_t *pile, table_t *table)
 {
-  table_t *t= top();
+  table_t *t= top(pile);
   t->precedent= table;
   table->suivant=t;
   table->precedent=NULL;
@@ -154,37 +143,15 @@ pile_t *push(table_t *table)
   return pile;
 }
 
-/* Ajout de la table donnée sur la pile */
-pile_t *push_type(table_t *table)
-{
-  table_t *t= top_type();
-  t->precedent= table;
-  table->suivant=t;
-  table->precedent=NULL;
-  pile_type->premier= table;
-  return pile_type;
-}
-
 /* Suppression de la table présente sur le top de la pile */
-pile_t *pop()
+pile_t *pop(pile_t *pile)
 {
-  table_t *last_top= top();
+  table_t *last_top= top(pile);
   table_t *new_top = last_top->suivant;
   new_top->precedent = NULL;
   pile->premier= new_top;
   supprimer_table(last_top);
   return pile;
-}
-
-/* Suppression de la table présente sur le top de la pile */
-pile_t *pop_type()
-{
-  table_t *last_top= top_type();
-  table_t *new_top = last_top->suivant;
-  new_top->precedent = NULL;
-  pile_type->premier= new_top;
-  supprimer_table(last_top);
-  return pile_type;
 }
 
 /* Recherche d'un symbole par son nom dans la table donnée */
@@ -201,23 +168,11 @@ symbole_t *rechercher(table_t *tableSymbole, char *nom)
   return s;
 }
 
-/* Recherche d'un symbole dans l'ensemble de la pile des identifiants*/
-symbole_t *find(char *nom)
-{
-  return find_in_pile(pile, nom);
-}
-
-/* Recherche d'un symbole dans l'ensemble de la pile des types*/
-symbole_t *find_type(char *nom)
-{
-  return find_in_pile(pile_type, nom);
-}
-
 
 /* Recherche d'un symbole dans l'ensemble de la pile */
-symbole_t *find_in_pile(pile_t *pile, char *nom)
+symbole_t *find(pile_t *pile, char *nom)
 {
-  table_t *table_courante= pile->premier;
+  table_t *table_courante= top(pile);
   symbole_t *symbole= NULL;
   while(table_courante != NULL && symbole == NULL){
     symbole = rechercher(table_courante, nom);
@@ -248,17 +203,7 @@ char *add_declaration(char* var, arbre_t *type, char* declarations)
 }
 
 /* Fonction de debug pour afficher la pile et les tables de symboles */
-void afficher_pile()
-    {
-      afficher_pile_t(pile);
-    }
-
-void afficher_pile_type()
-    {
-      afficher_pile_t(pile_type);
-    }
-
-void afficher_pile_t(pile_t *pile)
+void afficher_pile(pile_t *pile)
     {
 	table_t *table_courante = pile->premier;
 	int i=0;
@@ -289,3 +234,7 @@ void afficher_table(table_t *t)
 	    }
 	fprintf(stderr, "\n");
     }
+
+
+pile_t *get_pile_id() {return pile_id;}
+pile_t *get_pile_type() {return pile_type;}
