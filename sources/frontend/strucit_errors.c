@@ -108,7 +108,7 @@ void structure_known_error(char *id, int line, attributs_t *attribut)
 void address_error(int line, attributs_t *attribut)
 {
   char *msg= (char *)malloc(0);
-  msg=concatener(msg, "Erreur ligne ", itos(line)," ~ on peut pas obtenir l'adresse d'une variable NULL\n", line);
+  msg=concatener(msg, "Erreur ligne ", itos(line)," ~ on peut pas obtenir l'adresse d'une variable NULL\n", line, NULL);
   type_error_custom(msg, attribut->type);
   return;
 }

@@ -1,6 +1,7 @@
 Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 TODO:
+erreur seg fault lors de l'erreur "id a deja ete declare"
 
 ERREURS GRAVES : 
 

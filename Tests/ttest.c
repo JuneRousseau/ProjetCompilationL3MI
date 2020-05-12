@@ -55,15 +55,15 @@ struct liste *suivant;
 
 int main() {
 
-struct liste *l1;
-struct liste *(*fct)(struct liste *p);
+struct liste *liste;
+//struct liste *(*fct)(struct liste *p);
 
 //struct node *n;
 //int a;
-l1=malloc(sizeof(l1));
+liste=malloc(sizeof(liste));
 
-l1->suivant= 0;
-l1->valeur= 42;
+liste->suivant= 0;
+liste->valeur= 42;
 //l1->n= 0;
 //a=41;
 //l1->n=&a;

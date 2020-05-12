@@ -797,18 +797,18 @@ struct_specifier
 : STRUCT IDENTIFIER '{'
 {
     char *id=$<name>2;
-    symbole_t *s=rechercher(top(), id);
+    symbole_t *s=rechercher(top_type(), id);
     if(s)
 	{
 	    structure_known_error(id, yylineno, &$<attributs>$);
 	}
     else
-	{ symbole_t *n= ajouter(top(), strdup(id)); n->type= struc_type(NULL, id); }
+	{ symbole_t *n= ajouter(top_type(), strdup(id)); n->type= struc_type(NULL, id); }
     push(nouvelle_table());
 } struct_declaration_list '}'
 {
     pop();
-    symbole_t *s=rechercher(top(), $2);
+    symbole_t *s=rechercher(top_type(), $2);
     if(s)
 	{
 	    if(verif_type(s->type, STRUCT_T))
@@ -836,7 +836,7 @@ struct_specifier
 | STRUCT IDENTIFIER
 {
     $$.code= strdup("void");
-    symbole_t *s_id= find($2);
+    symbole_t *s_id= find_type($2);
     if(s_id){$$.type=s_id->type;}
     else{structure_error($2, yylineno, &$$);}
 }
@@ -905,7 +905,7 @@ direct_declarator
 {
     symbole_t *s;
     s= rechercher(top(), $1);
-    if(s){identifier_known_error($1, yylineno, &$$);}
+    if(s){identifier_known_error($1, yylineno, &$$); s->type=basic_type(ERROR_T, $1);}
     else
 	{
 	    if(top()->suivant)
@@ -1057,10 +1057,10 @@ statement
 ;
 
 entree
-: '{' {push(nouvelle_table());} ;
+: '{' {push(nouvelle_table()); push_type(nouvelle_table());} ;
 
 sortie
-: '}' {pop();} ;
+: '}' {pop(); pop_type();} ;
 
 compound_statement
 : '{' '}'
@@ -1338,6 +1338,7 @@ int main()
 {
     
     init_pile();
+    init_pile_type();
     init_cpt_var();
     init_cpt_label();
     init_error();
@@ -1348,7 +1349,7 @@ int main()
 	    c=yyparse();
 	    }
 
-    exit(get_error_code());    
+    //exit(get_error_code());    
 }
 
 int yyerror(char* s)
