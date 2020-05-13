@@ -1,6 +1,6 @@
 PROJET DE COMPILATION L3 INFORMATIQUE - UCA
 STRUCIT, UN MINI COMPILATEUR C
-Chloé Dubas et June Rousseau
+Chloé Dubas et Rousseau Bastien
 
 
 I - QU'EST-CE QUE STRUCIT ?
@@ -36,12 +36,8 @@ Attention, avec la derniere commande, il faut que les fichiers se trouvent dans 
 
 Les fichiers de sorties sont generes dans le dossier ./outputs et se nomment $fichier_3.c .
 
-VI - NETTOYER LES FICHIERS GENERES
-Pour nettoyer les fichiers generes:
-- la commande "make clean" supprime les fichiers generes lors de la compilation de strucit (les fichiers objets et les fichiers C generes par Yacc)
-- la commanda "make mrproper" supprime egalement les executables et les tests generes dans ./outputs(fichier_3.c)
 
-VII - EN CAS DE PROBLEME POUR LA COMPILATION DE STRUCIT:
+VI - EN CAS DE PROBLEME POUR LA COMPILATION DE STRUCIT:
 Se rendre dans le dossier ./sources/frontend et compiler manuellement la partie frontend via la commande suivante:
 
 flex ANSI-frontend. && bison -v -d structfe.y && gcc lex.yy.c structfe.tab.c strucit_type.c strucit_utils.c strucit_symbols.c strucit_errors.c -o structfe.out -lfl
