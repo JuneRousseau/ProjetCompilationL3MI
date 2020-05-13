@@ -1,7 +1,6 @@
 Instruction pour le compil: ./compil.sh nameLex.l nameYacc
 
 TODO:
-erreur seg fault lors de l'erreur "id a deja ete declare"
 
 ERREURS GRAVES : 
 
@@ -16,5 +15,3 @@ typage des fonctions (en considerant que si on a un pointeur dans '(' declarator
 le free pour la concatenation ?
 
 CHOSES A TESTER:
-
-- imbrications etc

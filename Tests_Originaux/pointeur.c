@@ -1,5 +1,4 @@
 extern int printd( int i );
-extern void *malloc( int size );
 
 int main() {
    int *i;
@@ -15,7 +14,7 @@ int main() {
    *j=6;
    printd(*j);
 
-   *j=*j+(*i);
+   *j=*j+(*i)++;
    printd(*j);
    return 0;
 }
