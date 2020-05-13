@@ -57,7 +57,6 @@ void *desallouer(void *p) {
   _t1=p+suivant;
 
   q=*_t1;
-
   free(p);
 
   return q;

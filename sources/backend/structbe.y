@@ -174,6 +174,8 @@ int main()
 	    {
 		c=yyparse();
 	    }
+
+	printf("Accepted\n");
 	exit(0);
     }
 

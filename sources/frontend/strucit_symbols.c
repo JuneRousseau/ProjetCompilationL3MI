@@ -123,7 +123,6 @@ void init_piles()
 
   pile_type = (pile_t *) malloc(sizeof(pile_t));
   pile_type->premier= nouvelle_table();
-
 }
 
 /* Retourne la table sur le top de la pile */
@@ -238,3 +237,58 @@ void afficher_table(table_t *t)
 
 pile_t *get_pile_id() {return pile_id;}
 pile_t *get_pile_type() {return pile_type;}
+
+
+/* Retourne le decalage du pointeur pour le champs recherche */
+int get_offset_member(arbre_t *structure, char* member_name)
+{
+  if(!(verif_type(structure, STRUCT_T))){return -2;} 
+  
+  int size_of_struc=sizeof_type(structure);
+  int offset= size_of_struc;
+  arbre_t *prod_member= structure->fils_gauche;
+  
+  //if (prod_member == NULL) {return -1;}
+  if (prod_member == NULL) {
+    arbre_t *new_structure= find(get_pile_type(), structure->name)->type;
+    prod_member= new_structure->fils_gauche;}
+  if (!(verif_type(prod_member, PROD_T))) {if((!strcmp(prod_member->name, member_name))) {return 0;} else {return -1;}}
+  while(prod_member && strcmp(prod_member->fils_droit->name, member_name) )
+    {
+      offset-= sizeof_type(prod_member->fils_droit);
+      prod_member=prod_member->fils_gauche;
+if (!(verif_type(prod_member, PROD_T))) {if((!strcmp(prod_member->name, member_name))) {return 0;} else {return -1;}}
+      //if(!verif_type(prod_member, PROD_T)) {break;}
+    }
+  
+  if(prod_member == NULL){return -1;} //on a pas trouvé le champs demandé
+  else
+    {
+      if(verif_type(prod_member, PROD_T)) {offset-= sizeof_type(prod_member->fils_droit);}
+      else {offset-= sizeof_type(prod_member);}
+      return offset;
+    }
+}
+
+
+/* Retourne le type du champs recherché */
+arbre_t *get_type_member(arbre_t *structure, char* member_name)
+{
+  if(!(verif_type(structure, STRUCT_T))){return basic_type(ERROR_T, "");}
+
+  arbre_t *prod_member= structure->fils_gauche; //soit c'est une produit cartesien, soit c'est un directement un champs
+  if (prod_member == NULL) {
+    arbre_t *new_structure= find(get_pile_type(), structure->name)->type;
+    prod_member= new_structure->fils_gauche;}
+    //return basic_type(ERROR_T, "");} //la structure n'a pas de champs (etrange)
+  if (!(verif_type(prod_member, PROD_T))){if(!(strcmp(prod_member->name, member_name))) {return prod_member;} else {return basic_type(ERROR_T, "");}} //la structure n'a qu'un champs, donc on retourne son type si les noms correspondent
+  
+  while(prod_member && strcmp(prod_member->fils_droit->name, member_name) ) //tant que la structure possède encore des champs et que les noms du champs ne correspond pas a celui recherché
+    {
+      prod_member=prod_member->fils_gauche;
+      if(!verif_type(prod_member, PROD_T)) {break;}
+    }
+  if(prod_member == NULL){return basic_type(ERROR_T, "");} //on a pas trouvé le champs demandé
+  if(verif_type(prod_member, PROD_T)){ prod_member=prod_member->fils_droit;} //le champs n'est pas le dernier, il se trouve dans le fils droit du produit cartésien
+  return prod_member;
+}

@@ -40,7 +40,6 @@ typedef struct _attributs_t {
   symbole_t *id;
   int is_ptr_fct;
   int is_struc_member; //est ce que l'expression est du type struct->champs
-  int is_externn;
 } attributs_t;
 
 /* Fonctions utilitaires */

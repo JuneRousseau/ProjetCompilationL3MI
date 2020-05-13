@@ -17,8 +17,6 @@ arbre_t *prod_type(arbre_t *t1, arbre_t *t2, char* name);
 arbre_t *struc_type(arbre_t *champs, char* name);
 
 int sizeof_type(arbre_t *type);
-int get_offset_member(arbre_t *structure, char* member_name);
-arbre_t *get_type_member(arbre_t *structure, char* member_name);
 
 int verif_type(arbre_t *expr_type, type_t expected_type);
 

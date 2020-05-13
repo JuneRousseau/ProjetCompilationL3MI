@@ -30,3 +30,6 @@ void afficher_table();
 
 pile_t *get_pile_id();
 pile_t *get_pile_type();
+
+int get_offset_member(arbre_t *structure, char* member_name);
+arbre_t *get_type_member(arbre_t *structure, char* member_name);

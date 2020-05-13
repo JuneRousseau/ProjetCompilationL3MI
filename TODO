@@ -5,6 +5,9 @@ erreur seg fault lors de l'erreur "id a deja ete declare"
 
 ERREURS GRAVES : 
 
+- pour les structure recursive, on ne peut pas faire struct->champs1->champs1 (car struct->champs1 est un type STRUCT(NULL))
+- nom des fonctions / variables
+
 A DEMANDER :
 
 
@@ -14,4 +17,4 @@ le free pour la concatenation ?
 
 CHOSES A TESTER:
 
--
+- imbrications etc

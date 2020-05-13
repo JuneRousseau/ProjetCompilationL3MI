@@ -62,13 +62,14 @@ primary_expression
 {
     $$.code = init_code($$.code);
     $$.res = strdup($1);
-    symbole_t *s= find(get_pile_id(),$1);
+    symbole_t *s=find(get_pile_id(),$1);
     if(s)
 	{$$.type=s->type;}
     else
 	{
 	    identifier_unkonwn_error($1, yylineno, &$$);
 	}
+	
     $$.declarations=strdup("");
     $$.is_struc_member= 0;
     $$.id= s;
@@ -531,7 +532,7 @@ equality_expression
 
     $$.declarations= init_code($$.declarations);
     $$.declarations= concatener($$.declarations, $1.declarations, $3.declarations, NULL);
-$$.is_struc_member= 0;
+    $$.is_struc_member= 0;
 }
 
 | equality_expression NE_OP relational_expression
@@ -686,11 +687,26 @@ expression
 	{
 	    ptr_1=strdup("*");
 	}
-    if($3.is_struc_member){ptr_3=strdup("*");}
-    $$.code = concatener($$.code, $1.code, $3.code, ptr_1, $1.res, " = ", ptr_3, $3.res, ";\n", NULL);
-    
+
     $$.declarations= init_code($$.declarations);
     $$.declarations= concatener($$.declarations, $1.declarations, $3.declarations, NULL);
+
+    if($3.is_struc_member){
+
+	char *tmp;
+	tmp=new_var(tmp);
+	ptr_3=strdup("*");
+
+	$$.code = concatener($$.code, $1.code, $3.code, tmp, " = ", "*", $3.res, ";\n", ptr_1, $1.res, " = ", tmp, ";\n", NULL);
+
+	$$.declarations= add_declaration(tmp, $3.type, $$.declarations);
+    }
+
+    else {
+	$$.code = concatener($$.code, $1.code, $3.code, ptr_1, $1.res, " = ", ptr_3, $3.res, ";\n", NULL);}
+ 
+    
+   
 }
 ;
 
@@ -703,7 +719,7 @@ declaration
 	{$$.code=concatener($$.code, $1.code, " ", $2.id->nom, ";\n", NULL);}
     else
 	{
-	    if($1.is_externn){$$.code=concatener($$.code, $1.code, " ", $2.code, ";\n", NULL);}
+	    if(type_retour == NULL && verif_type($2.type, FCT_T)){$$.code=concatener($$.code, $1.code, " ", $2.code, ";\n", NULL);}
 	    else{$$.code=concatener($$.code, "void *", $2.id->nom, ";\n", NULL);}
 	}
 
@@ -756,7 +772,6 @@ declaration_specifiers
     $$.code= concatener($$.code, "extern ", $2.code, NULL);
     $$.type = $2.type;
     $$.declarations=strdup("");
-    $$.is_externn=1;
 }
 
 | type_specifier
@@ -764,7 +779,6 @@ declaration_specifiers
     $$.code= strdup($1.code);
     $$.type= $1.type;
     $$.declarations=strdup("");
-    $$.is_externn=0;
 }
 ;
 
@@ -1258,9 +1272,9 @@ jump_statement
 {
     $$.code= strdup($2.code);
     $$.code= concatener($$.code, "return ", $2.res," ;\n", NULL); 
-    $$.type= $2.type;
-    $$.declarations= strdup($2.declarations);
+    $$.declarations= strdup($2.declarations);;
     if(!compare_arbre_t(type_retour, $2.type)){type_error_function_definition(type_retour, $2.type, yylineno, &$$);}
+    else{$$.type= $2.type;}
 
 }
 ;
@@ -1306,11 +1320,11 @@ external_declaration
 function_definition
 : declaration_specifiers declarator
 {
-type_retour= ($<attributs>2.type)->fils_droit;
-if(type_retour==NULL) {type_retour=basic_type(ERROR_T, "");}
-else
-{
-switch(type_retour->root)
+    type_retour= ($<attributs>2.type)->fils_droit;
+    if(type_retour==NULL) {type_retour=basic_type(ERROR_T, "");}
+    else
+	{
+	    switch(type_retour->root)
 		{
 		case INT_T:
 		case VOID_T:
@@ -1322,13 +1336,14 @@ switch(type_retour->root)
 		    bad_definition_function_retour_error(yylineno, type_retour);
 		    break;
 		}
-}
+	}
 } compound_statement
 {
     pop(get_pile_id()); /*on pop la table des symboles des parametres*/
     $$.code = init_code($$.code);
     $$.code = concatener($$.code, $1.code, " " ,$2.code, $4.code, NULL);
     $$.type = $2.type;
+    type_retour=NULL;
 }
 ;
 
@@ -1336,19 +1351,18 @@ switch(type_retour->root)
 	 
 int main()
 {
-    
     init_piles();
-    init_cpt_var();
-    init_cpt_label();
-    init_error();
-    int c = yyparse();
+      init_cpt_var();
+      init_cpt_label();
+      init_error();
+      int c = yyparse();
     
-    while(c)
-	{
-	    c=yyparse();
-	}
+      while(c)
+      {
+      c=yyparse();
+      }
 
-    //exit(get_error_code());    
+    exit(get_error_code());    
 }
 
 int yyerror(char* s)

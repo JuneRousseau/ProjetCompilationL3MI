@@ -18,6 +18,7 @@ int compare_arbre_t(arbre_t *arbre1, arbre_t *arbre2)
 /* Compare les champs des structures passés en parametres (on passe les champs) */
 int cmp_arbre_struct(arbre_t *champs1, arbre_t *champs2)
 {
+  //printf("\nChamps1: %s \nChamps2: %s\n", draw_type_expr(champs1), draw_type_expr(champs2));
   arbre_t *tmp_member1= champs1;
   arbre_t *tmp_member2= champs2;
   arbre_t *tmp_droit1;
@@ -40,6 +41,8 @@ int cmp_arbre_struct(arbre_t *champs1, arbre_t *champs2)
 		  if(!cmp_arbre_t(tmp_droit1, tmp_droit2)){return 0;} //si les types des champs ne correspondent pas, on sort de la boucle, c'est faux
 		  if(strcmp(tmp_droit1->name, tmp_droit2->name)) {return 0;} //si les noms des champs ne correspondent pas, on sort de la boucle, c'est faux
 	        }
+	      tmp_member1=tmp_member1->fils_gauche;
+	      tmp_member2=tmp_member2->fils_gauche;
 	    }
 
 	  if(tmp_member1 == NULL && tmp_member2 == NULL) {return 1;}
@@ -61,6 +64,7 @@ int cmp_arbre_struct(arbre_t *champs1, arbre_t *champs2)
 /* Compare les arbres des expressions de types */
 int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2)
 {
+  //printf("\nArbre1: %s \nArbre2: %s\n", draw_type_expr(arbre1), draw_type_expr(arbre2));
   if(arbre1 == NULL && arbre2 == NULL){return 1;} // les 2 sont NULL, c'est vrai
   else
     {
@@ -95,7 +99,7 @@ int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2)
 	  else {// les racines sont différentes,
 	    type_t root1=arbre1->root;
 	    type_t root2=arbre2->root;
-	    if( (root1==PTR_T && root2==INT_T) || (root2==PTR_T && root1==INT_T) ) {return 1;} //on peut comparer pointeur et entier
+	    if( (root1==PTR_T && root2==INT_T)) {return 1;} //on peut comparer pointeur et entier
 	    else {return 0;}} //sinon c'est faux!
 	}
     }
@@ -104,10 +108,15 @@ int cmp_arbre_t(arbre_t *arbre1, arbre_t *arbre2)
 /* Verifie si les pointeurs sont des pointeurs sur VOID_T */
 int cmp_ptr_t(arbre_t *ptr1, arbre_t *ptr2)
 {
+  //printf("\nptr1: %s \nptr2: %s\n", draw_type_expr(ptr1), draw_type_expr(ptr2));
   arbre_t *fils1= ptr1->fils_gauche;
   arbre_t *fils2= ptr2->fils_gauche;
   if( fils1 != NULL && fils2 != NULL)
-    { if(fils1->root == VOID_T || fils2->root == VOID_T) {return 1;}}
+    { if(fils1->root == VOID_T || fils2->root == VOID_T) {return 1;}
+      else {return 0;}
+    }
+  else
+    {return 0;}
 }
 
 /* Constructeur d'un type de base*/
@@ -192,54 +201,6 @@ arbre_t *struc_type(arbre_t *champs, char* name)
 }
 
 
-/* Retourne le decalage du pointeur pour le champs recherche */
-int get_offset_member(arbre_t *structure, char* member_name)
-{
-  if(!(verif_type(structure, STRUCT_T))){return -2;} 
-  
-  int size_of_struc=sizeof_type(structure);
-  int offset= size_of_struc;
-  arbre_t *prod_member= structure->fils_gauche;
-  
-  if (prod_member == NULL) {return -1;}
-  if (!(verif_type(prod_member, PROD_T))) {if((!strcmp(prod_member->name, member_name))) {return 0;} else {return -1;}}
-  while(prod_member && strcmp(prod_member->fils_droit->name, member_name) )
-    {
-      offset-= sizeof_type(prod_member->fils_droit);
-      prod_member=prod_member->fils_gauche;
-if (!(verif_type(prod_member, PROD_T))) {if((!strcmp(prod_member->name, member_name))) {return 0;} else {return -1;}}
-      //if(!verif_type(prod_member, PROD_T)) {break;}
-    }
-  
-  if(prod_member == NULL){return -1;} //on a pas trouvé le champs demandé
-  else
-    {
-      if(verif_type(prod_member, PROD_T)) {offset-= sizeof_type(prod_member->fils_droit);}
-      else {offset-= sizeof_type(prod_member);}
-      return offset;
-    }
-}
-
-
-/* Retourne le type du champs recherché */
-arbre_t *get_type_member(arbre_t *structure, char* member_name)
-{
-  if(!(verif_type(structure, STRUCT_T))){return basic_type(ERROR_T, "");}
-
-  arbre_t *prod_member= structure->fils_gauche; //soit c'est une produit cartesien, soit c'est un directement un champs
-  if (prod_member == NULL) {return basic_type(ERROR_T, "");} //la structure n'a pas de champs (etrange)
-  if (!(verif_type(prod_member, PROD_T))){if(!(strcmp(prod_member->name, member_name))) {return prod_member;} else {return basic_type(ERROR_T, "");}} //la structure n'a qu'un champs, donc on retourne son type si les noms correspondent
-  
-  while(prod_member && strcmp(prod_member->fils_droit->name, member_name) ) //tant que la structure possède encore des champs et que les noms du champs ne correspond pas a celui recherché
-    {
-      prod_member=prod_member->fils_gauche;
-      if(!verif_type(prod_member, PROD_T)) {break;}
-    }
-  if(prod_member == NULL){return basic_type(ERROR_T, "");} //on a pas trouvé le champs demandé
-  if(verif_type(prod_member, PROD_T)){ prod_member=prod_member->fils_droit;} //le champs n'est pas le dernier, il se trouve dans le fils droit du produit cartésien
-  return prod_member;
-}
-
 /* Verifie si le racine de l'arbre est du type donné */
 int verif_type(arbre_t *expr_type, type_t expected_type)
 {
@@ -247,6 +208,7 @@ int verif_type(arbre_t *expr_type, type_t expected_type)
   else
     { return expr_type->root == expected_type; }
 }
+
 
 
 /* Retourne le nom du type donné */
