@@ -39,7 +39,7 @@ Les fichiers de sorties sont generes dans le dossier ./outputs et se nomment $fi
 VI - NETTOYER LES FICHIERS GENERES
 Pour nettoyer les fichiers generes:
 - la commande "make clean" supprime les fichiers generes lors de la compilation de strucit (les fichiers objets et les fichiers C generes par Yacc)
-- la commanda "make mrproper" supprime egalement les executables et les tests generes dans ./outputs(fichier_3.c)
+- la commande "make mrproper" supprime egalement les executables et les tests generes dans ./outputs(fichier_3.c)
 
 VII - EN CAS DE PROBLEME POUR LA COMPILATION DE STRUCIT:
 Se rendre dans le dossier ./sources/frontend et compiler manuellement la partie frontend via la commande suivante:
