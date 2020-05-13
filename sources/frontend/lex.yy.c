@@ -873,7 +873,7 @@ case 14:
 /* rule 14 can match eol */
 YY_RULE_SETUP
 #line 28 "ANSI-frontend.l"
-
+;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP

@@ -25,7 +25,7 @@ L                       [a-zA-Z_]
 {D}+                    { yylval.number= strdup(yytext); return CONSTANT; } /* constance numérique */
 
 "/*"([^*]|(\*+[^*/]))*\*+\/    ; /* Commentaires */
-"//"([^\n\r]*)[\n\r]
+"//"([^\n\r]*)[\n\r] ;
 
 "->"                    { return PTR_OP; }
 "&&"                    { return AND_OP; }
