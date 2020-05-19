@@ -720,7 +720,14 @@ declaration
     else
 	{
 	    if(type_retour == NULL && verif_type($2.type, FCT_T)){$$.code=concatener($$.code, $1.code, " ", $2.code, ";\n", NULL);}
-	    else{$$.code=concatener($$.code, "void *", $2.id->nom, ";\n", NULL);}
+	    else{
+
+		if(verif_type($2.type, PTR_T))
+		    {
+			if(verif_type($2.type->fils_gauche, FCT_T)) {$$.code=concatener($$.code, $1.code, " ", $2.code, ";\n", NULL);}//si c'est un pointeur sur fonction
+			else {$$.code=concatener($$.code, "void *", $2.id->nom, ";\n", NULL);}
+		    }
+	    }
 	}
 
 

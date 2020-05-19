@@ -96,6 +96,7 @@ declarator
 
 direct_declarator
         : IDENTIFIER
+	| '(' declarator ')'
         | direct_declarator '(' parameter_list ')'
         | direct_declarator '(' ')'
         ;
