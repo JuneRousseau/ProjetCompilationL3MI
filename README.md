@@ -16,37 +16,37 @@ Il faut se rendre à la racine du projet et executer la commande make. Cela comp
 Dans les parties suivante, il faut remplacer $fichier par le nom du fichier que vous souhaitez utiliser.
 
 ## III - COMMENT UTILISER LA PARTIE FRONTEND DU COMPILATEUR STRUCIT
-Il faut se rendre dans le dossier ./sources/frontend et executer la commande
-*./structfe.out < $fichier_entree > $fichier_sortie*
+Il faut se rendre dans le dossier ./sources/frontend et executer la commande:  
+`./structfe.out < $fichier_entree > $fichier_sortie`
 
 
 ## IV - COMMENT UTILISER LA PARTIE BACKEND DU COMPILATEUR STRUCIT
-Il faut se rendre dans le dossier ./sources/backend et executer la commande
-*./structbe.out < $fichier_entree*
+Il faut se rendre dans le dossier ./sources/backend et executer la commande:  
+`./structbe.out < $fichier_entree`
 
 
 ## V - UTILISATION AUTOMATIQUE DU COMPILATEUR AVEC DES FICHIERS DE TEST
-Un script bash est mis à votre disposition afin d'automatiser les tests présents dans le dossier ./Tests . Pour cela, vous pouvez utiliser la commande suivante:
-*./better_than_gcc.sh*
+Un script bash est mis à votre disposition afin d'automatiser les tests présents dans le dossier ./Tests . Pour cela, vous pouvez utiliser la commande suivante:  
+`./better_than_gcc.sh`
 
-Vous pouvez egalement compiler des tests particuliers avec la commande suivante:
-*./better_than_gcc.sh $fichier1 $fichier2 ...*
+Vous pouvez egalement compiler des tests particuliers avec la commande suivante:  
+`./better_than_gcc.sh $fichier1 $fichier2 ...`
 
-/!\ Attention, avec la derniere commande, il faut que les fichiers se trouvent dans le dossier ./Tests . /!\
+**/!\ Attention**, avec la derniere commande, il faut que les fichiers se trouvent dans le dossier ./Tests . /!\
 Les fichiers de sorties sont generes dans le dossier ./outputs et se nomment $fichier_3.c .
 
 
 ## VI - NETTOYER LES FICHIERS GENERES
 Pour nettoyer les fichiers generes:
-- la commande *make clean* supprime les fichiers generes lors de la compilation de strucit (les fichiers objets et les fichiers C generes par Yacc)
-- la commande *make mrproper* supprime egalement les executables et les tests generes dans ./outputs(fichier_3.c)
+- la commande `make clean` supprime les fichiers generes lors de la compilation de strucit (les fichiers objets et les fichiers C generes par Yacc)
+- la commande `make mrproper` supprime egalement les executables et les tests generes dans ./outputs(fichier_3.c)
 
 
 ## VII - EN CAS DE PROBLEME POUR LA COMPILATION DE STRUCIT:
-Se rendre dans le dossier ./sources/frontend et compiler avec *make*. Sinon, compiler manuellement la partie frontend via la commande suivante:
+Se rendre dans le dossier ./sources/frontend et compiler avec `make`. Sinon, compiler manuellement la partie frontend via la commande suivante:
 
-*flex ANSI-frontend. && bison -v -d structfe.y && gcc lex.yy.c structfe.tab.c strucit_type.c strucit_utils.c strucit_symbols.c strucit_errors.c -o structfe.out -lfl*
+`flex ANSI-frontend. && bison -v -d structfe.y && gcc lex.yy.c structfe.tab.c strucit_type.c strucit_utils.c strucit_symbols.c strucit_errors.c -o structfe.out -lfl`
 
-Puis se rendre dans le dossier ./sources/backend et compiler avec "make". Sinon, compiler manuellement la partie backend via la commande suivante:
+Puis se rendre dans le dossier ./sources/backend et compiler avec `make`. Sinon, compiler manuellement la partie backend via la commande suivante:
 
-*flex ANSI-backend.l && bison -v -d structbe.y && gcc lex.yy.c structbe.tab.c -o structbe.out -lfl*
+`flex ANSI-backend.l && bison -v -d structbe.y && gcc lex.yy.c structbe.tab.c -o structbe.out -lfl`
