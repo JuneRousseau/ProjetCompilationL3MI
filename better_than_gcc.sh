@@ -35,7 +35,8 @@ test_compilation()
 	then
 	    echo $file: Compilation OK
 	    touch test_log
-	    (./sources/backend/structbe.out < $name_output) 2>test_log
+	    touch backend_log
+	    (./sources/backend/structbe.out < $name_output) >backend_log 2>test_log
 	    parse="$?"
 	    if [ $parse == 0 ]
 	    then
@@ -45,6 +46,7 @@ test_compilation()
 		cat test_log
 		print_line $parse $name_output
 	    fi
+	    rm backend_log
 	    rm test_log
 	else
 	    if [ $compil == 1 ]

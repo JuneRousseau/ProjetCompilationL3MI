@@ -16,7 +16,10 @@ lex.yy.c: $(LEX_FILE)
 	@(gcc -o $@ -c $<)
 
 
-.PHONY: clean
+.PHONY: clean mrproper
 
 clean:
-	rm -rf *.o $(PROG_NAME).tab.* lex.yy.c $(PROG_NAME).out $(PROG_NAME).output
+	rm -rf *.o $(PROG_NAME).tab.* lex.yy.c $(PROG_NAME).output
+
+mrproper:
+	rm -rf *.o $(PROG_NAME).tab.* lex.yy.c $(PROG_NAME).output $(PROG_NAME).out

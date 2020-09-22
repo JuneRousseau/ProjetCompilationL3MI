@@ -11,7 +11,10 @@ $(EXEC_FE):
 $(EXEC_BE):
 	@(cd $(BACKEND_DIR) && $(MAKE))
 
-.PHONY: $(EXEC_FE) $(EXEC_BE) clean
+.PHONY: $(EXEC_FE) $(EXEC_BE) clean mrproper
 
 clean:
 	@(cd $(FRONTEND_DIR) && $(MAKE) $@ && cd ../../$(BACKEND_DIR) && $(MAKE) $@)
+
+mrproper:
+	@(cd $(FRONTEND_DIR) && $(MAKE) $@ && cd ../../$(BACKEND_DIR) && $(MAKE) $@ && cd ../.. && rm -rf ./outputs/*) 
